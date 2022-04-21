@@ -1,4 +1,4 @@
-package com.dsg.wardstudy.repository;
+package com.dsg.wardstudy.repository.studyGroup;
 
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import org.springframework.data.jpa.repository.JpaRepository;

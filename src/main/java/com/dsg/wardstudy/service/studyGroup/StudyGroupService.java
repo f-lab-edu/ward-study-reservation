@@ -1,9 +1,9 @@
-package com.dsg.wardstudy.service;
+package com.dsg.wardstudy.service.studyGroup;
 
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
-import com.dsg.wardstudy.dto.StudyGroupRequest;
-import com.dsg.wardstudy.dto.StudyGroupResponse;
-import com.dsg.wardstudy.repository.StudyGroupRepository;
+import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
+import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
+import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

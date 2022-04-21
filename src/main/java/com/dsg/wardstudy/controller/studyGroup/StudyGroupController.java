@@ -1,8 +1,8 @@
-package com.dsg.wardstudy.controller;
+package com.dsg.wardstudy.controller.studyGroup;
 
-import com.dsg.wardstudy.dto.StudyGroupRequest;
-import com.dsg.wardstudy.dto.StudyGroupResponse;
-import com.dsg.wardstudy.service.StudyGroupService;
+import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
+import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
+import com.dsg.wardstudy.service.studyGroup.StudyGroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

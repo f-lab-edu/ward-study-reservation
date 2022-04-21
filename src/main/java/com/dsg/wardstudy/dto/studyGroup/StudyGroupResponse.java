@@ -1,4 +1,4 @@
-package com.dsg.wardstudy.dto;
+package com.dsg.wardstudy.dto.studyGroup;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
