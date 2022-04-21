@@ -26,4 +26,4 @@ Content-Type: application/json
 }
 
 ### deleteById
-DELETE {{host}}/study-group/5
+DELETE {{host}}/study-group/6
