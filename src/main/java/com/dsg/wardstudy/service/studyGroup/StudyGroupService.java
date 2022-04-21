@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class StudyGroupService {
@@ -43,5 +46,13 @@ public class StudyGroupService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         return mapToDto(studyGroup);
+    }
+
+    public List<StudyGroupResponse> getAll() {
+
+        List<StudyGroup> all = studyGroupRepository.findAll();
+        return all.stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
     }
 }

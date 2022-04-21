@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -28,4 +30,12 @@ public class StudyGroupController {
         log.info("studyGroup getById");
         return ResponseEntity.ok(studyGroupService.getById(groupId));
     }
+
+    @GetMapping
+    public ResponseEntity<List<StudyGroupResponse>> getAll() {
+        log.info("studyGroup getAll");
+        return ResponseEntity.ok(studyGroupService.getAll());
+    }
+
+
 }
