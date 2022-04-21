@@ -44,4 +44,11 @@ public class StudyGroupController {
         log.info("studyGroup updateById");
         return studyGroupService.updateById(groupId, studyGroupRequest);
     }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<String> deleteById(@PathVariable("id") Long groupId) {
+        log.info("studyGroup deleteById");
+        studyGroupService.deleteById(groupId);
+        return new ResponseEntity<>("a study-group successfully deleted!", HttpStatus.OK);
+    }
 }

@@ -67,4 +67,10 @@ public class StudyGroupService {
         return groupId;
 
     }
+
+    public void deleteById(Long groupId) {
+        StudyGroup studyGroup = studyGroupRepository.findById(groupId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        studyGroupRepository.delete(studyGroup);
+    }
 }
