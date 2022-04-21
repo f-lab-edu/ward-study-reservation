@@ -1,18 +1,22 @@
 package com.dsg.wardstudy.domain.studyGroup;
 
+import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.dto.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "study_group")
 public class StudyGroup extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "group_id")
+    @Column(name = "study_group_id")
     private Long id;
 
     @Column(nullable = false)
@@ -20,6 +24,9 @@ public class StudyGroup extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String content;
+
+    @OneToMany(mappedBy = "studyGroup")
+    private List<UserGroup> userGroups = new ArrayList<>();
 
     @Builder
     public StudyGroup(String title, String content) {

@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -22,6 +24,9 @@ public class User extends BaseTimeEntity {
     private String nickname;
     private String email;
     private String password;
+
+    @OneToMany(mappedBy = "user")
+    private List<UserGroup> userGroups = new ArrayList<>();
 
     @Builder
     public User(Long id, String name, String nickname, String email, String password) {
