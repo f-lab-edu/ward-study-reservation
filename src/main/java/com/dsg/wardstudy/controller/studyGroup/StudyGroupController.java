@@ -7,10 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -24,5 +21,11 @@ public class StudyGroupController {
     public ResponseEntity<StudyGroupResponse> create(@RequestBody StudyGroupRequest studyGroupRequest) {
         log.info("studyGroup create");
         return new ResponseEntity<>(studyGroupService.create(studyGroupRequest), HttpStatus.CREATED);
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<StudyGroupResponse> getById(@PathVariable("id") Long groupId) {
+        log.info("studyGroup getById");
+        return ResponseEntity.ok(studyGroupService.getById(groupId));
     }
 }
