@@ -37,5 +37,11 @@ public class StudyGroupController {
         return ResponseEntity.ok(studyGroupService.getAll());
     }
 
-
+    @PutMapping("{id}")
+    public Long updateById(
+            @PathVariable("id") Long groupId,
+            @RequestBody StudyGroupRequest studyGroupRequest) {
+        log.info("studyGroup updateById");
+        return studyGroupService.updateById(groupId, studyGroupRequest);
+    }
 }

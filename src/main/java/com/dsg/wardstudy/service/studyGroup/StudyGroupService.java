@@ -7,6 +7,7 @@ import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -54,5 +55,16 @@ public class StudyGroupService {
         return all.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public Long updateById(Long groupId, StudyGroupRequest studyGroupRequest) {
+        StudyGroup studyGroup = studyGroupRepository.findById(groupId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        studyGroup.update(studyGroupRequest.getTitle(), studyGroupRequest.getContent());
+
+        return groupId;
+
     }
 }
