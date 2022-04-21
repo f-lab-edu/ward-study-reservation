@@ -19,6 +19,7 @@ public class StudyGroupService {
 
     private final StudyGroupRepository studyGroupRepository;
 
+    @Transactional
     public StudyGroupResponse create(StudyGroupRequest studyGroupRequest) {
 
         StudyGroup studyGroup = mapToEntity(studyGroupRequest);
@@ -41,6 +42,7 @@ public class StudyGroupService {
     }
 
 
+    @Transactional(readOnly = true)
     public StudyGroupResponse getById(Long groupId) {
 
         StudyGroup studyGroup = studyGroupRepository.findById(groupId)
@@ -49,6 +51,7 @@ public class StudyGroupService {
         return mapToDto(studyGroup);
     }
 
+    @Transactional(readOnly = true)
     public List<StudyGroupResponse> getAll() {
 
         List<StudyGroup> all = studyGroupRepository.findAll();
@@ -68,6 +71,7 @@ public class StudyGroupService {
 
     }
 
+    @Transactional
     public void deleteById(Long groupId) {
         StudyGroup studyGroup = studyGroupRepository.findById(groupId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
