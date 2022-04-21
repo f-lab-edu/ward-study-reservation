@@ -1,0 +1,39 @@
+package com.dsg.wardstudy.service;
+
+import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
+import com.dsg.wardstudy.dto.StudyGroupRequest;
+import com.dsg.wardstudy.dto.StudyGroupResponse;
+import com.dsg.wardstudy.repository.StudyGroupRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+@Service
+@RequiredArgsConstructor
+public class StudyGroupService {
+
+    private final StudyGroupRepository studyGroupRepository;
+
+    public StudyGroupResponse create(StudyGroupRequest studyGroupRequest) {
+
+        StudyGroup studyGroup = mapToEntity(studyGroupRequest);
+        StudyGroup savedGroup = studyGroupRepository.save(studyGroup);
+
+        return mapToDto(savedGroup);
+    }
+    private StudyGroup mapToEntity(StudyGroupRequest studyGroupRequest) {
+        return StudyGroup.builder()
+                .title(studyGroupRequest.getTitle())
+                .content(studyGroupRequest.getContent())
+                .build();
+    }
+
+    private StudyGroupResponse mapToDto(StudyGroup savedGroup) {
+        return StudyGroupResponse.builder()
+                .title(savedGroup.getTitle())
+                .content(savedGroup.getContent())
+                .build();
+    }
+
+
+
+}

@@ -2,6 +2,7 @@ package com.dsg.wardstudy.domain.studyGroup;
 
 import com.dsg.wardstudy.dto.BaseTimeEntity;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class StudyGroup extends BaseTimeEntity {
 
     @Id
@@ -23,13 +25,6 @@ public class StudyGroup extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String content;
-
-    @Column(name = "number_group")
-    private int numberGroup;
-
-    private int max_size;
-
-    private int min_size;
 
 
 
