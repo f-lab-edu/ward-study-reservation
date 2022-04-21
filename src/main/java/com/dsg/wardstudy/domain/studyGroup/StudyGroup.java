@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class StudyGroup extends BaseTimeEntity {
 
     @Id

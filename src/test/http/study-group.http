@@ -16,7 +16,7 @@ GET {{host}}/study-group/2
 GET {{host}}/study-group
 
 
-###
+### updateById
 PUT {{host}}/study-group/2
 Content-Type: application/json
 
@@ -25,5 +25,5 @@ Content-Type: application/json
   "content": "test_new"
 }
 
-###
+### deleteById
 DELETE {{host}}/study-group/5
