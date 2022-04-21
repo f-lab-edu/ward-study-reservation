@@ -8,8 +8,6 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class StudyGroup extends BaseTimeEntity {
 
     @Id
@@ -22,6 +20,12 @@ public class StudyGroup extends BaseTimeEntity {
 
     @Column(nullable = false)
     private String content;
+
+    @Builder
+    public StudyGroup(String title, String content) {
+        this.title = title;
+        this.content = content;
+    }
 
     public void update(String title, String content) {
         this.title = title;
