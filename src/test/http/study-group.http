@@ -1,0 +1,29 @@
+### create
+POST {{host}}/study-group
+Content-Type: application/json
+
+{
+  "title" : "dsg2",
+  "content": "test content02"
+}
+
+
+### getById
+GET {{host}}/study-group/2
+
+
+### getAll
+GET {{host}}/study-group
+
+
+###
+PUT {{host}}/study-group/2
+Content-Type: application/json
+
+{
+  "title" : "dsg_new",
+  "content": "test_new"
+}
+
+###
+DELETE {{host}}/study-group/5
