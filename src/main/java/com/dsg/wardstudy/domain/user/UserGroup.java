@@ -26,6 +26,7 @@ public class UserGroup extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "study_group_id")
     private StudyGroup studyGroup;

@@ -1,5 +1,6 @@
 package com.dsg.wardstudy.controller.studyGroup;
 
+import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
 import com.dsg.wardstudy.service.studyGroup.StudyGroupService;
@@ -36,13 +37,14 @@ public class StudyGroupController {
         return ResponseEntity.ok(studyGroupService.getAll());
     }
 
-//    @GetMapping("/user/{id}/study-group/")
-//    public ResponseEntity<List<StudyGroupResponse>> getAllByUserId(
-//            @PathVariable("id") Long userId
-//    ) {
-//        log.info("studyGroup getAllByUserId");
-//        return ResponseEntity.ok(studyGroupService.getAllByUserId(userId));
-//    }
+
+    @GetMapping("/user/{id}/study-group")
+    public ResponseEntity<List<StudyGroupResponse>> getAllByUserId(
+            @PathVariable("id") Long userId
+    ) {
+        log.info("studyGroup getAllByUserId");
+        return ResponseEntity.ok(studyGroupService.getAllByUserId(userId));
+    }
 
     @PutMapping("/study-group/{id}")
     public Long updateById(

@@ -7,8 +7,8 @@ import lombok.Getter;
 @Getter
 public enum UserType {
 
-    PARTICIPANT("참여자"),
-    LEADER("리더")
+    P("Participant"),
+    L("Leader")
     ;
 
     private final String desceiption;

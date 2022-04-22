@@ -1,9 +1,11 @@
 package com.dsg.wardstudy.service.studyGroup;
 
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
+import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
+import com.dsg.wardstudy.repository.userGroup.UserGroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -12,12 +14,14 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.LongStream;
 
 @Service
 @RequiredArgsConstructor
 public class StudyGroupService {
 
     private final StudyGroupRepository studyGroupRepository;
+    private final UserGroupRepository userGroupRepository;
 
     @Transactional
     public StudyGroupResponse create(StudyGroupRequest studyGroupRequest) {
@@ -43,9 +47,9 @@ public class StudyGroupService {
 
 
     @Transactional(readOnly = true)
-    public StudyGroupResponse getById(Long groupId) {
+    public StudyGroupResponse getById(Long studyGroupId) {
 
-        StudyGroup studyGroup = studyGroupRepository.findById(groupId)
+        StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         return mapToDto(studyGroup);
@@ -61,20 +65,41 @@ public class StudyGroupService {
     }
 
     @Transactional
-    public Long updateById(Long groupId, StudyGroupRequest studyGroupRequest) {
-        StudyGroup studyGroup = studyGroupRepository.findById(groupId)
+    public Long updateById(Long studyGroupId, StudyGroupRequest studyGroupRequest) {
+        StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         studyGroup.update(studyGroupRequest.getTitle(), studyGroupRequest.getContent());
 
-        return groupId;
+        return studyGroupId;
 
     }
 
     @Transactional
-    public void deleteById(Long groupId) {
-        StudyGroup studyGroup = studyGroupRepository.findById(groupId)
+    public void deleteById(Long studyGroupId) {
+        StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         studyGroupRepository.delete(studyGroup);
+    }
+
+    public List<StudyGroupResponse> getAllByUserId(Long userId) {
+        List<UserGroup> iByUserId = userGroupRepository.findIByUserId(userId);
+
+        List<Long> studyGroupsIds = iByUserId.stream()
+                .map(d -> d.getStudyGroup().getId())
+                .collect(Collectors.toList());
+
+        List<StudyGroup> studyGroups = studyGroupRepository.findByIds(studyGroupsIds);
+        List<StudyGroupResponse> collect = studyGroups.stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+
+        System.out.println("iByUserId : "+ iByUserId);
+        System.out.println("studyGroupsIds : "+ studyGroupsIds);
+        System.out.println("studyGroups : "+ studyGroups);
+        System.out.println("collect : "+ collect);
+
+        return collect;
+
     }
 }

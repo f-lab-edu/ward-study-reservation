@@ -27,3 +27,8 @@ Content-Type: application/json
 
 ### deleteById
 DELETE {{host}}/study-group/6
+
+
+### getAllByUserId
+GET http://localhost:8081/user/1/study-group
+

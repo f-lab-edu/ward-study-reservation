@@ -1,10 +1,8 @@
 package com.dsg.wardstudy.domain.user;
 
 import com.dsg.wardstudy.dto.BaseTimeEntity;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -25,7 +23,7 @@ public class User extends BaseTimeEntity {
     private String email;
     private String password;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserGroup> userGroups = new ArrayList<>();
 
     @Builder

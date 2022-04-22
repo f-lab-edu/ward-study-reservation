@@ -2,6 +2,7 @@ package com.dsg.wardstudy.domain.studyGroup;
 
 import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.dto.BaseTimeEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -25,7 +26,7 @@ public class StudyGroup extends BaseTimeEntity {
     @Column(nullable = false)
     private String content;
 
-    @OneToMany(mappedBy = "studyGroup")
+    @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL)
     private List<UserGroup> userGroups = new ArrayList<>();
 
     @Builder
