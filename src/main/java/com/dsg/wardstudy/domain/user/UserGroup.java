@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 
@@ -14,6 +15,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "user_group")
+@ToString(of = {"id", "userType"})
 public class UserGroup extends BaseTimeEntity {
 
     @Id
@@ -34,4 +36,12 @@ public class UserGroup extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private UserType userType;
+
+    public void setStudyGroup(StudyGroup studyGroup) {
+        this.studyGroup = studyGroup;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }

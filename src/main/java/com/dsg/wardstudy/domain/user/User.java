@@ -1,7 +1,6 @@
 package com.dsg.wardstudy.domain.user;
 
 import com.dsg.wardstudy.dto.BaseTimeEntity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -11,6 +10,7 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(of = {"id", "name", "nickname", "email", "password"})
 public class User extends BaseTimeEntity {
 
     @Id

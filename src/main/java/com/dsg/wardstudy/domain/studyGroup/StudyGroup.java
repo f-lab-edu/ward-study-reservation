@@ -13,6 +13,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "study_group")
+@ToString(of = {"id", "title", "content"})
 public class StudyGroup extends BaseTimeEntity {
 
     @Id
