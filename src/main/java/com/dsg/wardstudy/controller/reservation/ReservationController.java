@@ -31,10 +31,16 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.getById(reservationId));
     }
 
-    @GetMapping("/reservation")
-    public ResponseEntity<List<ReservationDetail>> getAll() {
-        log.info("reservation getAll");
-        return ResponseEntity.ok(reservationService.getAll());
+//    @GetMapping("/reservation")
+//    public ResponseEntity<List<ReservationDetail>> getAll() {
+//        log.info("reservation getAll");
+//        return ResponseEntity.ok(reservationService.getAll());
+//    }
+
+    @GetMapping("/user/{userId}/reservation")
+    public ResponseEntity<List<ReservationDetail>> getAllByUserId(@PathVariable("userId") Long userId) {
+        log.info("reservation getAllByUserId");
+        return ResponseEntity.ok(reservationService.getAllByUserId(userId));
     }
 
     @PutMapping("/reservation/{reservationId}")

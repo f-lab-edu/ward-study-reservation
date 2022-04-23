@@ -73,4 +73,10 @@ public class ReservationService {
     public void deleteById(Long reservationId) {
         reservationRepository.deleteById(reservationId);
     }
+
+    public List<ReservationDetail> getAllByUserId(Long userId) {
+        return reservationRepository.findByUserId(userId).stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
 }
