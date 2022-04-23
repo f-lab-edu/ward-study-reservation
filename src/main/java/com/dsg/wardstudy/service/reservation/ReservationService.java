@@ -7,6 +7,7 @@ import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.stream.Collectors;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
-
+    @Transactional
     public ReservationDetail create(ReservationRequest reservationRequest) {
 
         Reservation reservation = mapToEntity(reservationRequest);
@@ -42,16 +43,29 @@ public class ReservationService {
                 .build();
 
     }
-
+    @Transactional(readOnly = true)
     public ReservationDetail getById(Long reservationId) {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return mapToDto(reservation);
     }
-
+    @Transactional(readOnly = true)
     public List<ReservationDetail> getAll() {
         return reservationRepository.findAll()
                 .stream().map(this::mapToDto)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public Long updateById(Long reservationId, ReservationRequest reservationRequest) {
+        Reservation findReservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        findReservation.update(
+                reservationRequest.getStatus(),
+                reservationRequest.getStartTime(),
+                reservationRequest.getEndTime());
+
+        return findReservation.getId();
     }
 }

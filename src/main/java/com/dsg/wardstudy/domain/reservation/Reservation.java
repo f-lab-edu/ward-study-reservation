@@ -52,4 +52,10 @@ public class Reservation extends BaseTimeEntity {
         this.startTime = startTime;
         this.endTime = endTime;
     }
+
+    public void update(int status, LocalDateTime startTime, LocalDateTime endTime) {
+        this.status = status;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
 }

@@ -37,5 +37,11 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.getAll());
     }
 
+    @PutMapping("/reservation/{reservationId}")
+    public Long updateById(@PathVariable("reservationId") Long reservationId,
+                           @RequestBody ReservationRequest reservationRequest){
+        return reservationService.updateById(reservationId, reservationRequest);
+    }
+
 
 }
