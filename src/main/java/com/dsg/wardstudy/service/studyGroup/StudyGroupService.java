@@ -71,7 +71,7 @@ public class StudyGroupService {
 
         studyGroup.update(studyGroupRequest.getTitle(), studyGroupRequest.getContent());
 
-        return studyGroupId;
+        return studyGroup.getId();
 
     }
 
