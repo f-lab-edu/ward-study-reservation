@@ -1,4 +1,4 @@
-package com.dsg.wardstudy.repository.userGroup;
+package com.dsg.wardstudy.repository.user;
 
 import com.dsg.wardstudy.domain.user.UserGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
