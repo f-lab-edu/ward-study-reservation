@@ -6,6 +6,7 @@ import com.dsg.wardstudy.dto.reservation.ReservationRequest;
 import com.dsg.wardstudy.service.reservation.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +22,6 @@ public class ReservationController {
     @PostMapping("/reservation")
     ResponseEntity<ReservationDetail> create(@RequestBody ReservationRequest reservationRequest) {
         log.info("reservation create");
-        return ResponseEntity.ok(reservationService.create(reservationRequest));
+        return new ResponseEntity<>(reservationService.create(reservationRequest), HttpStatus.CREATED);
     }
 }
