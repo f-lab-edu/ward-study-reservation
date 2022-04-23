@@ -37,10 +37,14 @@ public class ReservationController {
                 reservationRequest, studyGroupId, roomId), HttpStatus.CREATED);
     }
 
-    @GetMapping("/reservation/{reservationId}")
-    public ResponseEntity<ReservationDetail> getById(@PathVariable("reservationId") Long reservationId) {
+    // 등록한 예약 상세 보기
+    @GetMapping("/room/{roomId}/reservation/{reservationId}")
+    public ResponseEntity<ReservationDetail> getByIds(
+            @PathVariable("roomId") Long roomId,
+            @PathVariable("reservationId") Long reservationId
+    ) {
         log.info("reservation getById");
-        return ResponseEntity.ok(reservationService.getById(reservationId));
+        return ResponseEntity.ok(reservationService.getByIds(roomId, reservationId));
     }
 
     // 해당 룸 예약 조회 startTime$endTime

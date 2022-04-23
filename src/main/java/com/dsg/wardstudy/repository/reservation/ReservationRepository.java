@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
     List<Reservation> findByUserId(Long userId);
@@ -16,4 +17,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findByRoomIdAndTime(@Param("roomId") Long roomId,
                                               @Param("sTime") LocalDateTime sTime,
                                               @Param("eTime") LocalDateTime eTime);
+
+    @Query("select r from Reservation r left join fetch r.room where r.room.id = :roomId " +
+            "and r.id = :reservationId")
+    Optional<Reservation> findByIds(@Param("roomId") Long roomId, @Param("reservationId") Long reservationId);
 }

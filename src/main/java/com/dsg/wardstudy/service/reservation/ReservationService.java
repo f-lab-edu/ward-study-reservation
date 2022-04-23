@@ -73,8 +73,8 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public ReservationDetail getById(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId)
+    public ReservationDetail getByIds(Long roomId, Long reservationId) {
+        Reservation reservation = reservationRepository.findByIds(roomId, reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return mapToDto(reservation);
     }
