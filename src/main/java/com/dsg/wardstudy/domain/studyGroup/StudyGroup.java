@@ -28,6 +28,7 @@ public class StudyGroup extends BaseTimeEntity {
     private String content;
 
     @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<UserGroup> userGroups = new ArrayList<>();
 
     @Builder
