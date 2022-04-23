@@ -1,6 +1,8 @@
 package com.dsg.wardstudy.domain.user;
 
+import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.dto.BaseTimeEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -25,6 +27,9 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserGroup> userGroups = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Reservation> reservations = new ArrayList<>();
 
     @Builder
     public User(Long id, String name, String nickname, String email, String password) {
