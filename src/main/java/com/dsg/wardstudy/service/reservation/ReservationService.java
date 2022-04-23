@@ -5,7 +5,9 @@ import com.dsg.wardstudy.dto.reservation.ReservationDetail;
 import com.dsg.wardstudy.dto.reservation.ReservationRequest;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @RequiredArgsConstructor
@@ -36,5 +38,11 @@ public class ReservationService {
                 .endTime(reservationRequest.getEndTime())
                 .build();
 
+    }
+
+    public ReservationDetail getById(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return mapToDto(reservation);
     }
 }
