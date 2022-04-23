@@ -31,12 +31,24 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.getById(reservationId));
     }
 
+    // 해당 룸 예약 조회 startTime$endTime
+    @GetMapping("/room/{roomId}/reservation")
+    public ResponseEntity<ReservationDetail> getByRoomIdAndTime(
+            @PathVariable("roomId") Long roomId,
+            @RequestParam("startTime") String startTime,
+            @RequestParam("endTime") String endTime
+    ) {
+        log.info("reservation getByRoomId");
+        return ResponseEntity.ok(reservationService.getByRoomIdAndTime(roomId, startTime, endTime));
+    }
+
 //    @GetMapping("/reservation")
 //    public ResponseEntity<List<ReservationDetail>> getAll() {
 //        log.info("reservation getAll");
 //        return ResponseEntity.ok(reservationService.getAll());
 //    }
 
+    // 해당 유저 예약  조회
     @GetMapping("/user/{userId}/reservation")
     public ResponseEntity<List<ReservationDetail>> getAllByUserId(@PathVariable("userId") Long userId) {
         log.info("reservation getAllByUserId");
