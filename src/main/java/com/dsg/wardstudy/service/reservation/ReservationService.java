@@ -68,4 +68,9 @@ public class ReservationService {
 
         return findReservation.getId();
     }
+
+    @Transactional
+    public void deleteById(Long reservationId) {
+        reservationRepository.deleteById(reservationId);
+    }
 }

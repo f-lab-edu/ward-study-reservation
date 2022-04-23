@@ -40,7 +40,15 @@ public class ReservationController {
     @PutMapping("/reservation/{reservationId}")
     public Long updateById(@PathVariable("reservationId") Long reservationId,
                            @RequestBody ReservationRequest reservationRequest){
+        log.info("reservation updateById");
         return reservationService.updateById(reservationId, reservationRequest);
+    }
+
+    @DeleteMapping("/reservation/{reservationId}")
+    public ResponseEntity<String> deleteById(@PathVariable("reservationId") Long reservationId) {
+        log.info("reservation deleteById");
+        reservationService.deleteById(reservationId);
+        return new ResponseEntity<>("a reservation successfully deleted!", HttpStatus.OK);
     }
 
 
