@@ -6,6 +6,7 @@ import com.dsg.wardstudy.dto.BaseTimeEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -45,5 +46,10 @@ public class Reservation extends BaseTimeEntity {
     @JsonIgnore
     private Room room;
 
-
+    @Builder
+    public Reservation(int status, LocalDateTime startTime, LocalDateTime endTime) {
+        this.status = status;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
 }
