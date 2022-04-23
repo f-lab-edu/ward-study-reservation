@@ -3,6 +3,7 @@ package com.dsg.wardstudy.controller.reservation;
 import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.dto.reservation.ReservationDetail;
 import com.dsg.wardstudy.dto.reservation.ReservationRequest;
+import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
 import com.dsg.wardstudy.service.reservation.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,10 +20,20 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
-    @PostMapping("/reservation")
-    public ResponseEntity<ReservationDetail> create(@RequestBody ReservationRequest reservationRequest) {
+//    @PostMapping("/reservation")
+//    public ResponseEntity<ReservationDetail> create(@RequestBody ReservationRequest reservationRequest) {
+//        log.info("reservation create");
+//        return new ResponseEntity<>(reservationService.create(reservationRequest), HttpStatus.CREATED);
+//    }
+
+    @PostMapping("/study-group/{studyGroupId}/room/{roomId}/reservation")
+    public ResponseEntity<ReservationDetail> create(
+            @PathVariable("studyGroupId") Long studyGroupId,
+            @PathVariable("roomId") Long roomId,
+            @RequestBody ReservationRequest reservationRequest) {
         log.info("reservation create");
-        return new ResponseEntity<>(reservationService.create(reservationRequest), HttpStatus.CREATED);
+        return new ResponseEntity<>(reservationService.create(
+                reservationRequest, studyGroupId, roomId), HttpStatus.CREATED);
     }
 
     @GetMapping("/reservation/{reservationId}")
@@ -57,7 +68,7 @@ public class ReservationController {
 
     @PutMapping("/reservation/{reservationId}")
     public Long updateById(@PathVariable("reservationId") Long reservationId,
-                           @RequestBody ReservationRequest reservationRequest){
+                           @RequestBody ReservationUpdateRequest reservationRequest){
         log.info("reservation updateById");
         return reservationService.updateById(reservationId, reservationRequest);
     }

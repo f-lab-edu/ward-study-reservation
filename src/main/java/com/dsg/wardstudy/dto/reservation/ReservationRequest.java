@@ -11,17 +11,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ReservationRequest {
 
-    private int status;
-
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;
 
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
+
     @Builder
-    public ReservationRequest(int status, LocalDateTime startTime, LocalDateTime endTime) {
-        this.status = status;
+    public ReservationRequest(LocalDateTime startTime, LocalDateTime endTime) {
         this.startTime = startTime;
         this.endTime = endTime;
     }

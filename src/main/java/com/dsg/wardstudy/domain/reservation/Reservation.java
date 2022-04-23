@@ -47,10 +47,12 @@ public class Reservation extends BaseTimeEntity {
     private Room room;
 
     @Builder
-    public Reservation(int status, LocalDateTime startTime, LocalDateTime endTime) {
+    public Reservation(int status, LocalDateTime startTime, LocalDateTime endTime, StudyGroup studyGroup, Room room) {
         this.status = status;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.studyGroup = studyGroup;
+        this.room = room;
     }
 
     public void update(int status, LocalDateTime startTime, LocalDateTime endTime) {
