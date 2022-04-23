@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ReservationService {
@@ -44,5 +47,11 @@ public class ReservationService {
         Reservation reservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return mapToDto(reservation);
+    }
+
+    public List<ReservationDetail> getAll() {
+        return reservationRepository.findAll()
+                .stream().map(this::mapToDto)
+                .collect(Collectors.toList());
     }
 }
