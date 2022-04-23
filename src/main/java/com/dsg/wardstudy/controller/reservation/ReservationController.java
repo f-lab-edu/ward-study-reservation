@@ -26,6 +26,7 @@ public class ReservationController {
 //        return new ResponseEntity<>(reservationService.create(reservationRequest), HttpStatus.CREATED);
 //    }
 
+    // 예약 등록
     @PostMapping("/study-group/{studyGroupId}/room/{roomId}/reservation")
     public ResponseEntity<ReservationDetail> create(
             @PathVariable("studyGroupId") Long studyGroupId,
@@ -44,7 +45,7 @@ public class ReservationController {
 
     // 해당 룸 예약 조회 startTime$endTime
     @GetMapping("/room/{roomId}/reservation")
-    public ResponseEntity<ReservationDetail> getByRoomIdAndTime(
+    public ResponseEntity<List<ReservationDetail>> getByRoomIdAndTime(
             @PathVariable("roomId") Long roomId,
             @RequestParam("startTime") String startTime,
             @RequestParam("endTime") String endTime

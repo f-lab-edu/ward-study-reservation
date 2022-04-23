@@ -47,7 +47,7 @@ public class ReservationService {
         Reservation reservation = mapToEntityCreate(reservationRequest, studyGroup, room);
         Reservation saveReservation = reservationRepository.save(reservation);
 
-        return mapToDtoCreate(saveReservation);
+        return mapToDto(saveReservation);
 
     }
 
@@ -59,17 +59,17 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public ReservationDetail getByRoomIdAndTime(Long roomId, String startTime, String endTime) {
+    public List<ReservationDetail> getByRoomIdAndTime(Long roomId, String startTime, String endTime) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         LocalDateTime sTime = LocalDateTime.parse(startTime, formatter);
         LocalDateTime eTime = LocalDateTime.parse(endTime, formatter);
 
-        Reservation reservation = reservationRepository.findByRoomIdAndTime(roomId, sTime, eTime)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return reservationRepository.findByRoomIdAndTime(roomId, sTime, eTime).stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
 
-        return mapToDto(reservation);
     }
 
     @Transactional(readOnly = true)
@@ -105,13 +105,6 @@ public class ReservationService {
         reservationRepository.deleteById(reservationId);
     }
 
-    private ReservationDetail mapToDto(Reservation saveReservation) {
-        return ReservationDetail.builder()
-                .status(saveReservation.getStatus())
-                .startTime(saveReservation.getStartTime())
-                .endTime(saveReservation.getEndTime())
-                .build();
-    }
 
     private Reservation mapToEntity(ReservationRequest reservationRequest) {
         return Reservation.builder()
@@ -122,7 +115,7 @@ public class ReservationService {
 
     }
 
-    private ReservationDetail mapToDtoCreate(Reservation saveReservation) {
+    private ReservationDetail mapToDto(Reservation saveReservation) {
         return ReservationDetail.builder()
                 .status(saveReservation.getStatus())
                 .startTime(saveReservation.getStartTime())

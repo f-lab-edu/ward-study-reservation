@@ -7,14 +7,13 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
     List<Reservation> findByUserId(Long userId);
 
     @Query("select r from Reservation r where r.room.id = :roomId " +
             "and r.startTime = :sTime and r.endTime = :eTime")
-    Optional<Reservation> findByRoomIdAndTime(@Param("roomId") Long roomId,
+    List<Reservation> findByRoomIdAndTime(@Param("roomId") Long roomId,
                                               @Param("sTime") LocalDateTime sTime,
                                               @Param("eTime") LocalDateTime eTime);
 }
