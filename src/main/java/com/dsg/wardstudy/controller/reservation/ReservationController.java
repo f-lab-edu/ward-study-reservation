@@ -1,6 +1,5 @@
 package com.dsg.wardstudy.controller.reservation;
 
-import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.dto.reservation.ReservationDetail;
 import com.dsg.wardstudy.dto.reservation.ReservationRequest;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
@@ -19,12 +18,6 @@ import java.util.List;
 public class ReservationController {
 
     private final ReservationService reservationService;
-
-//    @PostMapping("/reservation")
-//    public ResponseEntity<ReservationDetail> create(@RequestBody ReservationRequest reservationRequest) {
-//        log.info("reservation create");
-//        return new ResponseEntity<>(reservationService.create(reservationRequest), HttpStatus.CREATED);
-//    }
 
     // 예약 등록
     @PostMapping("/study-group/{studyGroupId}/room/{roomId}/reservation")
@@ -66,12 +59,6 @@ public class ReservationController {
             return reservationService.getByRoomId(roomId);
         }
     }
-
-//    @GetMapping("/reservation")
-//    public ResponseEntity<List<ReservationDetail>> getAll() {
-//        log.info("reservation getAll");
-//        return ResponseEntity.ok(reservationService.getAll());
-//    }
 
     // 해당 유저 예약  조회
     @GetMapping("/user/{userId}/reservation")

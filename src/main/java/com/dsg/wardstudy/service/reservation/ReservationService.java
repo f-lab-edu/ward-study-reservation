@@ -3,12 +3,14 @@ package com.dsg.wardstudy.service.reservation;
 import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.reservation.Room;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
+import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.dto.reservation.ReservationDetail;
 import com.dsg.wardstudy.dto.reservation.ReservationRequest;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.reservation.RoomRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
+import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -24,8 +26,9 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReservationService {
 
-    private final ReservationRepository reservationRepository;
     private final StudyGroupRepository studyGroupRepository;
+    private final UserGroupRepository userGroupRepository;
+    private final ReservationRepository reservationRepository;
     private final RoomRepository roomRepository;
 
     @Transactional
@@ -42,11 +45,24 @@ public class ReservationService {
 
     }
 
+//    @Transactional(readOnly = true)
+//    public List<ReservationDetail> getAllByUserId(Long userId) {
+//        // studyRepository로 StudyGroup -> Long 들 을 가지고 Reservation List 가져오기
+//        return reservationRepository.findByUserId(userId).stream()
+//                .map(this::mapToDto)
+//                .collect(Collectors.toList());
+//    }
+
     @Transactional(readOnly = true)
     public List<ReservationDetail> getAllByUserId(Long userId) {
-        return reservationRepository.findByUserId(userId).stream()
+        // studyRepository로 StudyGroup -> Long 들 을 가지고 Reservation List 가져오기
+//        List<UserGroup> userGroups = userGroupRepository.findIByUserId(userId);
+        List<Long> sgIds = userGroupRepository.findsgIdsByUserId(userId);
+
+        return reservationRepository.findBySgIds(sgIds).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
+
     }
 
     @Transactional(readOnly = true)
