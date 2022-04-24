@@ -97,8 +97,6 @@ public class ReservationService {
 
         String updateId = room.getId() + "||" + reservationRequest.getStartTime();
 
-        System.out.println("updateId :" + updateId);
-
          findReservation.update(
                  // Todo: pk 수정 updateId로
                 reservationRequest.getStatus(),
@@ -129,7 +127,6 @@ public class ReservationService {
     }
 
     private Reservation mapToEntity(ReservationRequest reservationRequest, StudyGroup studyGroup, Room room) {
-        System.out.println("reservation_id: "+ room.getId() + "||" +reservationRequest.getStartTime());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 

@@ -89,16 +89,9 @@ public class StudyGroupService {
                 .collect(Collectors.toList());
 
         List<StudyGroup> studyGroups = studyGroupRepository.findByIds(studyGroupsIds);
-        List<StudyGroupResponse> collect = studyGroups.stream()
+        return studyGroups.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
-
-        System.out.println("iByUserId : "+ iByUserId);
-        System.out.println("studyGroupsIds : "+ studyGroupsIds);
-        System.out.println("studyGroups : "+ studyGroups);
-        System.out.println("collect : "+ collect);
-
-        return collect;
 
     }
 }
