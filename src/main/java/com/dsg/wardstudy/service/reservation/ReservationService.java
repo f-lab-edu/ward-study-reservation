@@ -28,15 +28,6 @@ public class ReservationService {
     private final StudyGroupRepository studyGroupRepository;
     private final RoomRepository roomRepository;
 
-//    @Transactional
-//    public ReservationDetail create(ReservationRequest reservationRequest) {
-//
-//        Reservation reservation = mapToEntity(reservationRequest);
-//        Reservation saveReservation = reservationRepository.save(reservation);
-//
-//        return mapToDto(saveReservation);
-//    }
-
     @Transactional
     public ReservationDetail create(ReservationRequest reservationRequest, Long studyGroupId, Long roomId) {
         StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
@@ -73,18 +64,18 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
+    public List<ReservationDetail> getByRoomId(Long roomId) {
+        return reservationRepository.findByRoomId(roomId).stream()
+                .map(this::mapToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
     public ReservationDetail getByIds(Long roomId, Long reservationId) {
         Reservation reservation = reservationRepository.findByIds(roomId, reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return mapToDto(reservation);
     }
-
-//    @Transactional(readOnly = true)
-//    public List<ReservationDetail> getAll() {
-//        return reservationRepository.findAll()
-//                .stream().map(this::mapToDto)
-//                .collect(Collectors.toList());
-//    }
 
     @Transactional
     public Long updateById(Long reservationId, ReservationUpdateRequest reservationRequest) {

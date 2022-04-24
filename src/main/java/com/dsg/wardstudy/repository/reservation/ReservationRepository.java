@@ -12,6 +12,9 @@ import java.util.Optional;
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
     List<Reservation> findByUserId(Long userId);
 
+    @Query("select r from Reservation r left join fetch r.room where r.room.id = :roomId")
+    List<Reservation> findByRoomId(@Param("roomId") Long roomId);
+
     @Query("select r from Reservation r left join fetch r.room where r.room.id = :roomId " +
             "and r.startTime = :sTime and r.endTime = :eTime")
     List<Reservation> findByRoomIdAndTime(@Param("roomId") Long roomId,
