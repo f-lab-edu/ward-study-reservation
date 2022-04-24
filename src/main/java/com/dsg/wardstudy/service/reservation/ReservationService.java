@@ -3,7 +3,6 @@ package com.dsg.wardstudy.service.reservation;
 import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.reservation.Room;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
-import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.dto.reservation.ReservationDetail;
 import com.dsg.wardstudy.dto.reservation.ReservationRequest;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
@@ -32,7 +31,7 @@ public class ReservationService {
     private final RoomRepository roomRepository;
 
     @Transactional
-    public ReservationDetail create(ReservationRequest reservationRequest, Long studyGroupId, Long roomId) {
+    public ReservationDetail create(ReservationRequest reservationRequest, Long studyGroupId, String roomId) {
         StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Room room = roomRepository.findById(roomId)
@@ -56,7 +55,7 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationDetail> getByRoomIdAndTime(Long roomId, String startTime, String endTime) {
+    public List<ReservationDetail> getByRoomIdAndTime(String roomId, String startTime, String endTime) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -70,21 +69,21 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationDetail> getByRoomId(Long roomId) {
+    public List<ReservationDetail> getByRoomId(String roomId) {
         return reservationRepository.findByRoomId(roomId).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public ReservationDetail getByIds(Long roomId, String reservationId) {
+    public ReservationDetail getByIds(String roomId, String reservationId) {
         Reservation reservation = reservationRepository.findByIds(roomId, reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return mapToDto(reservation);
     }
 
     @Transactional
-    public String updateById(Long roomId, String reservationId, ReservationUpdateRequest reservationRequest) {
+    public String updateById(String roomId, String reservationId, ReservationUpdateRequest reservationRequest) {
         Reservation findReservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -101,6 +100,7 @@ public class ReservationService {
         System.out.println("updateId :" + updateId);
 
          findReservation.update(
+                 // Todo: pk 수정 updateId로
                 reservationRequest.getStatus(),
                 sTime,
                 eTime

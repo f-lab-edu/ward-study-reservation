@@ -23,7 +23,7 @@ public class ReservationController {
     @PostMapping("/study-group/{studyGroupId}/room/{roomId}/reservation")
     public ResponseEntity<ReservationDetail> create(
             @PathVariable("studyGroupId") Long studyGroupId,
-            @PathVariable("roomId") Long roomId,
+            @PathVariable("roomId") String roomId,
             @RequestBody ReservationRequest reservationRequest) {
         log.info("reservation create");
         return new ResponseEntity<>(reservationService.create(
@@ -33,7 +33,7 @@ public class ReservationController {
     // 등록한 예약 상세 보기
     @GetMapping("/room/{roomId}/reservation/{reservationId}")
     public ResponseEntity<ReservationDetail> getByIds(
-            @PathVariable("roomId") Long roomId,
+            @PathVariable("roomId") String roomId,
             @PathVariable("reservationId") String reservationId
     ) {
         log.info("reservation getById");
@@ -43,7 +43,7 @@ public class ReservationController {
     // 해당 룸 예약 조회 startTime$endTime(option)
     @GetMapping("/room/{roomId}/reservation")
     public ResponseEntity<List<ReservationDetail>> getByRoomIdAndTime(
-            @PathVariable("roomId") Long roomId,
+            @PathVariable("roomId") String roomId,
             @RequestParam(value = "startTime", required=false) String startTime,
             @RequestParam(value = "endTime", required=false) String endTime
     ) {
@@ -51,7 +51,7 @@ public class ReservationController {
         return ResponseEntity.ok(byRoomIdAndTime(roomId, startTime, endTime));
     }
 
-    private List<ReservationDetail> byRoomIdAndTime(Long roomId, String startTime, String endTime) {
+    private List<ReservationDetail> byRoomIdAndTime(String roomId, String startTime, String endTime) {
 
         if (startTime != null && endTime != null)  {
             return reservationService.getByRoomIdAndTime(roomId, startTime, endTime);
@@ -67,15 +67,17 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.getAllByUserId(userId));
     }
 
+    // 예약 수정
     @PutMapping("/room/{roomId}/reservation/{reservationId}")
     public String updateById(
-            @PathVariable("roomId") Long roomId,
+            @PathVariable("roomId") String roomId,
             @PathVariable("reservationId") String reservationId,
             @RequestBody ReservationUpdateRequest reservationRequest){
         log.info("reservation updateById");
         return reservationService.updateById(roomId, reservationId, reservationRequest);
     }
 
+    // 예약 삭제
     @DeleteMapping("/reservation/{reservationId}")
     public ResponseEntity<String> deleteById(@PathVariable("reservationId") String reservationId) {
         log.info("reservation deleteById");
