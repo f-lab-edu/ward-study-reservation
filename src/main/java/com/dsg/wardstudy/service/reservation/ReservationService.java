@@ -38,25 +38,15 @@ public class ReservationService {
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        Reservation reservation = mapToEntityCreate(reservationRequest, studyGroup, room);
+        Reservation reservation = mapToEntity(reservationRequest, studyGroup, room);
         Reservation saveReservation = reservationRepository.save(reservation);
 
         return mapToDto(saveReservation);
 
     }
 
-//    @Transactional(readOnly = true)
-//    public List<ReservationDetail> getAllByUserId(Long userId) {
-//        // studyRepository로 StudyGroup -> Long 들 을 가지고 Reservation List 가져오기
-//        return reservationRepository.findByUserId(userId).stream()
-//                .map(this::mapToDto)
-//                .collect(Collectors.toList());
-//    }
-
     @Transactional(readOnly = true)
     public List<ReservationDetail> getAllByUserId(Long userId) {
-        // studyRepository로 StudyGroup -> Long 들 을 가지고 Reservation List 가져오기
-//        List<UserGroup> userGroups = userGroupRepository.findIByUserId(userId);
         List<Long> sgIds = userGroupRepository.findsgIdsByUserId(userId);
 
         return reservationRepository.findBySgIds(sgIds).stream()
@@ -87,43 +77,49 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public ReservationDetail getByIds(Long roomId, Long reservationId) {
+    public ReservationDetail getByIds(Long roomId, String reservationId) {
         Reservation reservation = reservationRepository.findByIds(roomId, reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return mapToDto(reservation);
     }
 
     @Transactional
-    public Long updateById(Long reservationId, ReservationUpdateRequest reservationRequest) {
+    public String updateById(Long roomId, String reservationId, ReservationUpdateRequest reservationRequest) {
         Reservation findReservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        findReservation.update(
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        LocalDateTime sTime = LocalDateTime.parse(reservationRequest.getStartTime(), formatter);
+        LocalDateTime eTime = LocalDateTime.parse(reservationRequest.getEndTime(), formatter);
+
+        String updateId = room.getId() + "||" + reservationRequest.getStartTime();
+
+        System.out.println("updateId :" + updateId);
+
+         findReservation.update(
                 reservationRequest.getStatus(),
-                reservationRequest.getStartTime(),
-                reservationRequest.getEndTime()
+                sTime,
+                eTime
         );
 
-        return findReservation.getId();
+        return updateId;
     }
 
     @Transactional
-    public void deleteById(Long reservationId) {
-        reservationRepository.deleteById(reservationId);
-    }
-
-
-    private Reservation mapToEntity(ReservationRequest reservationRequest) {
-        return Reservation.builder()
-                .status(1)
-                .startTime(reservationRequest.getStartTime())
-                .endTime(reservationRequest.getEndTime())
-                .build();
-
+    public void deleteById(String reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        reservationRepository.delete(reservation);
     }
 
     private ReservationDetail mapToDto(Reservation saveReservation) {
+
         return ReservationDetail.builder()
+                .id(saveReservation.getId())
                 .status(saveReservation.getStatus())
                 .startTime(saveReservation.getStartTime())
                 .endTime(saveReservation.getEndTime())
@@ -132,11 +128,19 @@ public class ReservationService {
                 .build();
     }
 
-    private Reservation mapToEntityCreate(ReservationRequest reservationRequest, StudyGroup studyGroup, Room room) {
+    private Reservation mapToEntity(ReservationRequest reservationRequest, StudyGroup studyGroup, Room room) {
+        System.out.println("reservation_id: "+ room.getId() + "||" +reservationRequest.getStartTime());
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        LocalDateTime sTime = LocalDateTime.parse(reservationRequest.getStartTime(), formatter);
+        LocalDateTime eTime = LocalDateTime.parse(reservationRequest.getEndTime(), formatter);
+
         return Reservation.builder()
+                .id(room.getId() + "||" +reservationRequest.getStartTime())
                 .status(1)
-                .startTime(reservationRequest.getStartTime())
-                .endTime(reservationRequest.getEndTime())
+                .startTime(sTime)
+                .endTime(eTime)
                 .studyGroup(studyGroup)
                 .room(room)
                 .build();

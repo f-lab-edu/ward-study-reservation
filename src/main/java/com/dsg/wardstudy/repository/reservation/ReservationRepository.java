@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
-    List<Reservation> findByUserId(Long userId);
+
+    @Query("select r from Reservation r where r.id = :reservationId")
+    Optional<Reservation> findById(@Param("reservationId") String reservationId);
 
     @Query("select r from Reservation r left join fetch r.room where r.room.id = :roomId")
     List<Reservation> findByRoomId(@Param("roomId") Long roomId);
@@ -23,8 +25,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("select r from Reservation r left join fetch r.room where r.room.id = :roomId " +
             "and r.id = :reservationId")
-    Optional<Reservation> findByIds(@Param("roomId") Long roomId, @Param("reservationId") Long reservationId);
+    Optional<Reservation> findByIds(@Param("roomId") Long roomId, @Param("reservationId") String reservationId);
 
     @Query("select r from Reservation r left join fetch r.studyGroup where r.studyGroup.id in :sgIds")
     List<Reservation> findBySgIds(@Param("sgIds") List<Long> sgIds);
+
 }

@@ -34,7 +34,7 @@ public class ReservationController {
     @GetMapping("/room/{roomId}/reservation/{reservationId}")
     public ResponseEntity<ReservationDetail> getByIds(
             @PathVariable("roomId") Long roomId,
-            @PathVariable("reservationId") Long reservationId
+            @PathVariable("reservationId") String reservationId
     ) {
         log.info("reservation getById");
         return ResponseEntity.ok(reservationService.getByIds(roomId, reservationId));
@@ -67,15 +67,17 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.getAllByUserId(userId));
     }
 
-    @PutMapping("/reservation/{reservationId}")
-    public Long updateById(@PathVariable("reservationId") Long reservationId,
-                           @RequestBody ReservationUpdateRequest reservationRequest){
+    @PutMapping("/room/{roomId}/reservation/{reservationId}")
+    public String updateById(
+            @PathVariable("roomId") Long roomId,
+            @PathVariable("reservationId") String reservationId,
+            @RequestBody ReservationUpdateRequest reservationRequest){
         log.info("reservation updateById");
-        return reservationService.updateById(reservationId, reservationRequest);
+        return reservationService.updateById(roomId, reservationId, reservationRequest);
     }
 
     @DeleteMapping("/reservation/{reservationId}")
-    public ResponseEntity<String> deleteById(@PathVariable("reservationId") Long reservationId) {
+    public ResponseEntity<String> deleteById(@PathVariable("reservationId") String reservationId) {
         log.info("reservation deleteById");
         reservationService.deleteById(reservationId);
         return new ResponseEntity<>("a reservation successfully deleted!", HttpStatus.OK);

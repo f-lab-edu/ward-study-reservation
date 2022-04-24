@@ -1,27 +1,25 @@
 package com.dsg.wardstudy.dto.reservation;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 public class ReservationUpdateRequest {
 
+    private String id;
+
     private int status;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime startTime;
+    private String startTime;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime endTime;
+    private String endTime;
 
 
     @Builder
-    public ReservationUpdateRequest(int status, LocalDateTime startTime, LocalDateTime endTime) {
+    public ReservationUpdateRequest(String id, int status, String startTime, String endTime) {
+        this.id = id;
         this.status = status;
         this.startTime = startTime;
         this.endTime = endTime;
