@@ -19,9 +19,8 @@ import java.time.LocalDateTime;
 public class Reservation extends BaseTimeEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "reservation_id")
-    private Long id;
+    private String id;
 
     private int status;
 
@@ -47,7 +46,8 @@ public class Reservation extends BaseTimeEntity {
     private Room room;
 
     @Builder
-    public Reservation(int status, LocalDateTime startTime, LocalDateTime endTime, StudyGroup studyGroup, Room room) {
+    public Reservation(String id, int status, LocalDateTime startTime, LocalDateTime endTime, StudyGroup studyGroup, Room room) {
+        this.id = id;
         this.status = status;
         this.startTime = startTime;
         this.endTime = endTime;
