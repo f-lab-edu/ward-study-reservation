@@ -4,7 +4,7 @@ import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.reservation.Room;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.dto.reservation.ReservationDetail;
-import com.dsg.wardstudy.dto.reservation.ReservationRequest;
+import com.dsg.wardstudy.dto.reservation.ReservationCreateRequest;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.reservation.RoomRepository;
@@ -31,7 +31,7 @@ public class ReservationService {
     private final RoomRepository roomRepository;
 
     @Transactional
-    public ReservationDetail create(ReservationRequest reservationRequest, Long studyGroupId, String roomId) {
+    public ReservationDetail create(ReservationCreateRequest reservationRequest, Long studyGroupId, String roomId) {
         StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Room room = roomRepository.findById(roomId)
@@ -126,7 +126,7 @@ public class ReservationService {
                 .build();
     }
 
-    private Reservation mapToEntity(ReservationRequest reservationRequest, StudyGroup studyGroup, Room room) {
+    private Reservation mapToEntity(ReservationCreateRequest reservationRequest, StudyGroup studyGroup, Room room) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
