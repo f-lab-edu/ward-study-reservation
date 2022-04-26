@@ -16,8 +16,9 @@ import java.util.List;
 public class Room extends BaseTimeEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "room_id")
-    private String id;
+    private Long id;
 
     private String name;
 

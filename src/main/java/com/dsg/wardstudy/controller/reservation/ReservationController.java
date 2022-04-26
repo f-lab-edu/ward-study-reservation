@@ -23,7 +23,7 @@ public class ReservationController {
     @PostMapping("/study-group/{studyGroupId}/room/{roomId}/reservation")
     public ResponseEntity<ReservationDetail> create(
             @PathVariable("studyGroupId") Long studyGroupId,
-            @PathVariable("roomId") String roomId,
+            @PathVariable("roomId") Long roomId,
             @RequestBody ReservationCreateRequest reservationCreateRequest) {
         log.info("reservation create, studyGroupId: {}, roomId: {}, request: {}", studyGroupId, roomId, reservationCreateRequest);
         return new ResponseEntity<>(reservationService.create(
@@ -33,7 +33,7 @@ public class ReservationController {
     // 등록한 예약 상세 보기
     @GetMapping("/room/{roomId}/reservation/{reservationId}")
     public ResponseEntity<ReservationDetail> getByIds(
-            @PathVariable("roomId") String roomId,
+            @PathVariable("roomId") Long roomId,
             @PathVariable("reservationId") String reservationId
     ) {
         log.info("reservation getById, roomId: {}, reservationId: {}", roomId, reservationId);
@@ -43,7 +43,7 @@ public class ReservationController {
     // 해당 룸 예약 조회 startTime & endTime(mandatory)
     @GetMapping("/room/{roomId}/reservation/time")
     public ResponseEntity<List<ReservationDetail>> getByRoomIdAndTime(
-            @PathVariable("roomId") String roomId,
+            @PathVariable("roomId") Long roomId,
             @RequestParam(value = "startTime") String startTime,
             @RequestParam(value = "endTime") String endTime
     ) {
@@ -53,7 +53,7 @@ public class ReservationController {
 
     // 해당 룸 예약 조회 startTime & endTime x
     @GetMapping("/room/{roomId}/reservation")
-    public ResponseEntity<List<ReservationDetail>> getByRoomId(@PathVariable("roomId") String roomId) {
+    public ResponseEntity<List<ReservationDetail>> getByRoomId(@PathVariable("roomId") Long roomId) {
 
         log.info("reservation getByRoomId, roomId: {}", roomId);
         return  ResponseEntity.ok(reservationService.getByRoomId(roomId));
@@ -70,7 +70,7 @@ public class ReservationController {
     // 예약 수정
     @PutMapping("/room/{roomId}/reservation/{reservationId}")
     public String updateById(
-            @PathVariable("roomId") String roomId,
+            @PathVariable("roomId") Long roomId,
             @PathVariable("reservationId") String reservationId,
             @RequestBody ReservationUpdateRequest reservationRequest){
         log.info("reservation updateById, roomId: {}, reservationId: {}", roomId, reservationId);

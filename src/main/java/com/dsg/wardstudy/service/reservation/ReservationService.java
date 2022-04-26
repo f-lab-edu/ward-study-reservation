@@ -33,7 +33,7 @@ public class ReservationService {
     private final RoomRepository roomRepository;
 
     @Transactional
-    public ReservationDetail create(ReservationCreateRequest reservationRequest, Long studyGroupId, String roomId) {
+    public ReservationDetail create(ReservationCreateRequest reservationRequest, Long studyGroupId, Long roomId) {
         StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Room room = roomRepository.findById(roomId)
@@ -57,7 +57,7 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationDetail> getByRoomIdAndTime(String roomId, String startTime, String endTime) {
+    public List<ReservationDetail> getByRoomIdAndTime(Long roomId, String startTime, String endTime) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -71,21 +71,21 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationDetail> getByRoomId(String roomId) {
+    public List<ReservationDetail> getByRoomId(Long roomId) {
         return reservationRepository.findByRoomId(roomId).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public ReservationDetail getByRoomIdAndReservationId(String roomId, String reservationId) {
+    public ReservationDetail getByRoomIdAndReservationId(Long roomId, String reservationId) {
         Reservation reservation = reservationRepository.findByRoomIdAndReservationId(roomId, reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return mapToDto(reservation);
     }
 
     @Transactional
-    public String updateById(String roomId, String reservationId, ReservationUpdateRequest reservationRequest) {
+    public String updateById(Long roomId, String reservationId, ReservationUpdateRequest reservationRequest) {
         Reservation findReservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         StudyGroup studyGroup = findReservation.getStudyGroup();
