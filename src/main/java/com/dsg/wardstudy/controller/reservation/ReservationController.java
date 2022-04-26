@@ -37,7 +37,7 @@ public class ReservationController {
             @PathVariable("reservationId") String reservationId
     ) {
         log.info("reservation getById, roomId: {}, reservationId: {}", roomId, reservationId);
-        return ResponseEntity.ok(reservationService.getByIds(roomId, reservationId));
+        return ResponseEntity.ok(reservationService.getByRoomIdAndReservationId(roomId, reservationId));
     }
 
     // 해당 룸 예약 조회 startTime & endTime(mandatory)

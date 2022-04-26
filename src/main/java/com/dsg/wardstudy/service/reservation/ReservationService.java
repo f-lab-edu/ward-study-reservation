@@ -11,6 +11,7 @@ import com.dsg.wardstudy.repository.reservation.RoomRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReservationService {
@@ -76,8 +78,8 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public ReservationDetail getByIds(String roomId, String reservationId) {
-        Reservation reservation = reservationRepository.findByIds(roomId, reservationId)
+    public ReservationDetail getByRoomIdAndReservationId(String roomId, String reservationId) {
+        Reservation reservation = reservationRepository.findByRoomIdAndReservationId(roomId, reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return mapToDto(reservation);
     }
