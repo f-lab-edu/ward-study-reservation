@@ -1,7 +1,7 @@
 package com.dsg.wardstudy.controller.reservation;
 
 import com.dsg.wardstudy.dto.reservation.ReservationDetail;
-import com.dsg.wardstudy.dto.reservation.ReservationRequest;
+import com.dsg.wardstudy.dto.reservation.ReservationCreateRequest;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
 import com.dsg.wardstudy.service.reservation.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class ReservationController {
     public ResponseEntity<ReservationDetail> create(
             @PathVariable("studyGroupId") Long studyGroupId,
             @PathVariable("roomId") String roomId,
-            @RequestBody ReservationRequest reservationRequest) {
+            @RequestBody ReservationCreateRequest reservationRequest) {
         log.info("reservation create");
         return new ResponseEntity<>(reservationService.create(
                 reservationRequest, studyGroupId, roomId), HttpStatus.CREATED);
@@ -44,21 +44,20 @@ public class ReservationController {
     @GetMapping("/room/{roomId}/reservation")
     public ResponseEntity<List<ReservationDetail>> getByRoomIdAndTime(
             @PathVariable("roomId") String roomId,
-            @RequestParam(value = "startTime", required=false) String startTime,
-            @RequestParam(value = "endTime", required=false) String endTime
+            @RequestParam(value = "startTime") String startTime,
+            @RequestParam(value = "endTime") String endTime
     ) {
+        log.info("reservation getByRoomIdAndTime");
+        return ResponseEntity.ok(reservationService.getByRoomIdAndTime(roomId, startTime, endTime));
+    }
+
+    @GetMapping("/room/{roomId}/reservation")
+    public ResponseEntity<List<ReservationDetail>> getByRoomId(@PathVariable("roomId") String roomId) {
+
         log.info("reservation getByRoomId");
-        return ResponseEntity.ok(byRoomIdAndTime(roomId, startTime, endTime));
+        return  ResponseEntity.ok(reservationService.getByRoomId(roomId));
     }
 
-    private List<ReservationDetail> byRoomIdAndTime(String roomId, String startTime, String endTime) {
-
-        if (startTime != null && endTime != null)  {
-            return reservationService.getByRoomIdAndTime(roomId, startTime, endTime);
-        } else {
-            return reservationService.getByRoomId(roomId);
-        }
-    }
 
     // 해당 유저 예약  조회
     @GetMapping("/user/{userId}/reservation")
