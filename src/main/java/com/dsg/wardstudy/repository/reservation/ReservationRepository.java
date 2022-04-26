@@ -18,7 +18,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     List<Reservation> findByRoomId(@Param("roomId") String roomId);
 
     @Query("select r from Reservation r left join fetch r.room where r.room.id = :roomId " +
-            "and r.startTime = :sTime and r.endTime = :eTime")
+            "and r.startTime > :sTime and r.endTime < :eTime")
     List<Reservation> findByRoomIdAndTime(@Param("roomId") String roomId,
                                               @Param("sTime") LocalDateTime sTime,
                                               @Param("eTime") LocalDateTime eTime);
