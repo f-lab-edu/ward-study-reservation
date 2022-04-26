@@ -27,7 +27,7 @@ public class StudyGroupController {
 
     @GetMapping("/study-group/{id}")
     public ResponseEntity<StudyGroupResponse> getById(@PathVariable("id") Long studyGroupId) {
-        log.info("studyGroup getById");
+        log.info("studyGroup getById, studyGroupId: {}", studyGroupId);
         return ResponseEntity.ok(studyGroupService.getById(studyGroupId));
     }
 
@@ -42,7 +42,7 @@ public class StudyGroupController {
     public ResponseEntity<List<StudyGroupResponse>> getAllByUserId(
             @PathVariable("id") Long userId
     ) {
-        log.info("studyGroup getAllByUserId");
+        log.info("studyGroup getAllByUserId, userId: {}", userId);
         return ResponseEntity.ok(studyGroupService.getAllByUserId(userId));
     }
 
@@ -50,13 +50,13 @@ public class StudyGroupController {
     public Long updateById(
             @PathVariable("id") Long studyGroupId,
             @RequestBody StudyGroupRequest studyGroupRequest) {
-        log.info("studyGroup updateById");
+        log.info("studyGroup updateById, studyGroupId: {}, ", studyGroupId);
         return studyGroupService.updateById(studyGroupId, studyGroupRequest);
     }
 
     @DeleteMapping("/study-group/{id}")
     public ResponseEntity<String> deleteById(@PathVariable("id") Long studyGroupId) {
-        log.info("studyGroup deleteById");
+        log.info("studyGroup deleteById, studyGroupId: {}", studyGroupId);
         studyGroupService.deleteById(studyGroupId);
         return new ResponseEntity<>("a study-group successfully deleted!", HttpStatus.OK);
     }
