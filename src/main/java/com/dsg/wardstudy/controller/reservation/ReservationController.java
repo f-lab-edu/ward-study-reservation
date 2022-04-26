@@ -47,7 +47,7 @@ public class ReservationController {
             @RequestParam(value = "startTime") String startTime,
             @RequestParam(value = "endTime") String endTime
     ) {
-        log.info("reservation getByRoomIdAndTime, roomId: {}", roomId);
+        log.info("reservation getByRoomIdAndTime, roomId: {}, startTime: {}, endTime: {}", roomId, startTime, endTime);
         return ResponseEntity.ok(reservationService.getByRoomIdAndTime(roomId, startTime, endTime));
     }
 
