@@ -24,10 +24,10 @@ public class ReservationController {
     public ResponseEntity<ReservationDetail> create(
             @PathVariable("studyGroupId") Long studyGroupId,
             @PathVariable("roomId") String roomId,
-            @RequestBody ReservationCreateRequest reservationRequest) {
-        log.info("reservation create");
+            @RequestBody ReservationCreateRequest reservationCreateRequest) {
+        log.info("reservation create, studyGroupId: {}, roomId: {}, request: {}", studyGroupId, roomId, reservationCreateRequest);
         return new ResponseEntity<>(reservationService.create(
-                reservationRequest, studyGroupId, roomId), HttpStatus.CREATED);
+                reservationCreateRequest, studyGroupId, roomId), HttpStatus.CREATED);
     }
 
     // 등록한 예약 상세 보기

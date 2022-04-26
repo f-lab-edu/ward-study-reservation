@@ -21,7 +21,7 @@ public class StudyGroupController {
 
     @PostMapping("/study-group")
     public ResponseEntity<StudyGroupResponse> create(@RequestBody StudyGroupRequest studyGroupRequest) {
-        log.info("studyGroup create");
+        log.info("studyGroup create, studyGroupRequest: {}", studyGroupRequest);
         return new ResponseEntity<>(studyGroupService.create(studyGroupRequest), HttpStatus.CREATED);
     }
 
