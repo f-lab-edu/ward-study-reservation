@@ -88,6 +88,9 @@ public class ReservationService {
     public String updateById(String roomId, String reservationId, ReservationUpdateRequest reservationRequest) {
         Reservation findReservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        StudyGroup studyGroup = findReservation.getStudyGroup();
+        // update : find -> delete -> save
+        reservationRepository.delete(findReservation);
 
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -97,16 +100,18 @@ public class ReservationService {
         LocalDateTime sTime = LocalDateTime.parse(reservationRequest.getStartTime(), formatter);
         LocalDateTime eTime = LocalDateTime.parse(reservationRequest.getEndTime(), formatter);
 
-        String updateId = room.getId() + "||" + reservationRequest.getStartTime();
+        Reservation newReservation = Reservation.builder()
+                .id(room.getId() + "||" + reservationRequest.getStartTime())
+                .status(1)
+                .startTime(sTime)
+                .endTime(eTime)
+                .studyGroup(studyGroup)
+                .room(room)
+                .build();
 
-         findReservation.update(
-                 // Todo: pk 수정 updateId로
-                reservationRequest.getStatus(),
-                sTime,
-                eTime
-        );
+        Reservation updatedReservation = reservationRepository.save(newReservation);
 
-        return updateId;
+        return updatedReservation.getId();
     }
 
     @Transactional

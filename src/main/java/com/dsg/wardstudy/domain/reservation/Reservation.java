@@ -55,9 +55,4 @@ public class Reservation extends BaseTimeEntity {
         this.room = room;
     }
 
-    public void update(int status, LocalDateTime startTime, LocalDateTime endTime) {
-        this.status = status;
-        this.startTime = startTime;
-        this.endTime = endTime;
-    }
 }

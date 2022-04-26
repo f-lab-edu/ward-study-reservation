@@ -51,7 +51,7 @@ public class ReservationController {
         return ResponseEntity.ok(reservationService.getByRoomIdAndTime(roomId, startTime, endTime));
     }
 
-    //
+    // 해당 룸 예약 조회 startTime & endTime x
     @GetMapping("/room/{roomId}/reservation")
     public ResponseEntity<List<ReservationDetail>> getByRoomId(@PathVariable("roomId") String roomId) {
 

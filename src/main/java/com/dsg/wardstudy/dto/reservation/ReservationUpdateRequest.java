@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReservationUpdateRequest {
 
-    private String id;
-
     private int status;
 
     private String startTime;
@@ -18,8 +16,7 @@ public class ReservationUpdateRequest {
 
 
     @Builder
-    public ReservationUpdateRequest(String id, int status, String startTime, String endTime) {
-        this.id = id;
+    public ReservationUpdateRequest(int status, String startTime, String endTime) {
         this.status = status;
         this.startTime = startTime;
         this.endTime = endTime;
