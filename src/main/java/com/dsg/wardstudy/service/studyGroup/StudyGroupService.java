@@ -76,9 +76,7 @@ public class StudyGroupService {
 
     @Transactional
     public void deleteById(Long studyGroupId) {
-        StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        studyGroupRepository.delete(studyGroup);
+        studyGroupRepository.deleteById(studyGroupId);
     }
 
     public List<StudyGroupResponse> getAllByUserId(Long userId) {

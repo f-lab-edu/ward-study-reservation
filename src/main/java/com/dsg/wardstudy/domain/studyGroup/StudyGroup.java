@@ -32,7 +32,8 @@ public class StudyGroup extends BaseTimeEntity {
     private List<UserGroup> userGroups = new ArrayList<>();
 
     @Builder
-    public StudyGroup(String title, String content) {
+    public StudyGroup(Long id, String title, String content) {
+        this.id = id;
         this.title = title;
         this.content = content;
     }
