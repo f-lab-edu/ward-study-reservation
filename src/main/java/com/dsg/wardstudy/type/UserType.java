@@ -11,5 +11,5 @@ public enum UserType {
     L("Leader")
     ;
 
-    private final String desceiption;
+    private final String description;
 }
