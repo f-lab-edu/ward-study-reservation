@@ -57,8 +57,8 @@ public class StudyGroupService {
     @Transactional(readOnly = true)
     public List<StudyGroupResponse> getAll() {
 
-        List<StudyGroup> all = studyGroupRepository.findAll();
-        return all.stream()
+        List<StudyGroup> studyGroups = studyGroupRepository.findAll();
+        return studyGroups.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -80,9 +80,9 @@ public class StudyGroupService {
     }
 
     public List<StudyGroupResponse> getAllByUserId(Long userId) {
-        List<UserGroup> iByUserId = userGroupRepository.findIByUserId(userId);
+        List<UserGroup> userGroups = userGroupRepository.findByUserId(userId);
 
-        List<Long> studyGroupsIds = iByUserId.stream()
+        List<Long> studyGroupsIds = userGroups.stream()
                 .map(d -> d.getStudyGroup().getId())
                 .collect(Collectors.toList());
 

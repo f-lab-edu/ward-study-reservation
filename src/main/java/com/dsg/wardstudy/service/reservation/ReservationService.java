@@ -48,9 +48,9 @@ public class ReservationService {
 
     @Transactional(readOnly = true)
     public List<ReservationDetail> getAllByUserId(Long userId) {
-        List<Long> sgIds = userGroupRepository.findsgIdsByUserId(userId);
+        List<Long> sgIds = userGroupRepository.findSgIdsByUserId(userId);
 
-        return reservationRepository.findBySgIds(sgIds).stream()
+        return reservationRepository.findByStudyGroupIdIn(sgIds).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
 

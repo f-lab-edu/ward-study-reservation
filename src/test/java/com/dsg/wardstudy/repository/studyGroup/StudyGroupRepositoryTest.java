@@ -98,7 +98,7 @@ class StudyGroupRepositoryTest {
 //                .build();
 //        User savedUser = userRepository.save(user);
         // when - action or the behaviour that we are going test
-        List<UserGroup> iByUserId = userGroupRepository.findIByUserId(2L);
+        List<UserGroup> iByUserId = userGroupRepository.findByUserId(2L);
         List<Long> studyGroupsIds = iByUserId.stream()
                 .map(d -> d.getStudyGroup().getId())
                 .collect(Collectors.toList());

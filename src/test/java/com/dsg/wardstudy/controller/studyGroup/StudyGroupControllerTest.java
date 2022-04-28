@@ -139,6 +139,16 @@ class StudyGroupControllerTest {
     }
 
     @Test
+    public void getAllByUserId() throws Exception {
+        // given - precondition or setup
+
+        // when - action or the behaviour that we are going test
+
+        // then - verify the output
+
+    }
+
+    @Test
     public void updateById() throws Exception {
         // given - precondition or setup
         Long studyGroupId = 1L;

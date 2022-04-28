@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
 
-        List<UserGroup> findIByUserId(Long userId);
+        List<UserGroup> findByUserId(Long userId);
 
         @Query("select ug.studyGroup.id from UserGroup ug where ug.user.id = :userId")
-        List<Long> findsgIdsByUserId(@Param("userId") Long userId);
+        List<Long> findSgIdsByUserId(@Param("userId") Long userId);
 
 }
