@@ -79,6 +79,7 @@ public class StudyGroupService {
         studyGroupRepository.deleteById(studyGroupId);
     }
 
+    @Transactional(readOnly = true)
     public List<StudyGroupResponse> getAllByUserId(Long userId) {
         List<UserGroup> userGroups = userGroupRepository.findByUserId(userId);
 
