@@ -4,10 +4,7 @@ import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.dto.BaseTimeEntity;
 import com.dsg.wardstudy.type.UserType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -36,6 +33,12 @@ public class UserGroup extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private UserType userType;
+
+    @Builder
+    public UserGroup(Long id, User user) {
+        this.id = id;
+        this.user = user;
+    }
 
     public void setStudyGroup(StudyGroup studyGroup) {
         this.studyGroup = studyGroup;

@@ -3,6 +3,7 @@ package com.dsg.wardstudy.domain.reservation;
 import com.dsg.wardstudy.dto.BaseTimeEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -26,5 +27,9 @@ public class Room extends BaseTimeEntity {
     @JsonIgnore
     private List<Reservation> reservations = new ArrayList<>();
 
-
+    @Builder
+    public Room(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 }

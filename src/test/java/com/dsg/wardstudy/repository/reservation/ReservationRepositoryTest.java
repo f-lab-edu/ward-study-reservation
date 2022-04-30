@@ -1,0 +1,235 @@
+package com.dsg.wardstudy.repository.reservation;
+
+import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.reservation.Room;
+import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
+import com.dsg.wardstudy.domain.user.User;
+import com.dsg.wardstudy.domain.user.UserGroup;
+import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
+import com.dsg.wardstudy.repository.user.UserGroupRepository;
+import com.dsg.wardstudy.repository.user.UserRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@Slf4j
+@DataJpaTest
+class ReservationRepositoryTest {
+
+    @Autowired
+    private ReservationRepository reservationRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private UserGroupRepository userGroupRepository;
+
+    @Autowired
+    private StudyGroupRepository studyGroupRepository;
+
+    @Autowired
+    private RoomRepository roomRepository;
+
+    private User user;
+    private UserGroup userGroup;
+    private StudyGroup studyGroup;
+    private Room room;
+
+    @BeforeEach
+    void setUp() {
+        user = User.builder()
+                .email("dsgfunk@gmail.com")
+                .build();
+
+        userGroup = UserGroup.builder()
+                .build();
+
+        studyGroup = StudyGroup.builder()
+                .title("title_")
+                .content("study 번 방")
+                .build();
+
+        room = Room.builder()
+                .name("roomA")
+                .build();
+
+    }
+
+    @Test
+    public void create(){
+        // given - precondition or setup
+        // when - action or the behaviour that we are going test
+
+        User savedUser = userRepository.save(user);
+        StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
+        Room savedRoom = roomRepository.save(room);
+
+        String startTime = "2021-08-07 12:00:00";
+        String endTime = "2021-08-07 13:00:00";
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        LocalDateTime sTime = LocalDateTime.parse(startTime, formatter);
+        LocalDateTime eTime = LocalDateTime.parse(endTime, formatter);
+
+
+        Reservation reservation = Reservation.builder()
+                .id("3||2022-04-24 10:30:00")
+                .startTime(sTime)
+                .endTime(eTime)
+                .user(savedUser)
+                .studyGroup(savedStudyGroup)
+                .room(savedRoom)
+                .build();
+
+        Reservation savedReservation = reservationRepository.save(reservation);
+        log.info("savedReservation: {}", savedReservation);
+
+        // then - verify the output
+        assertThat(savedReservation).isNotNull();
+        assertThat(savedReservation.getId()).isEqualTo("3||2022-04-24 10:30:00");
+        assertThat(savedReservation.getStartTime()).isEqualTo(sTime);
+        assertThat(savedReservation.getUser().getEmail()).isEqualTo(this.user.getEmail());
+        assertThat(savedReservation.getStudyGroup().getTitle()).isEqualTo(this.studyGroup.getTitle());
+        assertThat(savedReservation.getRoom().getName()).isEqualTo(this.room.getName());
+
+    }
+
+    @Test
+    public void getByRoomIdAndTime(){
+        // given - precondition or setup
+        User savedUser = userRepository.save(user);
+        StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
+        Room savedRoom = roomRepository.save(room);
+
+        String startTime = "2021-08-07 12:00:00";
+        String endTime = "2021-08-07 13:00:00";
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        LocalDateTime sTime = LocalDateTime.parse(startTime, formatter);
+        LocalDateTime eTime = LocalDateTime.parse(endTime, formatter);
+
+        Reservation reservation = Reservation.builder()
+                .id("3||2022-04-24 10:30:00")
+                .user(savedUser)
+                .startTime(sTime)
+                .endTime(eTime)
+                .studyGroup(savedStudyGroup)
+                .room(savedRoom)
+                .build();
+
+        reservationRepository.save(reservation);
+        // when - action or the behaviour that we are going test
+        List<Reservation> reservationsByRoomIdAndTime = reservationRepository.findByRoomIdAndTime(savedRoom.getId(), sTime, eTime);
+        log.info("reservationsByRoomIdAndTime: {}", reservationsByRoomIdAndTime);
+
+        // then - verify the output
+        assertThat(reservationsByRoomIdAndTime).isNotNull();
+        assertThat(reservationsByRoomIdAndTime.size()).isEqualTo(1);
+
+    }
+
+    @Test
+    public void getByRoomId(){
+        // given - precondition or setup
+        Room savedRoom = roomRepository.save(room);
+
+        Reservation reservation = Reservation.builder()
+                .id("3||2022-04-24 10:30:00")
+                .room(savedRoom)
+                .build();
+
+        reservationRepository.save(reservation);
+        // when - action or the behaviour that we are going test
+        List<Reservation> reservationsByRoomId = reservationRepository.findByRoomId(savedRoom.getId());
+        log.info("reservationsByRoomId: {}", reservationsByRoomId);
+
+        // then - verify the output
+        assertThat(reservationsByRoomId).isNotNull();
+        assertThat(reservationsByRoomId.size()).isEqualTo(1);
+
+    }
+
+    @Test
+    public void getAllByUserId(){
+        // given - precondition or setup
+        User savedUser = userRepository.save(user);
+        StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
+
+        userGroup.setUser(savedUser);
+        userGroup.setStudyGroup(savedStudyGroup);
+        userGroupRepository.save(userGroup);
+
+        Reservation reservation = Reservation.builder()
+                .id("3||2022-04-24 10:30:00")
+                .studyGroup(savedStudyGroup)
+                .build();
+
+        reservationRepository.save(reservation);
+        // when - action or the behaviour that we are going test
+        List<Long> sgIdsByUserId = userGroupRepository.findSgIdsByUserId(savedUser.getId());
+        List<Reservation> reservationsByStudyGroupIdIn = reservationRepository.findByStudyGroupIdIn(sgIdsByUserId);
+
+        log.info("reservationsByStudyGroupIdIn: {}", reservationsByStudyGroupIdIn);
+        // then - verify the output
+        assertThat(reservationsByStudyGroupIdIn).isNotNull();
+        assertThat(reservationsByStudyGroupIdIn.size()).isEqualTo(1);
+
+    }
+
+    @Test
+    public void updateById(){
+        // given - precondition or setup
+
+        Room savedRoom = roomRepository.save(room);
+
+        String startTime = "2021-08-07 12:00:00";
+
+        Reservation reservation = Reservation.builder()
+                .id("3||2022-04-24 10:30:00")
+                .build();
+
+        Reservation savedReservation = reservationRepository.save(reservation);
+
+        // when - action or the behaviour that we are going test
+        Reservation findReservation = reservationRepository.findById(savedReservation.getId()).get();
+        reservationRepository.delete(findReservation);
+        Room findRoom = roomRepository.findById(savedRoom.getId()).get();
+
+        Reservation newReservation = Reservation.builder()
+                .id(findRoom.getId() + "||" + startTime)
+                .build();
+
+        Reservation updatedReservation = reservationRepository.save(newReservation);
+        // then - verify the output
+        assertThat(updatedReservation.getId()).isEqualTo(newReservation.getId());
+
+    }
+
+    @Test
+    public void deleteById(){
+        // given - precondition or setup
+        Reservation reservation = Reservation.builder()
+                .id("3||2022-04-24 10:30:00")
+                .build();
+
+        Reservation savedReservation = reservationRepository.save(reservation);
+
+        // when - action or the behaviour that we are going test
+        Reservation findReservation = reservationRepository.findById(savedReservation.getId()).get();
+        reservationRepository.delete(findReservation);
+
+        // then - verify the output
+        assertThat(reservationRepository.findById(savedReservation.getId())).isEmpty();
+
+    }
+}

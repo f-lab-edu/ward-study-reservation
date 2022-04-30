@@ -92,7 +92,7 @@ public class ReservationService {
         // update : find -> delete -> save
         reservationRepository.delete(findReservation);
 
-        Room room = roomRepository.findById(roomId)
+        Room findRoom = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -101,12 +101,12 @@ public class ReservationService {
         LocalDateTime eTime = LocalDateTime.parse(reservationRequest.getEndTime(), formatter);
 
         Reservation newReservation = Reservation.builder()
-                .id(room.getId() + "||" + reservationRequest.getStartTime())
+                .id(findRoom.getId() + "||" + reservationRequest.getStartTime())
                 .status(1)
                 .startTime(sTime)
                 .endTime(eTime)
                 .studyGroup(studyGroup)
-                .room(room)
+                .room(findRoom)
                 .build();
 
         Reservation updatedReservation = reservationRepository.save(newReservation);
