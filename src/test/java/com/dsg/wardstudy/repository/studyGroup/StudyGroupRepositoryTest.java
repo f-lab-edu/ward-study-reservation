@@ -59,11 +59,20 @@ class StudyGroupRepositoryTest {
     public void getAllTest(){
         // given - precondition or setup
         // when - action or the behaviour that we are going test
+        StudyGroup studyGroup1 = StudyGroup.builder()
+                .title("test2_study")
+                .content("java_study")
+                .build();
+
+        studyGroupRepository.save(studyGroup);
+        studyGroupRepository.save(studyGroup1);
+
         List<StudyGroup> studyGroups = studyGroupRepository.findAll();
+        log.info("studyGroups : {}", studyGroups);
 
         // then - verify the output
         assertThat(studyGroups).isNotNull();
-        log.info("studyGroups : {}", studyGroups);
+        assertThat(studyGroups.size()).isEqualTo(2);
 
     }
 
