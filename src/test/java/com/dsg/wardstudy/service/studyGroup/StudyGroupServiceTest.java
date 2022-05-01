@@ -151,9 +151,12 @@ class StudyGroupServiceTest {
         // when - action or the behaviour that we are going test
         Long updateId = studyGroupService.updateById(studyGroup.getId(), studyGroupRequest);
         log.info("updateId: {}", updateId);
+        StudyGroupResponse updatedResponse = studyGroupService.getById(updateId);
 
         // then - verify the output
-        assertThat(studyGroup.getId()).isEqualTo(updateId);
+        assertThat(this.studyGroup.getId()).isEqualTo(updateId);
+        assertThat(updatedResponse.getTitle()).isEqualTo(studyGroupRequest.getTitle());
+        assertThat(updatedResponse.getContent()).isEqualTo(studyGroupRequest.getContent());
 
     }
 
