@@ -180,12 +180,31 @@ class ReservationRepositoryTest {
 
         // when - action or the behaviour that we are going test
         List<Long> sgIds = userGroupRepository.findSgIdsByUserId(savedUser.getId());
-        List<Reservation> reservationsBySGIds = reservationRepository.findByStudyGroupIdIn(sgIds);
+        List<Reservation> reservationsBySGIds = reservationRepository.findByStudyGroupIds(sgIds);
 
         log.info("reservationsByStudyGroupIdIn: {}", reservationsBySGIds);
         // then - verify the output
         assertThat(reservationsBySGIds).isNotNull();
         assertThat(reservationsBySGIds.size()).isEqualTo(4);
+
+    }
+
+    @Test
+    public void findByRoomIdAndId(){
+        // given - precondition or setup
+        Room savedRoom = roomRepository.save(room);
+
+        Reservation reservation = Reservation.builder()
+                .id("3||2022-04-24 10:30:00")
+                .room(savedRoom)
+                .build();
+
+        Reservation savedReservation = reservationRepository.save(reservation);
+        // when - action or the behaviour that we are going test
+        Reservation findReservation = reservationRepository.findByRoomIdAndId(savedRoom.getId(), savedReservation.getId()).get();
+        log.info("findReservation: {}", findReservation);
+        // then - verify the output
+        assertThat(findReservation).isNotNull();
 
     }
 

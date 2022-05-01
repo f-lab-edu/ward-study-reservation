@@ -50,7 +50,7 @@ public class ReservationService {
     public List<ReservationDetail> getAllByUserId(Long userId) {
         List<Long> sgIds = userGroupRepository.findSgIdsByUserId(userId);
 
-        return reservationRepository.findByStudyGroupIdIn(sgIds).stream()
+        return reservationRepository.findByStudyGroupIds(sgIds).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
 
@@ -79,7 +79,7 @@ public class ReservationService {
 
     @Transactional(readOnly = true)
     public ReservationDetail getByRoomIdAndReservationId(Long roomId, String reservationId) {
-        Reservation reservation = reservationRepository.findByRoomIdAndReservationId(roomId, reservationId)
+        Reservation reservation = reservationRepository.findByRoomIdAndId(roomId, reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return mapToDto(reservation);
     }

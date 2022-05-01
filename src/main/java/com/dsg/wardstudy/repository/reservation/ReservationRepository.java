@@ -11,8 +11,7 @@ import java.util.Optional;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
-    @Query("select r from Reservation r where r.id = :reservationId")
-    Optional<Reservation> findById(@Param("reservationId") String reservationId);
+    Optional<Reservation> findById(String reservationId);
 
     @Query("select r from Reservation r left join fetch r.room where r.room.id = :roomId")
     List<Reservation> findByRoomId(@Param("roomId") Long roomId);
@@ -25,8 +24,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("select r from Reservation r left join fetch r.room where r.room.id = :roomId " +
             "and r.id = :reservationId")
-    Optional<Reservation> findByRoomIdAndReservationId(@Param("roomId") Long roomId, @Param("reservationId") String reservationId);
+    Optional<Reservation> findByRoomIdAndId(@Param("roomId") Long roomId, @Param("reservationId") String reservationId);
 
-    List<Reservation> findByStudyGroupIdIn(List<Long> sgIds);
+    @Query("select r from Reservation r left join fetch r.studyGroup where r.studyGroup.id in :sgIds")
+    List<Reservation> findByStudyGroupIds(List<Long> sgIds);
 
 }
