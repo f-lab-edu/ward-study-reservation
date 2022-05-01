@@ -1,7 +1,7 @@
 package com.dsg.wardstudy.controller.user;
 
 import com.dsg.wardstudy.domain.user.User;
-import com.dsg.wardstudy.dto.user.SignUpDto;
+import com.dsg.wardstudy.dto.user.SignUpRequest;
 import com.dsg.wardstudy.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ public class UserController {
     private final UserRepository userRepository;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> register(@RequestBody SignUpDto siginUpDto) {
+    public ResponseEntity<?> register(@RequestBody SignUpRequest siginUpDto) {
         User user = User.builder()
                 .name(siginUpDto.getName())
                 .email(siginUpDto.getEmail())

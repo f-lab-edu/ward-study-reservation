@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class SignUpDto {
+public class SignUpRequest {
 
     private String name;
     private String email;
@@ -14,7 +14,7 @@ public class SignUpDto {
     private String password;
 
     @Builder
-    public SignUpDto(String name, String email, String nickname, String password) {
+    public SignUpRequest(String name, String email, String nickname, String password) {
         this.name = name;
         this.email = email;
         this.nickname = nickname;
