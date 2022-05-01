@@ -41,7 +41,7 @@ public class ReservationController {
     }
 
     // 해당 룸 예약 조회 startTime & endTime(mandatory)
-    @GetMapping("/room/{roomId}/reservation/time")
+    @GetMapping("/room/{roomId}/reservation/query")
     public ResponseEntity<List<ReservationDetail>> getByRoomIdAndTime(
             @PathVariable("roomId") Long roomId,
             @RequestParam(value = "startTime") String startTime,
