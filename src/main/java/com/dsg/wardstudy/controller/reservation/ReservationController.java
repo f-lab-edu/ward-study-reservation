@@ -42,13 +42,13 @@ public class ReservationController {
 
     // 해당 룸 예약 조회 startTime & endTime(mandatory)
     @GetMapping("/room/{roomId}/reservation/query")
-    public ResponseEntity<List<ReservationDetail>> getByRoomIdAndTime(
+    public ResponseEntity<List<ReservationDetail>> getByRoomIdAndTimePeriod(
             @PathVariable("roomId") Long roomId,
             @RequestParam(value = "startTime") String startTime,
             @RequestParam(value = "endTime") String endTime
     ) {
         log.info("reservation getByRoomIdAndTime, roomId: {}, startTime: {}, endTime: {}", roomId, startTime, endTime);
-        return ResponseEntity.ok(reservationService.getByRoomIdAndTime(roomId, startTime, endTime));
+        return ResponseEntity.ok(reservationService.getByRoomIdAndTimePeriod(roomId, startTime, endTime));
     }
 
     // 해당 룸 예약 조회 startTime & endTime x

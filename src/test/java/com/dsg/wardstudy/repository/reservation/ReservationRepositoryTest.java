@@ -105,7 +105,7 @@ class ReservationRepositoryTest {
     }
 
     @Test
-    public void getByRoomIdAndTime(){
+    public void getByRoomIdAndTimePeriod(){
         // given - precondition or setup
         User savedUser = userRepository.save(user);
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
@@ -130,7 +130,7 @@ class ReservationRepositoryTest {
 
         reservationRepository.save(reservation);
         // when - action or the behaviour that we are going test
-        List<Reservation> reservationsByRoomIdAndTime = reservationRepository.findByRoomIdAndTime(savedRoom.getId(), sTime, eTime);
+        List<Reservation> reservationsByRoomIdAndTime = reservationRepository.findByRoomIdAndTimePeriod(savedRoom.getId(), sTime, eTime);
         log.info("reservationsByRoomIdAndTime: {}", reservationsByRoomIdAndTime);
 
         // then - verify the output

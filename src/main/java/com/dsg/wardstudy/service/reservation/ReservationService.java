@@ -57,14 +57,14 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationDetail> getByRoomIdAndTime(Long roomId, String startTime, String endTime) {
+    public List<ReservationDetail> getByRoomIdAndTimePeriod(Long roomId, String startTime, String endTime) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         LocalDateTime sTime = LocalDateTime.parse(startTime, formatter);
         LocalDateTime eTime = LocalDateTime.parse(endTime, formatter);
 
-        return reservationRepository.findByRoomIdAndTime(roomId, sTime, eTime).stream()
+        return reservationRepository.findByRoomIdAndTimePeriod(roomId, sTime, eTime).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
 
