@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -59,20 +60,21 @@ class StudyGroupRepositoryTest {
     public void getAllTest(){
         // given - precondition or setup
         // when - action or the behaviour that we are going test
-        StudyGroup studyGroup1 = StudyGroup.builder()
-                .title("test2_study")
-                .content("java_study")
-                .build();
+        IntStream.rangeClosed(1,10).forEach(i -> {
+            StudyGroup studyGroup = StudyGroup.builder()
+                    .title("testSG_"+i)
+                    .content("인원 "+i+"명의 스터디그룹을 모집합니다.")
+                    .build();
+            studyGroupRepository.save(studyGroup);
+        });
 
-        studyGroupRepository.save(studyGroup);
-        studyGroupRepository.save(studyGroup1);
 
         List<StudyGroup> studyGroups = studyGroupRepository.findAll();
         log.info("studyGroups : {}", studyGroups);
 
         // then - verify the output
         assertThat(studyGroups).isNotNull();
-        assertThat(studyGroups.size()).isEqualTo(2);
+        assertThat(studyGroups.size()).isEqualTo(10);
 
     }
 
