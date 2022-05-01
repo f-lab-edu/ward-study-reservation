@@ -144,8 +144,8 @@ class StudyGroupServiceTest {
                 .willReturn(Optional.of(studyGroup));
 
         studyGroupRequest = StudyGroupRequest.builder()
-                .title("kkk")
-                .content("kkk갑니다.")
+                .title("JumpToSpringboot_study")
+                .content("JumpTo님이 진행하는 스터디")
                 .build();
 
         // when - action or the behaviour that we are going test
