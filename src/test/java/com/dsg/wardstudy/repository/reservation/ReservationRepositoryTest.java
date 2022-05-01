@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -162,27 +163,29 @@ class ReservationRepositoryTest {
     @Test
     public void getAllByUserId(){
         // given - precondition or setup
-        User savedUser = userRepository.save(user);
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
+        User savedUser = userRepository.save(user);
 
         userGroup.setUser(savedUser);
-        userGroup.setStudyGroup(savedStudyGroup);
-        userGroupRepository.save(userGroup);
 
-        Reservation reservation = Reservation.builder()
-                .id("3||2022-04-24 10:30:00")
-                .studyGroup(savedStudyGroup)
-                .build();
+        IntStream.rangeClosed(1,4).forEach(i -> {
+            userGroup.setStudyGroup(savedStudyGroup);
+            userGroupRepository.save(userGroup);
+            Reservation reservation = Reservation.builder()
+                    .id("3||2022-04-0"+i+" 10:30:00")
+                    .studyGroup(savedStudyGroup)
+                    .build();
+            reservationRepository.save(reservation);
+        });
 
-        reservationRepository.save(reservation);
         // when - action or the behaviour that we are going test
-        List<Long> sgIdsByUserId = userGroupRepository.findSgIdsByUserId(savedUser.getId());
-        List<Reservation> reservationsByStudyGroupIdIn = reservationRepository.findByStudyGroupIdIn(sgIdsByUserId);
+        List<Long> sgIds = userGroupRepository.findSgIdsByUserId(savedUser.getId());
+        List<Reservation> reservationsBySGIds = reservationRepository.findByStudyGroupIdIn(sgIds);
 
-        log.info("reservationsByStudyGroupIdIn: {}", reservationsByStudyGroupIdIn);
+        log.info("reservationsByStudyGroupIdIn: {}", reservationsBySGIds);
         // then - verify the output
-        assertThat(reservationsByStudyGroupIdIn).isNotNull();
-        assertThat(reservationsByStudyGroupIdIn.size()).isEqualTo(1);
+        assertThat(reservationsBySGIds).isNotNull();
+        assertThat(reservationsBySGIds.size()).isEqualTo(4);
 
     }
 
