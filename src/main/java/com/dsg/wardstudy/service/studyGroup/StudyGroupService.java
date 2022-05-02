@@ -57,8 +57,8 @@ public class StudyGroupService {
     @Transactional(readOnly = true)
     public List<StudyGroupResponse> getAll() {
 
-        List<StudyGroup> all = studyGroupRepository.findAll();
-        return all.stream()
+        List<StudyGroup> studyGroups = studyGroupRepository.findAll();
+        return studyGroups.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
@@ -76,19 +76,18 @@ public class StudyGroupService {
 
     @Transactional
     public void deleteById(Long studyGroupId) {
-        StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        studyGroupRepository.delete(studyGroup);
+        studyGroupRepository.deleteById(studyGroupId);
     }
 
+    @Transactional(readOnly = true)
     public List<StudyGroupResponse> getAllByUserId(Long userId) {
-        List<UserGroup> iByUserId = userGroupRepository.findIByUserId(userId);
+        List<UserGroup> userGroups = userGroupRepository.findByUserId(userId);
 
-        List<Long> studyGroupsIds = iByUserId.stream()
+        List<Long> studyGroupsIds = userGroups.stream()
                 .map(d -> d.getStudyGroup().getId())
                 .collect(Collectors.toList());
 
-        List<StudyGroup> studyGroups = studyGroupRepository.findByIds(studyGroupsIds);
+        List<StudyGroup> studyGroups = studyGroupRepository.findByIdIn(studyGroupsIds);
         return studyGroups.stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());

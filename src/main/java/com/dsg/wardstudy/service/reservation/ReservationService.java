@@ -4,13 +4,14 @@ import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.reservation.Room;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.dto.reservation.ReservationDetail;
-import com.dsg.wardstudy.dto.reservation.ReservationRequest;
+import com.dsg.wardstudy.dto.reservation.ReservationCreateRequest;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.reservation.RoomRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReservationService {
@@ -31,7 +33,7 @@ public class ReservationService {
     private final RoomRepository roomRepository;
 
     @Transactional
-    public ReservationDetail create(ReservationRequest reservationRequest, Long studyGroupId, String roomId) {
+    public ReservationDetail create(ReservationCreateRequest reservationRequest, Long studyGroupId, Long roomId) {
         StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Room room = roomRepository.findById(roomId)
@@ -46,48 +48,51 @@ public class ReservationService {
 
     @Transactional(readOnly = true)
     public List<ReservationDetail> getAllByUserId(Long userId) {
-        List<Long> sgIds = userGroupRepository.findsgIdsByUserId(userId);
+        List<Long> sgIds = userGroupRepository.findSgIdsByUserId(userId);
 
-        return reservationRepository.findBySgIds(sgIds).stream()
+        return reservationRepository.findByStudyGroupIds(sgIds).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
 
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationDetail> getByRoomIdAndTime(String roomId, String startTime, String endTime) {
+    public List<ReservationDetail> getByRoomIdAndTimePeriod(Long roomId, String startTime, String endTime) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         LocalDateTime sTime = LocalDateTime.parse(startTime, formatter);
         LocalDateTime eTime = LocalDateTime.parse(endTime, formatter);
 
-        return reservationRepository.findByRoomIdAndTime(roomId, sTime, eTime).stream()
+        return reservationRepository.findByRoomIdAndTimePeriod(roomId, sTime, eTime).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
 
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationDetail> getByRoomId(String roomId) {
+    public List<ReservationDetail> getByRoomId(Long roomId) {
         return reservationRepository.findByRoomId(roomId).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public ReservationDetail getByIds(String roomId, String reservationId) {
-        Reservation reservation = reservationRepository.findByIds(roomId, reservationId)
+    public ReservationDetail getByRoomIdAndReservationId(Long roomId, String reservationId) {
+        Reservation reservation = reservationRepository.findByRoomIdAndId(roomId, reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return mapToDto(reservation);
     }
 
     @Transactional
-    public String updateById(String roomId, String reservationId, ReservationUpdateRequest reservationRequest) {
+    public String updateById(Long roomId, String reservationId, ReservationUpdateRequest reservationRequest) {
         Reservation findReservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        StudyGroup studyGroup = findReservation.getStudyGroup();
+        // update : find -> delete -> save
+        reservationRepository.delete(findReservation);
 
-        Room room = roomRepository.findById(roomId)
+        Room findRoom = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -95,16 +100,18 @@ public class ReservationService {
         LocalDateTime sTime = LocalDateTime.parse(reservationRequest.getStartTime(), formatter);
         LocalDateTime eTime = LocalDateTime.parse(reservationRequest.getEndTime(), formatter);
 
-        String updateId = room.getId() + "||" + reservationRequest.getStartTime();
+        Reservation newReservation = Reservation.builder()
+                .id(findRoom.getId() + "||" + reservationRequest.getStartTime())
+                .status(1)
+                .startTime(sTime)
+                .endTime(eTime)
+                .studyGroup(studyGroup)
+                .room(findRoom)
+                .build();
 
-         findReservation.update(
-                 // Todo: pk 수정 updateId로
-                reservationRequest.getStatus(),
-                sTime,
-                eTime
-        );
+        Reservation updatedReservation = reservationRepository.save(newReservation);
 
-        return updateId;
+        return updatedReservation.getId();
     }
 
     @Transactional
@@ -126,7 +133,7 @@ public class ReservationService {
                 .build();
     }
 
-    private Reservation mapToEntity(ReservationRequest reservationRequest, StudyGroup studyGroup, Room room) {
+    private Reservation mapToEntity(ReservationCreateRequest reservationRequest, StudyGroup studyGroup, Room room) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 

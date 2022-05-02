@@ -5,10 +5,7 @@ import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.dto.BaseTimeEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -16,6 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString(of = {"id", "startTime", "endTime"})
 public class Reservation extends BaseTimeEntity {
 
     @Id
@@ -46,18 +44,14 @@ public class Reservation extends BaseTimeEntity {
     private Room room;
 
     @Builder
-    public Reservation(String id, int status, LocalDateTime startTime, LocalDateTime endTime, StudyGroup studyGroup, Room room) {
+    public Reservation(String id, int status, LocalDateTime startTime, LocalDateTime endTime, User user, StudyGroup studyGroup, Room room) {
         this.id = id;
         this.status = status;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.user = user;
         this.studyGroup = studyGroup;
         this.room = room;
     }
 
-    public void update(int status, LocalDateTime startTime, LocalDateTime endTime) {
-        this.status = status;
-        this.startTime = startTime;
-        this.endTime = endTime;
-    }
 }

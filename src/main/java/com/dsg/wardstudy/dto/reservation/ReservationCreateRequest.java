@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ReservationRequest {
+public class ReservationCreateRequest {
 
     private String startTime;
 
@@ -14,7 +14,7 @@ public class ReservationRequest {
 
 
     @Builder
-    public ReservationRequest(String startTime, String endTime) {
+    public ReservationCreateRequest(String startTime, String endTime) {
         this.startTime = startTime;
         this.endTime = endTime;
     }
