@@ -35,9 +35,10 @@ public class UserGroup extends BaseTimeEntity {
     private UserType userType;
 
     @Builder
-    public UserGroup(Long id, User user) {
+    public UserGroup(Long id, User user, UserType userType) {
         this.id = id;
         this.user = user;
+        this.userType = userType;
     }
 
     public void setStudyGroup(StudyGroup studyGroup) {

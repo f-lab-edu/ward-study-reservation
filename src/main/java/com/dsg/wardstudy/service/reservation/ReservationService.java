@@ -10,6 +10,7 @@ import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.reservation.RoomRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
+import com.dsg.wardstudy.type.UserType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,9 @@ public class ReservationService {
 
     @Transactional
     public ReservationDetail create(ReservationCreateRequest reservationRequest, Long studyGroupId, Long roomId) {
+
+        validateCreateRequest(reservationRequest);
+
         StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         Room room = roomRepository.findById(roomId)
@@ -44,6 +48,13 @@ public class ReservationService {
 
         return mapToDto(saveReservation);
 
+    }
+
+    private void validateCreateRequest(ReservationCreateRequest reservationRequest) {
+        UserType userType = reservationRequest.getUserType();
+        if (userType.equals(UserType.P)) {
+            throw new IllegalStateException("userType이 리더인 분만 예약등록이 가능합니다.");
+        }
     }
 
     @Transactional(readOnly = true)
@@ -86,6 +97,9 @@ public class ReservationService {
 
     @Transactional
     public String updateById(Long roomId, String reservationId, ReservationUpdateRequest reservationRequest) {
+
+        validateUpdateRequest(reservationRequest);
+
         Reservation findReservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         StudyGroup studyGroup = findReservation.getStudyGroup();
@@ -112,6 +126,13 @@ public class ReservationService {
         Reservation updatedReservation = reservationRepository.save(newReservation);
 
         return updatedReservation.getId();
+    }
+
+    private void validateUpdateRequest(ReservationUpdateRequest reservationRequest) {
+        UserType userType = reservationRequest.getUserType();
+        if (userType.equals(UserType.P)) {
+            throw new IllegalStateException("userType이 리더인 분만 예약수정이 가능합니다.");
+        }
     }
 
     @Transactional
