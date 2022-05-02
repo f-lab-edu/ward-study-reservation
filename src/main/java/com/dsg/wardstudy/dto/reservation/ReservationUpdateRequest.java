@@ -1,6 +1,5 @@
 package com.dsg.wardstudy.dto.reservation;
 
-import com.dsg.wardstudy.type.UserType;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReservationUpdateRequest {
 
-    private UserType userType;
+    private Long userId;
+
+    private Long studyGroupId;
 
     private int status;
 
@@ -19,8 +20,7 @@ public class ReservationUpdateRequest {
 
 
     @Builder
-    public ReservationUpdateRequest(UserType userType, int status, String startTime, String endTime) {
-        this.userType = userType;
+    public ReservationUpdateRequest(int status, String startTime, String endTime) {
         this.status = status;
         this.startTime = startTime;
         this.endTime = endTime;

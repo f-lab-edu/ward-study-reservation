@@ -8,6 +8,7 @@ import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
+import com.dsg.wardstudy.type.UserType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -51,6 +52,7 @@ class ReservationRepositoryTest {
                 .build();
 
         userGroup = UserGroup.builder()
+                .userType(UserType.P)
                 .build();
 
         studyGroup = StudyGroup.builder()
