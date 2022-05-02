@@ -171,6 +171,7 @@ class StudyGroupServiceTest {
 
         // then - verify the output
         verify(studyGroupRepository).deleteById(studyGroupId);
+        assertThat(studyGroupRepository.findById(studyGroupId)).isEmpty();
 
     }
 
