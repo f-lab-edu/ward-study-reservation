@@ -3,6 +3,8 @@ package com.dsg.wardstudy.controller.studyGroup;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
+import com.dsg.wardstudy.exception.ErrorCode;
+import com.dsg.wardstudy.exception.ResourceNotFoundException;
 import com.dsg.wardstudy.service.studyGroup.StudyGroupService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,11 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -128,7 +128,7 @@ class StudyGroupControllerTest {
     public void getById_ThrowException() throws Exception {
         Long studyGroupId = 1L;
         // given - precondition or setup
-        given(studyGroupService.getById(studyGroupId)).willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+        given(studyGroupService.getById(studyGroupId)).willThrow(new ResourceNotFoundException(ErrorCode.NO_TARGET));
 
         // when - action or the behaviour that we are going test
         // then - verify the output

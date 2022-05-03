@@ -4,9 +4,11 @@ import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.reservation.Room;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
-import com.dsg.wardstudy.dto.reservation.ReservationDetails;
 import com.dsg.wardstudy.dto.reservation.ReservationCreateRequest;
+import com.dsg.wardstudy.dto.reservation.ReservationDetails;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
+import com.dsg.wardstudy.exception.ErrorCode;
+import com.dsg.wardstudy.exception.ResourceNotFoundException;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.reservation.RoomRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
@@ -15,10 +17,8 @@ import com.dsg.wardstudy.repository.user.UserRepository;
 import com.dsg.wardstudy.type.UserType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -42,11 +42,11 @@ public class ReservationService {
         validateCreateRequest(reservationRequest, studyGroupId);
 
         User user = userRepository.findById(reservationRequest.getUserId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
         StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
         Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
 
         Reservation reservation = mapToEntity(reservationRequest, user, studyGroup, room);
         Reservation saveReservation = reservationRepository.save(reservation);
@@ -61,7 +61,7 @@ public class ReservationService {
                 reservationRequest.getUserId(), studyGroupId).get();
 
         if (!userType.equals(UserType.L)) {
-            throw new IllegalStateException("userType이 리더인 분만 예약등록이 가능합니다.");
+            throw new IllegalStateException("user가 리더인 분만 예약등록이 가능합니다.");
         }
     }
 
@@ -99,7 +99,7 @@ public class ReservationService {
     @Transactional(readOnly = true)
     public ReservationDetails getByRoomIdAndReservationId(Long roomId, String reservationId) {
         Reservation reservation = reservationRepository.findByRoomIdAndId(roomId, reservationId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
         return mapToDto(reservation);
     }
 
@@ -109,12 +109,12 @@ public class ReservationService {
         validateUpdateRequest(reservationRequest);
 
         User user = userRepository.findById(reservationRequest.getUserId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
         Reservation oldReservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
         StudyGroup studyGroup = oldReservation.getStudyGroup();
         Room Room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -139,19 +139,20 @@ public class ReservationService {
     private void validateUpdateRequest(ReservationUpdateRequest reservationRequest) {
 
         StudyGroup studyGroup = studyGroupRepository.findById(reservationRequest.getStudyGroupId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
 
         UserType userType = userGroupRepository.findUserTypeByUserIdAndSGId(
                 reservationRequest.getUserId(), studyGroup.getId()).get();
         if (!userType.equals(UserType.L)) {
-            throw new IllegalStateException("userType이 리더인 분만 예약수정이 가능합니다.");
+            throw new IllegalStateException("user가 리더인 분만 예약수정이 가능합니다.");
         }
     }
 
     @Transactional
     public void deleteById(String reservationId) {
+        // TODO : 멱등성에 따라 고치기
         Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
         reservationRepository.delete(reservation);
     }
 
