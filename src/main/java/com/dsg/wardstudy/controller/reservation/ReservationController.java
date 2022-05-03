@@ -19,6 +19,7 @@ public class ReservationController {
 
     private final ReservationService reservationService;
 
+    // 리더일때만 예약 등록, 수정 가능
     // 예약 등록
     @PostMapping("/study-group/{studyGroupId}/room/{roomId}/reservation")
     public ResponseEntity<ReservationDetail> create(

@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReservationCreateRequest {
 
+    private Long userId;
     private String startTime;
-
     private String endTime;
 
 

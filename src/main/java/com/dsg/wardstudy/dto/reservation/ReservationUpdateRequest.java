@@ -8,6 +8,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReservationUpdateRequest {
 
+    private Long userId;
+
+    private Long studyGroupId;
+
     private int status;
 
     private String startTime;
