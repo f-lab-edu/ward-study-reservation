@@ -4,7 +4,7 @@ import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.reservation.Room;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
-import com.dsg.wardstudy.dto.reservation.ReservationDetail;
+import com.dsg.wardstudy.dto.reservation.ReservationDetails;
 import com.dsg.wardstudy.dto.reservation.ReservationCreateRequest;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
@@ -37,7 +37,7 @@ public class ReservationService {
     private final RoomRepository roomRepository;
 
     @Transactional
-    public ReservationDetail create(ReservationCreateRequest reservationRequest, Long studyGroupId, Long roomId) {
+    public ReservationDetails create(ReservationCreateRequest reservationRequest, Long studyGroupId, Long roomId) {
 
         validateCreateRequest(reservationRequest, studyGroupId);
 
@@ -66,7 +66,7 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationDetail> getAllByUserId(Long userId) {
+    public List<ReservationDetails> getAllByUserId(Long userId) {
         List<Long> sgIds = userGroupRepository.findSgIdsByUserId(userId);
 
         return reservationRepository.findByStudyGroupIds(sgIds).stream()
@@ -76,7 +76,7 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationDetail> getByRoomIdAndTimePeriod(Long roomId, String startTime, String endTime) {
+    public List<ReservationDetails> getByRoomIdAndTimePeriod(Long roomId, String startTime, String endTime) {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -90,14 +90,14 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationDetail> getByRoomId(Long roomId) {
+    public List<ReservationDetails> getByRoomId(Long roomId) {
         return reservationRepository.findByRoomId(roomId).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public ReservationDetail getByRoomIdAndReservationId(Long roomId, String reservationId) {
+    public ReservationDetails getByRoomIdAndReservationId(Long roomId, String reservationId) {
         Reservation reservation = reservationRepository.findByRoomIdAndId(roomId, reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         return mapToDto(reservation);
@@ -155,9 +155,9 @@ public class ReservationService {
         reservationRepository.delete(reservation);
     }
 
-    private ReservationDetail mapToDto(Reservation saveReservation) {
+    private ReservationDetails mapToDto(Reservation saveReservation) {
 
-        return ReservationDetail.builder()
+        return ReservationDetails.builder()
                 .id(saveReservation.getId())
                 .startTime(saveReservation.getStartTime())
                 .endTime(saveReservation.getEndTime())

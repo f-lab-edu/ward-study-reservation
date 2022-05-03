@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-public class ReservationDetail {
+public class ReservationDetails {
 
     private String id;
 
@@ -29,7 +29,7 @@ public class ReservationDetail {
     private Room room;
 
     @Builder
-    public ReservationDetail(String id, LocalDateTime startTime, LocalDateTime endTime, User user, StudyGroup studyGroup, Room room) {
+    public ReservationDetails(String id, LocalDateTime startTime, LocalDateTime endTime, User user, StudyGroup studyGroup, Room room) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
