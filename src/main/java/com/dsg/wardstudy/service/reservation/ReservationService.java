@@ -60,7 +60,7 @@ public class ReservationService {
         UserType userType = userGroupRepository.findUserTypeByUserIdAndSGId(
                 reservationRequest.getUserId(), studyGroupId).get();
 
-        if (userType.equals(UserType.P)) {
+        if (!userType.equals(UserType.L)) {
             throw new IllegalStateException("userType이 리더인 분만 예약등록이 가능합니다.");
         }
     }
@@ -146,7 +146,7 @@ public class ReservationService {
 
         UserType userType = userGroupRepository.findUserTypeByUserIdAndSGId(
                 reservationRequest.getUserId(), studyGroup.getId()).get();
-        if (userType.equals(UserType.P)) {
+        if (!userType.equals(UserType.L)) {
             throw new IllegalStateException("userType이 리더인 분만 예약수정이 가능합니다.");
         }
     }
