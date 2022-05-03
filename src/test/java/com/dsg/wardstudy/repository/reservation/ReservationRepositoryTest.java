@@ -225,8 +225,7 @@ class ReservationRepositoryTest {
         Reservation savedReservation = reservationRepository.save(reservation);
 
         // when - action or the behaviour that we are going test
-        Reservation findReservation = reservationRepository.findById(savedReservation.getId()).get();
-        reservationRepository.delete(findReservation);
+        Reservation oldReservation = reservationRepository.findById(savedReservation.getId()).get();
         Room findRoom = roomRepository.findById(savedRoom.getId()).get();
 
         Reservation newReservation = Reservation.builder()
@@ -234,6 +233,7 @@ class ReservationRepositoryTest {
                 .build();
 
         Reservation updatedReservation = reservationRepository.save(newReservation);
+        reservationRepository.delete(oldReservation);
         // then - verify the output
         assertThat(updatedReservation.getId()).isEqualTo(newReservation.getId());
 

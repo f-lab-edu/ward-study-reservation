@@ -105,17 +105,14 @@ public class ReservationService {
 
     @Transactional
     public String updateById(Long roomId, String reservationId, ReservationUpdateRequest reservationRequest) {
-
+        // update 로직 변경 : find -> new save -> old delete
         validateUpdateRequest(reservationRequest);
 
         User user = userRepository.findById(reservationRequest.getUserId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        Reservation findReservation = reservationRepository.findById(reservationId)
+        Reservation oldReservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        StudyGroup studyGroup = findReservation.getStudyGroup();
-        // update : find -> delete -> save
-        reservationRepository.delete(findReservation);
-
+        StudyGroup studyGroup = oldReservation.getStudyGroup();
         Room Room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
 
@@ -134,6 +131,7 @@ public class ReservationService {
                 .build();
 
         Reservation updatedReservation = reservationRepository.save(newReservation);
+        reservationRepository.delete(oldReservation);
 
         return updatedReservation.getId();
     }
