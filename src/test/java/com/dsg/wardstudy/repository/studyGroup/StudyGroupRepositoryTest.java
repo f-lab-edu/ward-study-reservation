@@ -96,13 +96,6 @@ class StudyGroupRepositoryTest {
     public void getAllByUserId(){
         // given - precondition or setup
         // TODO : User, UserGroup save API 만들어야
-//        User user = User.builder()
-//                .name("test")
-//                .email("test@test.com")
-//                .nickname("test")
-//                .password("1234")
-//                .build();
-//        User savedUser = userRepository.save(user);
         // when - action or the behaviour that we are going test
         List<UserGroup> iByUserId = userGroupRepository.findByUserId(2L);
         List<Long> studyGroupsIds = iByUserId.stream()

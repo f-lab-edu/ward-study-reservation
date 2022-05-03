@@ -12,16 +12,13 @@ public class ReservationUpdateRequest {
 
     private Long studyGroupId;
 
-    private int status;
-
     private String startTime;
 
     private String endTime;
 
 
     @Builder
-    public ReservationUpdateRequest(int status, String startTime, String endTime) {
-        this.status = status;
+    public ReservationUpdateRequest(String startTime, String endTime) {
         this.startTime = startTime;
         this.endTime = endTime;
     }

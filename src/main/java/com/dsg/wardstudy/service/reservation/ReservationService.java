@@ -126,7 +126,6 @@ public class ReservationService {
 
         Reservation newReservation = Reservation.builder()
                 .id(Room.getId() + "||" + reservationRequest.getStartTime())
-                .status(1)
                 .startTime(sTime)
                 .endTime(eTime)
                 .user(user)
@@ -162,7 +161,6 @@ public class ReservationService {
 
         return ReservationDetail.builder()
                 .id(saveReservation.getId())
-                .status(saveReservation.getStatus())
                 .startTime(saveReservation.getStartTime())
                 .endTime(saveReservation.getEndTime())
                 .user(saveReservation.getUser())
@@ -183,7 +181,6 @@ public class ReservationService {
 
         return Reservation.builder()
                 .id(room.getId() + "||" +reservationRequest.getStartTime())
-                .status(1)
                 .startTime(sTime)
                 .endTime(eTime)
                 .user(user)

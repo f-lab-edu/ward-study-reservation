@@ -16,8 +16,6 @@ public class ReservationDetail {
 
     private String id;
 
-    private int status;
-
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;
 
@@ -31,9 +29,8 @@ public class ReservationDetail {
     private Room room;
 
     @Builder
-    public ReservationDetail(String id, int status, LocalDateTime startTime, LocalDateTime endTime, User user, StudyGroup studyGroup, Room room) {
+    public ReservationDetail(String id, LocalDateTime startTime, LocalDateTime endTime, User user, StudyGroup studyGroup, Room room) {
         this.id = id;
-        this.status = status;
         this.startTime = startTime;
         this.endTime = endTime;
         this.user = user;
