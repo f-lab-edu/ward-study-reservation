@@ -150,9 +150,7 @@ public class ReservationService {
 
     @Transactional
     public void deleteById(String reservationId) {
-        // TODO : 멱등성에 따라 고치기
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
+        Reservation reservation = reservationRepository.findById(reservationId).get();
         reservationRepository.delete(reservation);
     }
 
