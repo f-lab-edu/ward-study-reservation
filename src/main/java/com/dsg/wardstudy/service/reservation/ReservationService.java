@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -150,8 +151,10 @@ public class ReservationService {
 
     @Transactional
     public void deleteById(String reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId).get();
-        reservationRepository.delete(reservation);
+        Optional<Reservation> reservation = reservationRepository.findById(reservationId);
+        if (reservation.isPresent()) {
+            reservationRepository.delete(reservation.get());
+        }
     }
 
     private ReservationDetails mapToDto(Reservation saveReservation) {
