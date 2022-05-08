@@ -18,7 +18,9 @@ public class ReservationUpdateRequest {
 
 
     @Builder
-    public ReservationUpdateRequest(String startTime, String endTime) {
+    public ReservationUpdateRequest(Long userId, Long studyGroupId, String startTime, String endTime) {
+        this.userId = userId;
+        this.studyGroupId = studyGroupId;
         this.startTime = startTime;
         this.endTime = endTime;
     }
