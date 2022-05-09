@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -62,7 +64,8 @@ class StudyGroupControllerTest {
                 .content(studyGroup.getContent())
                 .build();
 
-        given(studyGroupService.create(studyGroupRequest)).willReturn(studyGroupResponse);
+        given(studyGroupService.create(any(StudyGroupRequest.class)))
+                .willReturn(studyGroupResponse);
 
         // when - action or the behaviour that we are going test
         ResultActions resultActions = mockMvc.perform(post("/study-group")
@@ -112,7 +115,7 @@ class StudyGroupControllerTest {
                 .title(studyGroup.getTitle())
                 .content(studyGroup.getContent())
                 .build();
-        given(studyGroupService.getById(studyGroupId)).willReturn(studyGroupResponse);
+        given(studyGroupService.getById(anyLong())).willReturn(studyGroupResponse);
 
         // when - action or the behaviour that we are going test
         // then - verify the output
