@@ -8,6 +8,7 @@ import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.dto.reservation.ReservationCreateRequest;
 import com.dsg.wardstudy.dto.reservation.ReservationDetails;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
+import com.dsg.wardstudy.exception.ResourceNotFoundException;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.reservation.RoomRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
@@ -29,7 +31,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
@@ -129,6 +133,23 @@ class ReservationServiceTest {
         assertThat(details.getEndTime()).isEqualTo(reservation.getEndTime());
     }
 
+    @Test
+    public void getById_ThrowsException(){
+
+        String reservationId = "1||2020-11-03 06:30:00";
+
+        Mockito.lenient().when(reservationRepository.findByRoomId(room.getId()))
+                .thenReturn(List.of(reservation));
+        Mockito.lenient().when(reservationRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> {
+            reservationService.getByRoomIdAndReservationId(room.getId(), reservationId);
+        }).isInstanceOf(ResourceNotFoundException.class);
+
+
+    }
+
     // 해당 유저
     @Test
     void getAllByUserId() {
@@ -192,7 +213,6 @@ class ReservationServiceTest {
 
         assertThat(detailsList).isNotNull();
         assertThat(detailsList.size()).isEqualTo(2);
-
 
     }
 
