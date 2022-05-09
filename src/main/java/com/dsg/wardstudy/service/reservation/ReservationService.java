@@ -68,7 +68,9 @@ public class ReservationService {
 
     @Transactional(readOnly = true)
     public List<ReservationDetails> getAllByUserId(Long userId) {
-        List<Long> sgIds = userGroupRepository.findSgIdsByUserId(userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
+        List<Long> sgIds = userGroupRepository.findSgIdsByUserId(user.getId());
 
         return reservationRepository.findByStudyGroupIds(sgIds).stream()
                 .map(this::mapToDto)
@@ -79,12 +81,15 @@ public class ReservationService {
     @Transactional(readOnly = true)
     public List<ReservationDetails> getByRoomIdAndTimePeriod(Long roomId, String startTime, String endTime) {
 
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         LocalDateTime sTime = LocalDateTime.parse(startTime, formatter);
         LocalDateTime eTime = LocalDateTime.parse(endTime, formatter);
 
-        return reservationRepository.findByRoomIdAndTimePeriod(roomId, sTime, eTime).stream()
+        return reservationRepository.findByRoomIdAndTimePeriod(room.getId(), sTime, eTime).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
 
@@ -92,7 +97,10 @@ public class ReservationService {
 
     @Transactional(readOnly = true)
     public List<ReservationDetails> getByRoomId(Long roomId) {
-        return reservationRepository.findByRoomId(roomId).stream()
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
+
+        return reservationRepository.findByRoomId(room.getId()).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
