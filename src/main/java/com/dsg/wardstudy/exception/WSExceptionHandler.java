@@ -40,6 +40,24 @@ public class WSExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
+    // handle sepecific exceptions
+    @ExceptionHandler(WSApiException.class)
+    public ResponseEntity<ErrorDetails> handleWSApiException(
+            WSApiException exception,
+            WebRequest webRequest){
+
+        log.error("WSApiException: ", exception);
+
+        ErrorDetails errorDetails = ErrorDetails.builder()
+                .date(LocalDateTime.now())
+                .message(exception.getMessage())
+                .description(webRequest.getDescription(false))
+                .errorCode(exception.getErrorCode())
+                .build();
+
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
     // global exception
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetails> handleGlobalException(

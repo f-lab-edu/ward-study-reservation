@@ -9,6 +9,7 @@ import com.dsg.wardstudy.dto.reservation.ReservationDetails;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
 import com.dsg.wardstudy.exception.ErrorCode;
 import com.dsg.wardstudy.exception.ResourceNotFoundException;
+import com.dsg.wardstudy.exception.WSApiException;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.reservation.RoomRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
@@ -62,7 +63,7 @@ public class ReservationService {
                 reservationRequest.getUserId(), studyGroupId).get();
 
         if (!userType.equals(UserType.L)) {
-            throw new IllegalStateException("user가 리더인 분만 예약등록이 가능합니다.");
+            throw new WSApiException(ErrorCode.INVALID_REQUEST, "user가 리더인 분만 예약등록이 가능합니다.");
         }
     }
 
@@ -153,7 +154,7 @@ public class ReservationService {
         UserType userType = userGroupRepository.findUserTypeByUserIdAndSGId(
                 reservationRequest.getUserId(), studyGroup.getId()).get();
         if (!userType.equals(UserType.L)) {
-            throw new IllegalStateException("user가 리더인 분만 예약수정이 가능합니다.");
+            throw new WSApiException(ErrorCode.INVALID_REQUEST, "user가 리더인 분만 예약수정이 가능합니다.");
         }
     }
 
