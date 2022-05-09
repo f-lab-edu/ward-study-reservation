@@ -154,6 +154,8 @@ class ReservationServiceTest {
     @Test
     void getAllByUserId() {
 
+        given(userRepository.findById(user.getId()))
+                .willReturn(Optional.of(user));
         when(userGroupRepository.findSgIdsByUserId(user.getId()))
                 .thenReturn(List.of(studyGroup.getId()));
 
@@ -182,6 +184,9 @@ class ReservationServiceTest {
                 .endTime(LocalDateTime.of(2019, Month.OCTOBER, 3, 9, 30))
                 .build();
 
+        given(roomRepository.findById(room.getId()))
+                .willReturn(Optional.of(room));
+
         given(reservationRepository.findByRoomIdAndTimePeriod(room.getId(), startTime, endTime))
                 .willReturn(List.of(reservation, reservation1));
 
@@ -205,6 +210,8 @@ class ReservationServiceTest {
                 .startTime(LocalDateTime.of(2019, Month.OCTOBER, 3, 6, 30))
                 .endTime(LocalDateTime.of(2019, Month.OCTOBER, 3, 7, 30))
                 .build();
+        given(roomRepository.findById(room.getId()))
+                .willReturn(Optional.of(room));
         given(reservationRepository.findByRoomId(room.getId()))
                 .willReturn(List.of(reservation, reservation1));
 
@@ -219,8 +226,8 @@ class ReservationServiceTest {
     @Test
     void getByRoomIdAndReservationId() {
 
-        given(reservationRepository.findByRoomIdAndId(room.getId(), reservation.getId()))
-                .willReturn(Optional.of(reservation));
+        when(reservationRepository.findByRoomIdAndId(room.getId(), reservation.getId()))
+                .thenReturn(Optional.of(reservation));
 
         ReservationDetails details = reservationService.getByRoomIdAndReservationId(room.getId(), reservation.getId());
         log.info("details: {}", details);

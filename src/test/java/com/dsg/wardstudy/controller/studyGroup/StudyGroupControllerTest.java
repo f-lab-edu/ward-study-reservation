@@ -140,6 +140,7 @@ class StudyGroupControllerTest {
 
     @Test
     public void getAllByUserId() throws Exception {
+        // TODO
         // given - precondition or setup
 
         // when - action or the behaviour that we are going test
