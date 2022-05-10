@@ -45,7 +45,7 @@ class StudyGroupControllerIntegrationTest {
     }
 
     @Test
-    public void create() throws Exception {
+    public void givenStudyGroupRequest_whenCreate_thenReturnStudyGroupResponse() throws Exception {
         // given - precondition or setup
         StudyGroupRequest studyGroupRequest = StudyGroupRequest.builder()
                 .title(studyGroup.getTitle())
@@ -67,7 +67,7 @@ class StudyGroupControllerIntegrationTest {
     }
 
     @Test
-    public void getAll() throws Exception {
+    public void givenListOfStudyGroupResponses_whenGet_thenReturnStudyGroupResponseList() throws Exception {
         // given - precondition or setup
         int length = 3;
         IntStream.rangeClosed(1, length).forEach(i -> {
@@ -88,7 +88,7 @@ class StudyGroupControllerIntegrationTest {
     }
 
     @Test
-    public void getById() throws Exception {
+    public void givenStudyGroupId_whenGet_thenReturnStudyGroupResponse() throws Exception {
         // given - precondition or setup
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
 
@@ -103,7 +103,7 @@ class StudyGroupControllerIntegrationTest {
     }
 
     @Test
-    public void getById_ThrowException() throws Exception {
+    public void givenInvalidStudyGroupId_whenGet_thenReturnEmpty() throws Exception {
         Long studyGroupId = 100L;
         // given - precondition or setup
         studyGroupRepository.save(studyGroup);
@@ -118,7 +118,7 @@ class StudyGroupControllerIntegrationTest {
 
     @Test
     public void getAllByUserId() throws Exception {
-        // TODO
+        // TODO : controller 메서드 만들기
         // given - precondition or setup
 
         // when - action or the behaviour that we are going test
@@ -128,7 +128,7 @@ class StudyGroupControllerIntegrationTest {
     }
 
     @Test
-    public void updateById() throws Exception {
+    public void givenStudyGroupIdAndUpdatedStudyGroupRequest_whenUpdate_thenReturnUpdateStudyGroupId() throws Exception {
         // given - precondition or setup
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
 
@@ -149,7 +149,7 @@ class StudyGroupControllerIntegrationTest {
     }
 
     @Test
-    public void deleteById() throws Exception {
+    public void givenStudyGroupId_whenDelete_thenReturn200() throws Exception {
         // given - precondition or setup
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
 

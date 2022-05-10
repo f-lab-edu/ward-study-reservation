@@ -71,10 +71,8 @@ class ReservationRepositoryIntegrationTest {
     }
 
     @Test
-    public void create() {
+    public void givenReservation_whenSave_thenReturnSavedReservation() {
         // given - precondition or setup
-        // when - action or the behaviour that we are going test
-
         User savedUser = userRepository.save(user);
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
         Room savedRoom = roomRepository.save(room);
@@ -87,7 +85,6 @@ class ReservationRepositoryIntegrationTest {
         LocalDateTime sTime = LocalDateTime.parse(startTime, formatter);
         LocalDateTime eTime = LocalDateTime.parse(endTime, formatter);
 
-
         Reservation reservation = Reservation.builder()
                 .id("3||2022-04-24 10:30:00")
                 .startTime(sTime)
@@ -97,6 +94,7 @@ class ReservationRepositoryIntegrationTest {
                 .room(savedRoom)
                 .build();
 
+        // when - action or the behaviour that we are going test
         Reservation savedReservation = reservationRepository.save(reservation);
         log.info("savedReservation: {}", savedReservation);
 
@@ -111,7 +109,7 @@ class ReservationRepositoryIntegrationTest {
     }
 
     @Test
-    public void getByRoomIdAndTimePeriod() {
+    public void givenRoomIdAndTimePeriod_whenFindByIdAndTimePeriod_thenReturnReservationList() {
         // given - precondition or setup
         User savedUser = userRepository.save(user);
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
@@ -146,7 +144,7 @@ class ReservationRepositoryIntegrationTest {
     }
 
     @Test
-    public void getByRoomId() {
+    public void givenRoomId_whenFindById_thenReturnReservationList() {
         // given - precondition or setup
         Room savedRoom = roomRepository.save(room);
 
@@ -167,7 +165,7 @@ class ReservationRepositoryIntegrationTest {
     }
 
     @Test
-    public void getAllByUserId() {
+    public void givenUserId_whenFindById_thenReturnReservationList() {
         // given - precondition or setup
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
         User savedUser = userRepository.save(user);
@@ -196,7 +194,7 @@ class ReservationRepositoryIntegrationTest {
     }
 
     @Test
-    public void findByRoomIdAndId() {
+    public void givenRoomIdAndReservationId_whenFindById_thenReturnReservation() {
         // given - precondition or setup
         Room savedRoom = roomRepository.save(room);
 
@@ -215,9 +213,8 @@ class ReservationRepositoryIntegrationTest {
     }
 
     @Test
-    public void updateById() {
+    public void givenReservation_whenUpdate_thenReturnUpdatedReservationId() {
         // given - precondition or setup
-
         Room savedRoom = roomRepository.save(room);
 
         String startTime = "2021-08-07 12:00:00";
@@ -228,7 +225,6 @@ class ReservationRepositoryIntegrationTest {
 
         Reservation savedReservation = reservationRepository.save(reservation);
 
-        // when - action or the behaviour that we are going test
         Reservation oldReservation = reservationRepository.findById(savedReservation.getId()).get();
         Room findRoom = roomRepository.findById(savedRoom.getId()).get();
 
@@ -236,6 +232,7 @@ class ReservationRepositoryIntegrationTest {
                 .id(findRoom.getId() + "||" + startTime)
                 .build();
 
+        // when - action or the behaviour that we are going test
         Reservation updatedReservation = reservationRepository.save(newReservation);
         reservationRepository.delete(oldReservation);
         // then - verify the output
@@ -244,7 +241,7 @@ class ReservationRepositoryIntegrationTest {
     }
 
     @Test
-    public void deleteById() {
+    public void givenReservation_whenDelete_thenRemoveReservation() {
         // given - precondition or setup
         Reservation reservation = Reservation.builder()
                 .id("3||2022-04-24 10:30:00")

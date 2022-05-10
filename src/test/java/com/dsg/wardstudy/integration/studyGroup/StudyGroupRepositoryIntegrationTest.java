@@ -46,7 +46,7 @@ class StudyGroupRepositoryIntegrationTest {
 
     @Test
     @DisplayName("스터디그룹 생성테스트")
-    public void saveTest() {
+    public void givenStudyGroup_whenSave_thenReturnSavedStudyGroup() {
         // given - precondition or setup
         // when - action or the behaviour that we are going test
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
@@ -60,7 +60,7 @@ class StudyGroupRepositoryIntegrationTest {
 
     @Test
     @DisplayName("스터디그룹 전체조회")
-    public void getAllTest() {
+    public void givenStudyGroupList_whenFindAll_thenStudyGroupList() {
         // given - precondition or setup
         IntStream.rangeClosed(1, 10).forEach(i -> {
             StudyGroup studyGroup = StudyGroup.builder()
@@ -81,7 +81,7 @@ class StudyGroupRepositoryIntegrationTest {
 
     @Test
     @DisplayName("스터디그룹 상세보기")
-    public void getById() {
+    public void givenStudyGroup_whenFindById_thenReturnStudyGroup() {
         // given - precondition or setup
         StudyGroup savedStudyGroup = studyGroupRepository.save(this.studyGroup);
         // when - action or the behaviour that we are going test
@@ -94,7 +94,7 @@ class StudyGroupRepositoryIntegrationTest {
 
     @Test
     @DisplayName("스터디그룹들 userId로 가져오기")
-    public void getAllByUserId() {
+    public void givenUserId_whenFindByUserId_thenReturnStudyGroupsIdList() {
         // given - precondition or setup
         // TODO : User, UserGroup save API 만들어야
 //        User user = User.builder()
@@ -120,7 +120,7 @@ class StudyGroupRepositoryIntegrationTest {
 
     @Test
     @DisplayName("스터디그룹 수정")
-    public void updateById() {
+    public void givenStudyGroup_whenUpdateStudyGroup_thenReturnUpdatedStudyGroup() {
         // given - precondition or setup
         studyGroupRepository.save(studyGroup);
 
@@ -135,7 +135,7 @@ class StudyGroupRepositoryIntegrationTest {
 
     @Test
     @DisplayName("스터디그룹 삭제")
-    public void deleteById() {
+    public void givenStudyGroup_whenDelete_thenRemoveStudyGroup() {
         // given - precondition or setup
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
         // when - action or the behaviour that we are going test
