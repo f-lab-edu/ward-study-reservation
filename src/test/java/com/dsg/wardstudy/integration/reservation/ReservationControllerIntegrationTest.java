@@ -132,9 +132,9 @@ class ReservationControllerIntegrationTest {
     @DisplayName("해당 룸 예약 조회 startTime & endTime(o)")
     void getByRoomIdAndTimePeriod() throws Exception {
 
-        LongStream.rangeClosed(1,5).forEach(i -> {
+        LongStream.rangeClosed(1, 5).forEach(i -> {
             Reservation reservation = Reservation.builder()
-                    .id(i+"||"+"2019-11-03 06:30:00")
+                    .id(i + "||" + "2019-11-03 06:30:00")
                     .user(user)
                     .studyGroup(studyGroup)
                     .build();
@@ -160,9 +160,9 @@ class ReservationControllerIntegrationTest {
     @DisplayName("해당 룸 예약 조회")
     void getByRoomId() throws Exception {
 
-        IntStream.rangeClosed(1,5).forEach(i -> {
+        IntStream.rangeClosed(1, 5).forEach(i -> {
             Reservation reservation = Reservation.builder()
-                    .id(i+"||"+"2019-11-03 06:30:00")
+                    .id(i + "||" + "2019-11-03 06:30:00")
                     .user(user)
                     .studyGroup(studyGroup)
                     .room(room)
@@ -194,9 +194,9 @@ class ReservationControllerIntegrationTest {
     @DisplayName("해당 유저 예약 조회")
     void getAllByUserId() throws Exception {
 
-        IntStream.rangeClosed(1,5).forEach(i -> {
+        IntStream.rangeClosed(1, 5).forEach(i -> {
             Reservation reservation = Reservation.builder()
-                    .id(i+"||"+"2019-11-03 06:30:00")
+                    .id(i + "||" + "2019-11-03 06:30:00")
                     .user(user)
                     .studyGroup(studyGroup)
                     .room(room)

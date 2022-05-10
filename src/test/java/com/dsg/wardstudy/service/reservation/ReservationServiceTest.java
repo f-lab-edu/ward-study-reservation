@@ -134,7 +134,7 @@ class ReservationServiceTest {
     }
 
     @Test
-    public void getById_ThrowsException(){
+    public void getById_ThrowsException() {
 
         String reservationId = "1||2020-11-03 06:30:00";
 

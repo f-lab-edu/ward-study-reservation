@@ -18,7 +18,7 @@ class UserGroupRepositoryTest {
     private UserGroupRepository userGroupRepository;
 
     @Test
-    public void findUserTypeByUserId(){
+    public void findUserTypeByUserId() {
         // given - precondition or setup
 
         // when - action or the behaviour that we are going test

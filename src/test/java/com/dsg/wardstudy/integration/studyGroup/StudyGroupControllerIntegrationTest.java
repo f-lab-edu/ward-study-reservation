@@ -72,8 +72,8 @@ class StudyGroupControllerIntegrationTest {
         int length = 3;
         IntStream.rangeClosed(1, length).forEach(i -> {
             StudyGroup studyGroup = StudyGroup.builder()
-                    .title("sg_dsg"+"_"+i)
-                    .content("spring_study"+"_"+i)
+                    .title("sg_dsg" + "_" + i)
+                    .content("spring_study" + "_" + i)
                     .build();
             studyGroupRepository.save(studyGroup);
         });

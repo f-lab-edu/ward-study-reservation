@@ -165,7 +165,7 @@ class ReservationControllerTest {
                 .room(room)
                 .build();
 
-        IntStream.rangeClosed(1,5).forEach(i -> {
+        IntStream.rangeClosed(1, 5).forEach(i -> {
             detailsList.add(reservationDetails);
         });
 
@@ -201,7 +201,7 @@ class ReservationControllerTest {
                 .room(room)
                 .build();
 
-        IntStream.rangeClosed(1,5).forEach(i -> {
+        IntStream.rangeClosed(1, 5).forEach(i -> {
             detailsList.add(reservationDetails);
         });
 
@@ -247,7 +247,7 @@ class ReservationControllerTest {
                 .room(room)
                 .build();
 
-        IntStream.rangeClosed(1,5).forEach(i -> {
+        IntStream.rangeClosed(1, 5).forEach(i -> {
             detailsList.add(reservationDetails);
         });
 

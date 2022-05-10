@@ -71,7 +71,7 @@ class ReservationRepositoryIntegrationTest {
     }
 
     @Test
-    public void create(){
+    public void create() {
         // given - precondition or setup
         // when - action or the behaviour that we are going test
 
@@ -111,7 +111,7 @@ class ReservationRepositoryIntegrationTest {
     }
 
     @Test
-    public void getByRoomIdAndTimePeriod(){
+    public void getByRoomIdAndTimePeriod() {
         // given - precondition or setup
         User savedUser = userRepository.save(user);
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
@@ -146,7 +146,7 @@ class ReservationRepositoryIntegrationTest {
     }
 
     @Test
-    public void getByRoomId(){
+    public void getByRoomId() {
         // given - precondition or setup
         Room savedRoom = roomRepository.save(room);
 
@@ -167,18 +167,18 @@ class ReservationRepositoryIntegrationTest {
     }
 
     @Test
-    public void getAllByUserId(){
+    public void getAllByUserId() {
         // given - precondition or setup
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
         User savedUser = userRepository.save(user);
 
         userGroup.setUser(savedUser);
 
-        IntStream.rangeClosed(1,4).forEach(i -> {
+        IntStream.rangeClosed(1, 4).forEach(i -> {
             userGroup.setStudyGroup(savedStudyGroup);
             userGroupRepository.save(userGroup);
             Reservation reservation = Reservation.builder()
-                    .id("3||2022-04-0"+i+" 10:30:00")
+                    .id("3||2022-04-0" + i + " 10:30:00")
                     .studyGroup(savedStudyGroup)
                     .build();
             reservationRepository.save(reservation);
@@ -196,7 +196,7 @@ class ReservationRepositoryIntegrationTest {
     }
 
     @Test
-    public void findByRoomIdAndId(){
+    public void findByRoomIdAndId() {
         // given - precondition or setup
         Room savedRoom = roomRepository.save(room);
 
@@ -215,7 +215,7 @@ class ReservationRepositoryIntegrationTest {
     }
 
     @Test
-    public void updateById(){
+    public void updateById() {
         // given - precondition or setup
 
         Room savedRoom = roomRepository.save(room);
@@ -244,7 +244,7 @@ class ReservationRepositoryIntegrationTest {
     }
 
     @Test
-    public void deleteById(){
+    public void deleteById() {
         // given - precondition or setup
         Reservation reservation = Reservation.builder()
                 .id("3||2022-04-24 10:30:00")
