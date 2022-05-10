@@ -52,7 +52,7 @@ class StudyGroupControllerTest {
     }
 
     @Test
-    public void create() throws Exception {
+    public void givenStudyGroupRequest_whenCreate_thenReturnStudyGroupResponse() throws Exception {
         // given - precondition or setup
         StudyGroupRequest studyGroupRequest = StudyGroupRequest.builder()
                 .title(studyGroup.getTitle())
@@ -82,7 +82,7 @@ class StudyGroupControllerTest {
     }
 
     @Test
-    public void getAll() throws Exception {
+    public void givenListOfStudyGroupResponses_whenGet_thenReturnStudyGroupResponseList() throws Exception {
         // given - precondition or setup
         int length = 10;
         List<StudyGroupResponse> studyGroupResponses = new ArrayList<>();
@@ -108,7 +108,7 @@ class StudyGroupControllerTest {
     }
 
     @Test
-    public void getById() throws Exception {
+    public void givenStudyGroupId_whenGet_thenReturnStudyGroupResponse() throws Exception {
         Long studyGroupId = 1L;
         // given - precondition or setup
         StudyGroupResponse studyGroupResponse = StudyGroupResponse.builder()
@@ -128,7 +128,7 @@ class StudyGroupControllerTest {
     }
 
     @Test
-    public void getById_ThrowException() throws Exception {
+    public void givenInvalidStudyGroupId_whenGet_thenReturnEmpty() throws Exception {
         Long studyGroupId = 1L;
         // given - precondition or setup
         given(studyGroupService.getById(studyGroupId)).willThrow(new ResourceNotFoundException(ErrorCode.NO_TARGET));
@@ -143,7 +143,7 @@ class StudyGroupControllerTest {
 
     @Test
     public void getAllByUserId() throws Exception {
-        // TODO
+        // TODO : controller 메서드 만들기
         // given - precondition or setup
 
         // when - action or the behaviour that we are going test
@@ -153,7 +153,7 @@ class StudyGroupControllerTest {
     }
 
     @Test
-    public void updateById() throws Exception {
+    public void givenStudyGroupIdAndUpdatedStudyGroupRequest_whenUpdate_thenReturnUpdateStudyGroupId() throws Exception {
         // given - precondition or setup
         Long studyGroupId = 1L;
 
@@ -176,7 +176,7 @@ class StudyGroupControllerTest {
     }
 
     @Test
-    public void deleteById() throws Exception {
+    public void givenStudyGroupId_whenDelete_thenReturn200() throws Exception {
         // given - precondition or setup
         Long studyGroupId = 1L;
         willDoNothing().given(studyGroupService).deleteById(studyGroupId);
