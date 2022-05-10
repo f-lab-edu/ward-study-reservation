@@ -151,7 +151,7 @@ public class ReservationService {
                     throw new ResourceNotFoundException(ErrorCode.NO_TARGET);
                 });
         StudyGroup studyGroup = oldReservation.getStudyGroup();
-        Room Room = roomRepository.findById(roomId)
+        Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> {
                     log.error("room 대상이 없습니다. roomId: {}", roomId);
                     throw new ResourceNotFoundException(ErrorCode.NO_TARGET);
@@ -163,18 +163,22 @@ public class ReservationService {
         LocalDateTime eTime = LocalDateTime.parse(reservationRequest.getEndTime(), formatter);
 
         Reservation newReservation = Reservation.builder()
-                .id(Room.getId() + "||" + reservationRequest.getStartTime())
+                .id(genReservationId(room, reservationRequest.getStartTime()))
                 .startTime(sTime)
                 .endTime(eTime)
                 .user(user)
                 .studyGroup(studyGroup)
-                .room(Room)
+                .room(room)
                 .build();
 
         Reservation updatedReservation = reservationRepository.save(newReservation);
         reservationRepository.delete(oldReservation);
 
         return updatedReservation.getId();
+    }
+
+    private String genReservationId(Room room, String startTime) {
+        return room.getId() + "||" + startTime;
     }
 
     private void validateUpdateRequest(ReservationUpdateRequest reservationRequest) {
@@ -224,7 +228,7 @@ public class ReservationService {
         LocalDateTime eTime = LocalDateTime.parse(reservationRequest.getEndTime(), formatter);
 
         return Reservation.builder()
-                .id(room.getId() + "||" + reservationRequest.getStartTime())
+                .id(genReservationId(room, reservationRequest.getStartTime()))
                 .startTime(sTime)
                 .endTime(eTime)
                 .user(user)
