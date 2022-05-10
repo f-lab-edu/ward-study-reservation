@@ -36,8 +36,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -100,7 +99,8 @@ class ReservationServiceTest {
     }
 
     @Test
-    void create() {
+    void givenReservation_whenSave_thenReturnReservationDetails() {
+        // given - precondition or setup
         // LocalDateTime -> String 으로 변환
         String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -125,17 +125,20 @@ class ReservationServiceTest {
         given(reservationRepository.save(any(Reservation.class)))
                 .willReturn(reservation);
 
+        // when - action or the behaviour that we are going test
         ReservationDetails details = reservationService.create(createRequest, studyGroup.getId(), room.getId());
         log.info("details: {}", details);
 
+        // then - verify the output
         assertThat(details).isNotNull();
         assertThat(details.getStartTime()).isEqualTo(reservation.getStartTime());
         assertThat(details.getEndTime()).isEqualTo(reservation.getEndTime());
     }
 
     @Test
-    public void getById_ThrowsException() {
-
+    public void givenRoomIdAndReservationId_whenGetById_thenReturnThrowException() {
+        // getById_ThrowsException
+        // given - precondition or setup
         String reservationId = "1||2020-11-03 06:30:00";
 
         Mockito.lenient().when(reservationRepository.findByRoomId(room.getId()))
@@ -143,17 +146,22 @@ class ReservationServiceTest {
         Mockito.lenient().when(reservationRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
 
+        // when - action or the behaviour that we are going test
         assertThatThrownBy(() -> {
             reservationService.getByRoomIdAndReservationId(room.getId(), reservationId);
         }).isInstanceOf(ResourceNotFoundException.class);
 
+        // then - verify the output
+        verify(reservationRepository, never()).findByRoomId(anyLong());
+        verify(reservationRepository, never()).findById(anyLong());
 
     }
 
     // 해당 유저
     @Test
-    void getAllByUserId() {
-
+    void givenUserId_whenGetAllById_thenReturnReservationDetailsList() {
+        // getAllByUserId
+        // given - precondition or setup
         given(userRepository.findById(user.getId()))
                 .willReturn(Optional.of(user));
         when(userGroupRepository.findSgIdsByUserId(user.getId()))
@@ -162,16 +170,20 @@ class ReservationServiceTest {
         when(reservationRepository.findByStudyGroupIds(List.of(studyGroup.getId())))
                 .thenReturn(List.of(reservation));
 
+        // when - action or the behaviour that we are going test
         List<ReservationDetails> detailsList = reservationService.getAllByUserId(user.getId());
         log.info("detailsList: {}", detailsList);
 
+        // then - verify the output
         assertThat(detailsList).isNotNull();
         assertThat(detailsList.size()).isEqualTo(1);
 
     }
 
     @Test
-    void getByRoomIdAndTimePeriod() {
+    void givenRoomIdAndTimePeriod_whenGetAllById_thenReturnReservationDetailsList() {
+        // getByRoomIdAndTimePeriod
+        // given - precondition or setup
         LocalDateTime startTime = LocalDateTime.of(2019, Month.OCTOBER, 3, 5, 30);
 
         LocalDateTime endTime = LocalDateTime.of(2019, Month.OCTOBER, 3, 9, 30);
@@ -193,16 +205,19 @@ class ReservationServiceTest {
         String sTime = startTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String eTime = endTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
+        // when - action or the behaviour that we are going test
         List<ReservationDetails> detailsList = reservationService.getByRoomIdAndTimePeriod(room.getId(), sTime, eTime);
         log.info("detailsList: {}", detailsList);
 
+        // then - verify the output
         assertThat(detailsList).isNotNull();
         assertThat(detailsList.size()).isEqualTo(2);
     }
 
     @Test
-    void getByRoomId() {
-
+    void givenRoomId_whenGetAllById_thenReturnReservationDetailsList() {
+        // getByRoomId
+        // given - precondition or setup
         Reservation reservation1 = Reservation.builder()
                 .id("1||2019-10-03 06:30:00")
                 .room(room)
@@ -215,23 +230,28 @@ class ReservationServiceTest {
         given(reservationRepository.findByRoomId(room.getId()))
                 .willReturn(List.of(reservation, reservation1));
 
+        // when - action or the behaviour that we are going test
         List<ReservationDetails> detailsList = reservationService.getByRoomId(room.getId());
         log.info("detailsList: {}", detailsList);
 
+        // then - verify the output
         assertThat(detailsList).isNotNull();
         assertThat(detailsList.size()).isEqualTo(2);
 
     }
 
     @Test
-    void getByRoomIdAndReservationId() {
-
+    void givenRoomIdAndReservationId_whenGetAllById_thenReturnReservationDetails() {
+        // getByRoomIdAndReservationId
+        // given - precondition or setup
         when(reservationRepository.findByRoomIdAndId(room.getId(), reservation.getId()))
                 .thenReturn(Optional.of(reservation));
 
+        // when - action or the behaviour that we are going test
         ReservationDetails details = reservationService.getByRoomIdAndReservationId(room.getId(), reservation.getId());
         log.info("details: {}", details);
 
+        // then - verify the output
         assertThat(details).isNotNull();
         assertThat(details.getId()).isEqualTo(reservation.getId());
         assertThat(details.getStartTime()).isEqualTo(reservation.getStartTime());
@@ -239,8 +259,8 @@ class ReservationServiceTest {
     }
 
     @Test
-    void updateById() {
-
+    void givenReservationUpdateRequest_whenUpdate_thenReturnUpdatedReservationId() {
+        // given - precondition or setup
         String sTime = LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30)
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String eTime = LocalDateTime.of(2022, Month.NOVEMBER, 3, 7, 30)
@@ -278,22 +298,26 @@ class ReservationServiceTest {
         // old reservation 제거
         willDoNothing().given(reservationRepository).delete(reservation);
 
+        // when - action or the behaviour that we are going test
         String updateById = reservationService.updateById(room.getId(), reservation.getId(), updateRequest);
         log.info("updateById: {}", updateById);
 
+        // then - verify the output
         assertThat(updateById).isNotNull();
         assertThat(updateById).isEqualTo(newReservation.getId());
     }
 
     @Test
-    void deleteById() {
-
+    void givenReservationId_whenDelete_thenNothing() {
+        // given - precondition or setup
         given(reservationRepository.findById(reservation.getId()))
                 .willReturn(Optional.of(reservation));
         willDoNothing().given(reservationRepository).delete(reservation);
 
+        // when - action or the behaviour that we are going test
         reservationService.deleteById(reservation.getId());
 
+        // then - verify the output
         verify(reservationRepository).delete(reservation);
 
     }
