@@ -8,8 +8,7 @@ import lombok.Getter;
 public enum UserType {
 
     P("Participant"),
-    L("Leader")
-    ;
+    L("Leader");
 
     private final String description;
 }

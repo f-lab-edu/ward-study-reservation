@@ -1,32 +1,21 @@
 package com.dsg.wardstudy.integration.studyGroup;
 
-import com.dsg.wardstudy.controller.studyGroup.StudyGroupController;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
-import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
-import com.dsg.wardstudy.service.studyGroup.StudyGroupService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.willDoNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -83,8 +72,8 @@ class StudyGroupControllerIntegrationTest {
         int length = 3;
         IntStream.rangeClosed(1, length).forEach(i -> {
             StudyGroup studyGroup = StudyGroup.builder()
-                    .title("sg_dsg"+"_"+i)
-                    .content("spring_study"+"_"+i)
+                    .title("sg_dsg" + "_" + i)
+                    .content("spring_study" + "_" + i)
                     .build();
             studyGroupRepository.save(studyGroup);
         });
@@ -129,6 +118,7 @@ class StudyGroupControllerIntegrationTest {
 
     @Test
     public void getAllByUserId() throws Exception {
+        // TODO
         // given - precondition or setup
 
         // when - action or the behaviour that we are going test

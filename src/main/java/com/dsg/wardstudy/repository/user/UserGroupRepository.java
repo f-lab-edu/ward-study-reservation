@@ -11,13 +11,13 @@ import java.util.Optional;
 
 public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
 
-        @Query("select ug from UserGroup ug left join fetch ug.user where ug.user.id = :userId")
-        List<UserGroup> findByUserId(@Param("userId") Long userId);
+    @Query("select ug from UserGroup ug left join fetch ug.user where ug.user.id = :userId")
+    List<UserGroup> findByUserId(@Param("userId") Long userId);
 
-        @Query("select ug.userType from UserGroup ug where ug.user.id = :userId and ug.studyGroup.id = :sgId")
-        Optional<UserType> findUserTypeByUserIdAndSGId(@Param("userId") Long userId, @Param("sgId") Long sgId);
+    @Query("select ug.userType from UserGroup ug where ug.user.id = :userId and ug.studyGroup.id = :sgId")
+    Optional<UserType> findUserTypeByUserIdAndSGId(@Param("userId") Long userId, @Param("sgId") Long sgId);
 
-        @Query("select ug.studyGroup.id from UserGroup ug where ug.user.id = :userId")
-        List<Long> findSgIdsByUserId(@Param("userId") Long userId);
+    @Query("select ug.studyGroup.id from UserGroup ug where ug.user.id = :userId")
+    List<Long> findSgIdsByUserId(@Param("userId") Long userId);
 
 }

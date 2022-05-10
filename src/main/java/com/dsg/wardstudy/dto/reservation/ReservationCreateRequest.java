@@ -14,7 +14,8 @@ public class ReservationCreateRequest {
 
 
     @Builder
-    public ReservationCreateRequest(String startTime, String endTime) {
+    public ReservationCreateRequest(Long userId, String startTime, String endTime) {
+        this.userId = userId;
         this.startTime = startTime;
         this.endTime = endTime;
     }

@@ -4,9 +4,12 @@ import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.reservation.Room;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
-import com.dsg.wardstudy.dto.reservation.ReservationDetail;
 import com.dsg.wardstudy.dto.reservation.ReservationCreateRequest;
+import com.dsg.wardstudy.dto.reservation.ReservationDetails;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
+import com.dsg.wardstudy.exception.ErrorCode;
+import com.dsg.wardstudy.exception.ResourceNotFoundException;
+import com.dsg.wardstudy.exception.WSApiException;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.reservation.RoomRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
@@ -15,14 +18,13 @@ import com.dsg.wardstudy.repository.user.UserRepository;
 import com.dsg.wardstudy.type.UserType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -37,16 +39,16 @@ public class ReservationService {
     private final RoomRepository roomRepository;
 
     @Transactional
-    public ReservationDetail create(ReservationCreateRequest reservationRequest, Long studyGroupId, Long roomId) {
+    public ReservationDetails create(ReservationCreateRequest reservationRequest, Long studyGroupId, Long roomId) {
 
         validateCreateRequest(reservationRequest, studyGroupId);
 
         User user = userRepository.findById(reservationRequest.getUserId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
         StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
         Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
 
         Reservation reservation = mapToEntity(reservationRequest, user, studyGroup, room);
         Reservation saveReservation = reservationRepository.save(reservation);
@@ -60,14 +62,16 @@ public class ReservationService {
         UserType userType = userGroupRepository.findUserTypeByUserIdAndSGId(
                 reservationRequest.getUserId(), studyGroupId).get();
 
-        if (userType.equals(UserType.P)) {
-            throw new IllegalStateException("userType이 리더인 분만 예약등록이 가능합니다.");
+        if (!userType.equals(UserType.L)) {
+            throw new WSApiException(ErrorCode.INVALID_REQUEST, "user가 리더인 분만 예약등록이 가능합니다.");
         }
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationDetail> getAllByUserId(Long userId) {
-        List<Long> sgIds = userGroupRepository.findSgIdsByUserId(userId);
+    public List<ReservationDetails> getAllByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
+        List<Long> sgIds = userGroupRepository.findSgIdsByUserId(user.getId());
 
         return reservationRepository.findByStudyGroupIds(sgIds).stream()
                 .map(this::mapToDto)
@@ -76,48 +80,51 @@ public class ReservationService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationDetail> getByRoomIdAndTimePeriod(Long roomId, String startTime, String endTime) {
+    public List<ReservationDetails> getByRoomIdAndTimePeriod(Long roomId, String startTime, String endTime) {
+
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
         LocalDateTime sTime = LocalDateTime.parse(startTime, formatter);
         LocalDateTime eTime = LocalDateTime.parse(endTime, formatter);
 
-        return reservationRepository.findByRoomIdAndTimePeriod(roomId, sTime, eTime).stream()
+        return reservationRepository.findByRoomIdAndTimePeriod(room.getId(), sTime, eTime).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
 
     }
 
     @Transactional(readOnly = true)
-    public List<ReservationDetail> getByRoomId(Long roomId) {
-        return reservationRepository.findByRoomId(roomId).stream()
+    public List<ReservationDetails> getByRoomId(Long roomId) {
+        Room room = roomRepository.findById(roomId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
+
+        return reservationRepository.findByRoomId(room.getId()).stream()
                 .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public ReservationDetail getByRoomIdAndReservationId(Long roomId, String reservationId) {
+    public ReservationDetails getByRoomIdAndReservationId(Long roomId, String reservationId) {
         Reservation reservation = reservationRepository.findByRoomIdAndId(roomId, reservationId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
         return mapToDto(reservation);
     }
 
     @Transactional
     public String updateById(Long roomId, String reservationId, ReservationUpdateRequest reservationRequest) {
-
+        // update 로직 변경 : find -> new save -> old delete
         validateUpdateRequest(reservationRequest);
 
         User user = userRepository.findById(reservationRequest.getUserId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        Reservation findReservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        StudyGroup studyGroup = findReservation.getStudyGroup();
-        // update : find -> delete -> save
-        reservationRepository.delete(findReservation);
-
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
+        Reservation oldReservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
+        StudyGroup studyGroup = oldReservation.getStudyGroup();
         Room Room = roomRepository.findById(roomId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -126,7 +133,6 @@ public class ReservationService {
 
         Reservation newReservation = Reservation.builder()
                 .id(Room.getId() + "||" + reservationRequest.getStartTime())
-                .status(1)
                 .startTime(sTime)
                 .endTime(eTime)
                 .user(user)
@@ -135,6 +141,7 @@ public class ReservationService {
                 .build();
 
         Reservation updatedReservation = reservationRepository.save(newReservation);
+        reservationRepository.delete(oldReservation);
 
         return updatedReservation.getId();
     }
@@ -142,27 +149,27 @@ public class ReservationService {
     private void validateUpdateRequest(ReservationUpdateRequest reservationRequest) {
 
         StudyGroup studyGroup = studyGroupRepository.findById(reservationRequest.getStudyGroupId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new ResourceNotFoundException(ErrorCode.NO_TARGET));
 
         UserType userType = userGroupRepository.findUserTypeByUserIdAndSGId(
                 reservationRequest.getUserId(), studyGroup.getId()).get();
-        if (userType.equals(UserType.P)) {
-            throw new IllegalStateException("userType이 리더인 분만 예약수정이 가능합니다.");
+        if (!userType.equals(UserType.L)) {
+            throw new WSApiException(ErrorCode.INVALID_REQUEST, "user가 리더인 분만 예약수정이 가능합니다.");
         }
     }
 
     @Transactional
     public void deleteById(String reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        reservationRepository.delete(reservation);
+        Optional<Reservation> reservation = reservationRepository.findById(reservationId);
+        if (reservation.isPresent()) {
+            reservationRepository.delete(reservation.get());
+        }
     }
 
-    private ReservationDetail mapToDto(Reservation saveReservation) {
+    private ReservationDetails mapToDto(Reservation saveReservation) {
 
-        return ReservationDetail.builder()
+        return ReservationDetails.builder()
                 .id(saveReservation.getId())
-                .status(saveReservation.getStatus())
                 .startTime(saveReservation.getStartTime())
                 .endTime(saveReservation.getEndTime())
                 .user(saveReservation.getUser())
@@ -182,8 +189,7 @@ public class ReservationService {
         LocalDateTime eTime = LocalDateTime.parse(reservationRequest.getEndTime(), formatter);
 
         return Reservation.builder()
-                .id(room.getId() + "||" +reservationRequest.getStartTime())
-                .status(1)
+                .id(room.getId() + "||" + reservationRequest.getStartTime())
                 .startTime(sTime)
                 .endTime(eTime)
                 .user(user)

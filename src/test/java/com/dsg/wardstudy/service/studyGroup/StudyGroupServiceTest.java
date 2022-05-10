@@ -3,6 +3,7 @@ package com.dsg.wardstudy.service.studyGroup;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
+import com.dsg.wardstudy.exception.ResourceNotFoundException;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,7 +13,6 @@ import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
@@ -51,7 +51,7 @@ class StudyGroupServiceTest {
     }
 
     @Test
-    public void create(){
+    public void create() {
         // given - precondition or setup
         when(studyGroupRepository.save(any(StudyGroup.class)))
                 .then(AdditionalAnswers.returnsFirstArg());
@@ -71,7 +71,7 @@ class StudyGroupServiceTest {
     }
 
     @Test
-    public void getById(){
+    public void getById() {
         // given - precondition or setup
         Optional<StudyGroup> studyGroup = Optional.of(this.studyGroup);
         given(studyGroupRepository.findById(1L))
@@ -87,7 +87,7 @@ class StudyGroupServiceTest {
     }
 
     @Test
-    public void getById_ThrowsException(){
+    public void getById_ThrowsException() {
         // given - precondition or setup
         // when - action or the behaviour that we are going test
         given(studyGroupRepository.findById(anyLong()))
@@ -95,12 +95,12 @@ class StudyGroupServiceTest {
         // then - verify the output
         assertThatThrownBy(() -> {
             studyGroupService.getById(1L);
-        }).isInstanceOf(ResponseStatusException.class);
+        }).isInstanceOf(ResourceNotFoundException.class);
     }
 
 
     @Test
-    public void getAll(){
+    public void getAll() {
         // given - precondition or setup
         StudyGroup studyGroup1 = StudyGroup.builder()
                 .id(100L)
@@ -119,7 +119,7 @@ class StudyGroupServiceTest {
     }
 
     @Test
-    public void getAll_negative(){
+    public void getAll_negative() {
         // given - precondition or setup
         StudyGroup studyGroup1 = StudyGroup.builder()
                 .id(2L)
@@ -138,7 +138,7 @@ class StudyGroupServiceTest {
     }
 
     @Test
-    public void updateById(){
+    public void updateById() {
         // given - precondition or setup
         given(studyGroupRepository.findById(anyLong()))
                 .willReturn(Optional.of(studyGroup));
@@ -161,7 +161,7 @@ class StudyGroupServiceTest {
     }
 
     @Test
-    public void deleteById(){
+    public void deleteById() {
         // given - precondition or setup
         Long studyGroupId = 1L;
         willDoNothing().given(studyGroupRepository).deleteById(studyGroupId);

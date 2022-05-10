@@ -16,12 +16,12 @@ public class UserController {
     private final UserRepository userRepository;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> register(@RequestBody SignUpRequest siginUpDto) {
+    public ResponseEntity<?> register(@RequestBody SignUpRequest signUpDto) {
         User user = User.builder()
-                .name(siginUpDto.getName())
-                .email(siginUpDto.getEmail())
-                .nickname(siginUpDto.getNickname())
-                .password(siginUpDto.getPassword())
+                .name(signUpDto.getName())
+                .email(signUpDto.getEmail())
+                .nickname(signUpDto.getNickname())
+                .password(signUpDto.getPassword())
                 .build();
 
         User savedUser = userRepository.save(user);

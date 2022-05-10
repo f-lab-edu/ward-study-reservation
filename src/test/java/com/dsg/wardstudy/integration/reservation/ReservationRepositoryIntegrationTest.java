@@ -1,12 +1,12 @@
-package com.dsg.wardstudy.repository.reservation;
+package com.dsg.wardstudy.integration.reservation;
 
 import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.reservation.Room;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
-import com.dsg.wardstudy.exception.ErrorCode;
-import com.dsg.wardstudy.exception.ResourceNotFoundException;
+import com.dsg.wardstudy.repository.reservation.ReservationRepository;
+import com.dsg.wardstudy.repository.reservation.RoomRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.LocalDateTime;
@@ -26,7 +27,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @DataJpaTest
-class ReservationRepositoryTest {
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+class ReservationRepositoryIntegrationTest {
 
     @Autowired
     private ReservationRepository reservationRepository;

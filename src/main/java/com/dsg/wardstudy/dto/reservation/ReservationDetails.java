@@ -12,16 +12,14 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-public class ReservationDetail {
+public class ReservationDetails {
 
     private String id;
 
-    private int status;
-
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endTime;
 
     private User user;
@@ -31,9 +29,8 @@ public class ReservationDetail {
     private Room room;
 
     @Builder
-    public ReservationDetail(String id, int status, LocalDateTime startTime, LocalDateTime endTime, User user, StudyGroup studyGroup, Room room) {
+    public ReservationDetails(String id, LocalDateTime startTime, LocalDateTime endTime, User user, StudyGroup studyGroup, Room room) {
         this.id = id;
-        this.status = status;
         this.startTime = startTime;
         this.endTime = endTime;
         this.user = user;
