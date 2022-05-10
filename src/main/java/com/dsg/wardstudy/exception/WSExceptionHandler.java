@@ -26,7 +26,7 @@ public class WSExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorDetails> handleResourceNotFoundException(
             ResourceNotFoundException exception,
-            WebRequest webRequest){
+            WebRequest webRequest) {
 
         log.error("ResourceNotFoundException: ", exception);
 
@@ -44,7 +44,7 @@ public class WSExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(WSApiException.class)
     public ResponseEntity<ErrorDetails> handleWSApiException(
             WSApiException exception,
-            WebRequest webRequest){
+            WebRequest webRequest) {
 
         log.error("WSApiException: ", exception);
 
@@ -62,7 +62,7 @@ public class WSExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDetails> handleGlobalException(
             Exception exception,
-            WebRequest webRequest){
+            WebRequest webRequest) {
 
         log.error("Exception ", exception);
         ErrorDetails errorDetails = ErrorDetails.builder()

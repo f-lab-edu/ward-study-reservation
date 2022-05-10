@@ -57,7 +57,7 @@ public class ReservationController {
     public ResponseEntity<List<ReservationDetails>> getByRoomId(@PathVariable("roomId") Long roomId) {
 
         log.info("reservation getByRoomId, roomId: {}", roomId);
-        return  ResponseEntity.ok(reservationService.getByRoomId(roomId));
+        return ResponseEntity.ok(reservationService.getByRoomId(roomId));
     }
 
 
@@ -73,7 +73,7 @@ public class ReservationController {
     public String updateById(
             @PathVariable("roomId") Long roomId,
             @PathVariable("reservationId") String reservationId,
-            @RequestBody ReservationUpdateRequest reservationRequest){
+            @RequestBody ReservationUpdateRequest reservationRequest) {
         log.info("reservation updateById, roomId: {}, reservationId: {}", roomId, reservationId);
         return reservationService.updateById(roomId, reservationId, reservationRequest);
     }

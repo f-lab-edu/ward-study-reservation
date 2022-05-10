@@ -44,6 +44,4 @@ public class StudyGroup extends BaseTimeEntity {
     }
 
 
-
-
 }

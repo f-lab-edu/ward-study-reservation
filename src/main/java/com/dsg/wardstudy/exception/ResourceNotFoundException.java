@@ -3,7 +3,7 @@ package com.dsg.wardstudy.exception;
 import lombok.Getter;
 
 @Getter
-public class ResourceNotFoundException extends RuntimeException{
+public class ResourceNotFoundException extends RuntimeException {
 
     private final ErrorCode errorCode;
     private final String message;

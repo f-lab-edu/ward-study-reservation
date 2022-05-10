@@ -30,6 +30,7 @@ public class StudyGroupService {
 
         return mapToDto(savedGroup);
     }
+
     private StudyGroup mapToEntity(StudyGroupRequest studyGroupRequest) {
         return StudyGroup.builder()
                 .title(studyGroupRequest.getTitle())

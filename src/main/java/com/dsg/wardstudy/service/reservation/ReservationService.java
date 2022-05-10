@@ -189,7 +189,7 @@ public class ReservationService {
         LocalDateTime eTime = LocalDateTime.parse(reservationRequest.getEndTime(), formatter);
 
         return Reservation.builder()
-                .id(room.getId() + "||" +reservationRequest.getStartTime())
+                .id(room.getId() + "||" + reservationRequest.getStartTime())
                 .startTime(sTime)
                 .endTime(eTime)
                 .user(user)
