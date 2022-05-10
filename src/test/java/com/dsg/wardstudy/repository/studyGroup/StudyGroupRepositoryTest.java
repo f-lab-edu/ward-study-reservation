@@ -43,7 +43,7 @@ class StudyGroupRepositoryTest {
 
     @Test
     @DisplayName("스터디그룹 생성테스트")
-    public void saveTest() {
+    public void givenStudyGroup_whenSave_thenReturnSavedStudyGroup() {
         // given - precondition or setup
         // when - action or the behaviour that we are going test
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
@@ -57,7 +57,7 @@ class StudyGroupRepositoryTest {
 
     @Test
     @DisplayName("스터디그룹 전체조회")
-    public void getAllTest() {
+    public void givenStudyGroupList_whenFindAll_thenStudyGroupList() {
         // given - precondition or setup
         // when - action or the behaviour that we are going test
         IntStream.rangeClosed(1, 10).forEach(i -> {
@@ -80,9 +80,9 @@ class StudyGroupRepositoryTest {
 
     @Test
     @DisplayName("스터디그룹 상세보기")
-    public void getById() {
+    public void givenStudyGroup_whenFindById_thenReturnStudyGroup() {
         // given - precondition or setup
-        StudyGroup savedStudyGroup = studyGroupRepository.save(this.studyGroup);
+        StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
         // when - action or the behaviour that we are going test
         studyGroupRepository.findById(savedStudyGroup.getId());
 
@@ -93,7 +93,7 @@ class StudyGroupRepositoryTest {
 
     @Test
     @DisplayName("스터디그룹들 userId로 가져오기")
-    public void getAllByUserId() {
+    public void givenUserId_whenFindByUserId_thenReturnStudyGroupsIdList() {
         // given - precondition or setup
         // TODO : User, UserGroup save API 만들어야
         // when - action or the behaviour that we are going test
@@ -101,18 +101,30 @@ class StudyGroupRepositoryTest {
         List<Long> studyGroupsIds = iByUserId.stream()
                 .map(d -> d.getStudyGroup().getId())
                 .collect(Collectors.toList());
+        log.info("studyGroupsIds : {}", studyGroupsIds);
 
+        assertThat(studyGroupsIds).isNotNull();
+
+    }
+
+    @Test
+    @DisplayName("스터디그룹들 studyGroupIdList로 가져오기")
+    public void givenSGIdList_whenFindBySGIdIn_thenStudyGroupList(){
+        // given - precondition or setup
+        List<Long> studyGroupsIds = List.of(1L, 2L, 3L);
+
+        // when - action or the behaviour that we are going test
         List<StudyGroup> studyGroups = studyGroupRepository.findByIdIn(studyGroupsIds);
+
         // then - verify the output
         assertThat(studyGroups).isNotNull();
         log.info("studyGroups.size(): " + studyGroups.size());
-
 
     }
 
     @Test
     @DisplayName("스터디그룹 수정")
-    public void updateById() {
+    public void givenStudyGroup_whenUpdateStudyGroup_thenReturnUpdatedStudyGroup() {
         // given - precondition or setup
         studyGroupRepository.save(studyGroup);
 
@@ -122,12 +134,13 @@ class StudyGroupRepositoryTest {
 
         // then - verify the output
         assertThat(studyGroup.getTitle()).isEqualTo("new_title");
+        assertThat(studyGroup.getContent()).isEqualTo("new_content");
 
     }
 
     @Test
     @DisplayName("스터디그룹 삭제")
-    public void deleteById() {
+    public void givenStudyGroup_whenDelete_thenRemoveStudyGroup() {
         // given - precondition or setup
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
         // when - action or the behaviour that we are going test

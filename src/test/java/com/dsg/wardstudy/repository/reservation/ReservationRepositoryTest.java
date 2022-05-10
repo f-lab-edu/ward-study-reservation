@@ -5,8 +5,6 @@ import com.dsg.wardstudy.domain.reservation.Room;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
-import com.dsg.wardstudy.exception.ErrorCode;
-import com.dsg.wardstudy.exception.ResourceNotFoundException;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
@@ -69,10 +67,8 @@ class ReservationRepositoryTest {
     }
 
     @Test
-    public void create() {
+    public void givenReservation_whenSave_thenReturnSavedReservation() {
         // given - precondition or setup
-        // when - action or the behaviour that we are going test
-
         User savedUser = userRepository.save(user);
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
         Room savedRoom = roomRepository.save(room);
@@ -85,7 +81,6 @@ class ReservationRepositoryTest {
         LocalDateTime sTime = LocalDateTime.parse(startTime, formatter);
         LocalDateTime eTime = LocalDateTime.parse(endTime, formatter);
 
-
         Reservation reservation = Reservation.builder()
                 .id("3||2022-04-24 10:30:00")
                 .startTime(sTime)
@@ -95,6 +90,7 @@ class ReservationRepositoryTest {
                 .room(savedRoom)
                 .build();
 
+        // when - action or the behaviour that we are going test
         Reservation savedReservation = reservationRepository.save(reservation);
         log.info("savedReservation: {}", savedReservation);
 
@@ -109,7 +105,8 @@ class ReservationRepositoryTest {
     }
 
     @Test
-    public void getByRoomIdAndTimePeriod() {
+    public void givenRoomIdAndTimePeriod_whenFindByIdAndTimePeriod_thenReturnReservationList() {
+        // getByRoomIdAndTimePeriod
         // given - precondition or setup
         User savedUser = userRepository.save(user);
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
@@ -133,6 +130,7 @@ class ReservationRepositoryTest {
                 .build();
 
         reservationRepository.save(reservation);
+
         // when - action or the behaviour that we are going test
         List<Reservation> reservationsByRoomIdAndTime = reservationRepository.findByRoomIdAndTimePeriod(savedRoom.getId(), sTime, eTime);
         log.info("reservationsByRoomIdAndTime: {}", reservationsByRoomIdAndTime);
@@ -144,7 +142,8 @@ class ReservationRepositoryTest {
     }
 
     @Test
-    public void getByRoomId() {
+    public void givenRoomId_whenFindById_thenReturnReservationList() {
+        // getByRoomId
         // given - precondition or setup
         Room savedRoom = roomRepository.save(room);
 
@@ -154,6 +153,7 @@ class ReservationRepositoryTest {
                 .build();
 
         reservationRepository.save(reservation);
+
         // when - action or the behaviour that we are going test
         List<Reservation> reservationsByRoomId = reservationRepository.findByRoomId(savedRoom.getId());
         log.info("reservationsByRoomId: {}", reservationsByRoomId);
@@ -165,7 +165,8 @@ class ReservationRepositoryTest {
     }
 
     @Test
-    public void getAllByUserId() {
+    public void givenUserId_whenFindById_thenReturnReservationList() {
+        // getAllByUserId
         // given - precondition or setup
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
         User savedUser = userRepository.save(user);
@@ -187,6 +188,7 @@ class ReservationRepositoryTest {
         List<Reservation> reservationsBySGIds = reservationRepository.findByStudyGroupIds(sgIds);
 
         log.info("reservationsByStudyGroupIdIn: {}", reservationsBySGIds);
+
         // then - verify the output
         assertThat(reservationsBySGIds).isNotNull();
         assertThat(reservationsBySGIds.size()).isEqualTo(4);
@@ -194,7 +196,8 @@ class ReservationRepositoryTest {
     }
 
     @Test
-    public void findByRoomIdAndId() {
+    public void givenRoomIdAndReservationId_whenFindById_thenReturnReservation() {
+        // findByRoomIdAndId
         // given - precondition or setup
         Room savedRoom = roomRepository.save(room);
 
@@ -204,18 +207,19 @@ class ReservationRepositoryTest {
                 .build();
 
         Reservation savedReservation = reservationRepository.save(reservation);
+
         // when - action or the behaviour that we are going test
         Reservation findReservation = reservationRepository.findByRoomIdAndId(savedRoom.getId(), savedReservation.getId()).get();
         log.info("findReservation: {}", findReservation);
+
         // then - verify the output
         assertThat(findReservation).isNotNull();
 
     }
 
     @Test
-    public void updateById() {
+    public void givenReservation_whenUpdate_thenReturnUpdatedReservationId() {
         // given - precondition or setup
-
         Room savedRoom = roomRepository.save(room);
 
         String startTime = "2021-08-07 12:00:00";
@@ -226,7 +230,6 @@ class ReservationRepositoryTest {
 
         Reservation savedReservation = reservationRepository.save(reservation);
 
-        // when - action or the behaviour that we are going test
         Reservation oldReservation = reservationRepository.findById(savedReservation.getId()).get();
         Room findRoom = roomRepository.findById(savedRoom.getId()).get();
 
@@ -234,15 +237,17 @@ class ReservationRepositoryTest {
                 .id(findRoom.getId() + "||" + startTime)
                 .build();
 
+        // when - action or the behaviour that we are going test
         Reservation updatedReservation = reservationRepository.save(newReservation);
         reservationRepository.delete(oldReservation);
+
         // then - verify the output
         assertThat(updatedReservation.getId()).isEqualTo(newReservation.getId());
 
     }
 
     @Test
-    public void deleteById() {
+    public void givenReservation_whenDelete_thenRemoveReservation() {
         // given - precondition or setup
         Reservation reservation = Reservation.builder()
                 .id("3||2022-04-24 10:30:00")
