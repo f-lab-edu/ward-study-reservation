@@ -7,6 +7,7 @@ import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.dto.reservation.ReservationCreateRequest;
 import com.dsg.wardstudy.dto.reservation.ReservationDetails;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
+import com.dsg.wardstudy.dto.reservation.ValidateFindByIdDto;
 import com.dsg.wardstudy.exception.ErrorCode;
 import com.dsg.wardstudy.exception.ResourceNotFoundException;
 import com.dsg.wardstudy.exception.WSApiException;
@@ -39,13 +40,43 @@ public class ReservationService {
     private final RoomRepository roomRepository;
 
     @Transactional
-    public ReservationDetails create(ReservationCreateRequest reservationRequest, Long studyGroupId, Long roomId) {
+    public ReservationDetails create(Long studyGroupId, Long roomId, ReservationCreateRequest reservationRequest) {
 
-        validateCreateRequest(reservationRequest, studyGroupId);
+        ValidateFindByIdDto validateFindByIdDto = validateCreateRequest(studyGroupId, roomId, reservationRequest);
 
-        User user = userRepository.findById(reservationRequest.getUserId())
+        Reservation reservation = mapToEntity(
+                reservationRequest
+                , validateFindByIdDto.getUser()
+                , validateFindByIdDto.getStudyGroup()
+                , validateFindByIdDto.getRoom()
+        );
+        Reservation saveReservation = reservationRepository.save(reservation);
+
+        return mapToDto(saveReservation);
+
+    }
+
+    private ValidateFindByIdDto validateCreateRequest(
+            Long studyGroupId,
+            Long roomId,
+            ReservationCreateRequest reservationRequest) {
+
+        ValidateFindByIdDto validateFindByIdDto = validateFindById(reservationRequest.getUserId(), studyGroupId, roomId);
+
+        UserType userType = userGroupRepository.findUserTypeByUserIdAndSGId(
+                reservationRequest.getUserId(), studyGroupId).get();
+
+        if (!userType.equals(UserType.L)) {
+            log.error("userType이 Leader가 아닙니다.");
+            throw new WSApiException(ErrorCode.INVALID_REQUEST, "user가 리더인 분만 예약등록이 가능합니다.");
+        }
+        return validateFindByIdDto;
+    }
+
+    private ValidateFindByIdDto validateFindById(Long userId, Long studyGroupId, Long roomId) {
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
-                    log.error("user 대상이 없습니다. userId: {}", reservationRequest.getUserId());
+                    log.error("user 대상이 없습니다. userId: {}", userId);
                     throw new ResourceNotFoundException(ErrorCode.NO_TARGET);
                 });
         StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
@@ -59,22 +90,11 @@ public class ReservationService {
                     throw new ResourceNotFoundException(ErrorCode.NO_TARGET);
                 });
 
-        Reservation reservation = mapToEntity(reservationRequest, user, studyGroup, room);
-        Reservation saveReservation = reservationRepository.save(reservation);
-
-        return mapToDto(saveReservation);
-
-    }
-
-    private void validateCreateRequest(ReservationCreateRequest reservationRequest, Long studyGroupId) {
-
-        UserType userType = userGroupRepository.findUserTypeByUserIdAndSGId(
-                reservationRequest.getUserId(), studyGroupId).get();
-
-        if (!userType.equals(UserType.L)) {
-            log.error("userType이 Leader가 아닙니다.");
-            throw new WSApiException(ErrorCode.INVALID_REQUEST, "user가 리더인 분만 예약등록이 가능합니다.");
-        }
+        return ValidateFindByIdDto.builder()
+                .user(user)
+                .studyGroup(studyGroup)
+                .room(room)
+                .build();
     }
 
     @Transactional(readOnly = true)
@@ -136,32 +156,21 @@ public class ReservationService {
     @Transactional
     public String updateById(Long roomId, String reservationId, ReservationUpdateRequest reservationRequest) {
         // update 로직 변경 : find -> new save -> old delete
-        validateUpdateRequest(reservationRequest);
-
-        User user = userRepository.findById(reservationRequest.getUserId())
-                .orElseThrow(() -> {
-                    log.error("user 대상이 없습니다. userId: {}", reservationRequest.getUserId());
-                    throw new ResourceNotFoundException(ErrorCode.NO_TARGET);
-                });
         Reservation oldReservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> {
                     log.error("reservation 대상이 없습니다. reservationId: {}", reservationId);
                     throw new ResourceNotFoundException(ErrorCode.NO_TARGET);
                 });
-        StudyGroup studyGroup = oldReservation.getStudyGroup();
-        Room room = roomRepository.findById(roomId)
-                .orElseThrow(() -> {
-                    log.error("room 대상이 없습니다. roomId: {}", roomId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_TARGET);
-                });
+
+        ValidateFindByIdDto validateFindByIdDto = validateUpdateRequest(roomId, reservationRequest);
 
         Reservation newReservation = Reservation.builder()
-                .id(genReservationId(room, reservationRequest.getStartTime()))
+                .id(genReservationId(validateFindByIdDto.getRoom(), reservationRequest.getStartTime()))
                 .startTime(formatterLocalDateTime(reservationRequest.getStartTime()))
                 .endTime(formatterLocalDateTime(reservationRequest.getEndTime()))
-                .user(user)
-                .studyGroup(studyGroup)
-                .room(room)
+                .user(validateFindByIdDto.getUser())
+                .studyGroup(validateFindByIdDto.getStudyGroup())
+                .room(validateFindByIdDto.getRoom())
                 .build();
 
         Reservation updatedReservation = reservationRepository.save(newReservation);
@@ -174,20 +183,19 @@ public class ReservationService {
         return room.getId() + "||" + startTime;
     }
 
-    private void validateUpdateRequest(ReservationUpdateRequest reservationRequest) {
+    private ValidateFindByIdDto validateUpdateRequest(Long roomId, ReservationUpdateRequest reservationRequest) {
 
-        StudyGroup studyGroup = studyGroupRepository.findById(reservationRequest.getStudyGroupId())
-                .orElseThrow(() -> {
-                    log.error("studyGroup 대상이 없습니다. studyGroupId: {}", reservationRequest.getStudyGroupId());
-                    throw new ResourceNotFoundException(ErrorCode.NO_TARGET);
-                });
+        ValidateFindByIdDto validateFindByIdDto = validateFindById(reservationRequest.getUserId(),
+                reservationRequest.getStudyGroupId(),
+                roomId);
 
         UserType userType = userGroupRepository.findUserTypeByUserIdAndSGId(
-                reservationRequest.getUserId(), studyGroup.getId()).get();
+                reservationRequest.getUserId(), reservationRequest.getStudyGroupId()).get();
         if (!userType.equals(UserType.L)) {
             log.error("userType이 Leader가 아닙니다.");
             throw new WSApiException(ErrorCode.INVALID_REQUEST, "user가 리더인 분만 예약수정이 가능합니다.");
         }
+        return validateFindByIdDto;
     }
 
     @Transactional

@@ -126,7 +126,7 @@ class ReservationServiceTest {
                 .willReturn(reservation);
 
         // when - action or the behaviour that we are going test
-        ReservationDetails details = reservationService.create(createRequest, studyGroup.getId(), room.getId());
+        ReservationDetails details = reservationService.create(studyGroup.getId(), room.getId(), createRequest);
         log.info("details: {}", details);
 
         // then - verify the output

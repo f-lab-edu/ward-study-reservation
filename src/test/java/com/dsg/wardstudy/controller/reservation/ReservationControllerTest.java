@@ -112,7 +112,7 @@ class ReservationControllerTest {
                 .room(room)
                 .build();
 
-        given(reservationService.create(createRequest, studyGroup.getId(), room.getId()))
+        given(reservationService.create(studyGroup.getId(), room.getId(), createRequest))
                 .willReturn(reservationDetails);
 
         // when - action or the behaviour that we are going test
