@@ -102,8 +102,8 @@ class ReservationServiceTest {
     void givenReservation_whenSave_thenReturnReservationDetails() {
         // given - precondition or setup
         // LocalDateTime -> String 으로 변환
-        String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String sTime = formatterLocalDateTimeToString(reservation.getStartTime());
+        String eTime = formatterLocalDateTimeToString(reservation.getEndTime());
 
         createRequest = ReservationCreateRequest.builder()
                 .userId(user.getId())
@@ -133,6 +133,11 @@ class ReservationServiceTest {
         assertThat(details).isNotNull();
         assertThat(details.getStartTime()).isEqualTo(reservation.getStartTime());
         assertThat(details.getEndTime()).isEqualTo(reservation.getEndTime());
+    }
+
+    private String formatterLocalDateTimeToString(LocalDateTime time) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return time.format(formatter);
     }
 
     @Test
@@ -185,7 +190,6 @@ class ReservationServiceTest {
         // getByRoomIdAndTimePeriod
         // given - precondition or setup
         LocalDateTime startTime = LocalDateTime.of(2019, Month.OCTOBER, 3, 5, 30);
-
         LocalDateTime endTime = LocalDateTime.of(2019, Month.OCTOBER, 3, 9, 30);
 
         Reservation reservation1 = Reservation.builder()
@@ -202,8 +206,8 @@ class ReservationServiceTest {
         given(reservationRepository.findByRoomIdAndTimePeriod(room.getId(), startTime, endTime))
                 .willReturn(List.of(reservation, reservation1));
 
-        String sTime = startTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        String eTime = endTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String sTime = formatterLocalDateTimeToString(startTime);
+        String eTime = formatterLocalDateTimeToString(endTime);
 
         // when - action or the behaviour that we are going test
         List<ReservationDetails> detailsList = reservationService.getByRoomIdAndTimePeriod(room.getId(), sTime, eTime);
@@ -261,11 +265,9 @@ class ReservationServiceTest {
     @Test
     void givenReservationUpdateRequest_whenUpdate_thenReturnUpdatedReservationId() {
         // given - precondition or setup
-        String sTime = LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30)
-                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        String eTime = LocalDateTime.of(2022, Month.NOVEMBER, 3, 7, 30)
-                .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
+        String sTime = formatterLocalDateTimeToString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30));
+        String eTime = formatterLocalDateTimeToString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 7, 30));
+        
         updateRequest = ReservationUpdateRequest.builder()
                 .userId(user.getId())
                 .studyGroupId(studyGroup.getId())

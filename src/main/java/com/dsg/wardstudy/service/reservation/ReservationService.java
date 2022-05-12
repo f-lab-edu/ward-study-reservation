@@ -101,10 +101,8 @@ public class ReservationService {
                     throw new ResourceNotFoundException(ErrorCode.NO_TARGET);
                 });
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-        LocalDateTime sTime = LocalDateTime.parse(startTime, formatter);
-        LocalDateTime eTime = LocalDateTime.parse(endTime, formatter);
+        LocalDateTime sTime = formatterLocalDateTime(startTime);
+        LocalDateTime eTime = formatterLocalDateTime(endTime);
 
         return reservationRepository.findByRoomIdAndTimePeriod(room.getId(), sTime, eTime).stream()
                 .map(this::mapToDto)
@@ -157,15 +155,10 @@ public class ReservationService {
                     throw new ResourceNotFoundException(ErrorCode.NO_TARGET);
                 });
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-        LocalDateTime sTime = LocalDateTime.parse(reservationRequest.getStartTime(), formatter);
-        LocalDateTime eTime = LocalDateTime.parse(reservationRequest.getEndTime(), formatter);
-
         Reservation newReservation = Reservation.builder()
                 .id(genReservationId(room, reservationRequest.getStartTime()))
-                .startTime(sTime)
-                .endTime(eTime)
+                .startTime(formatterLocalDateTime(reservationRequest.getStartTime()))
+                .endTime(formatterLocalDateTime(reservationRequest.getEndTime()))
                 .user(user)
                 .studyGroup(studyGroup)
                 .room(room)
@@ -217,20 +210,20 @@ public class ReservationService {
                 .build();
     }
 
+    private LocalDateTime formatterLocalDateTime(String time) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return LocalDateTime.parse(time, formatter);
+    }
+
     private Reservation mapToEntity(ReservationCreateRequest reservationRequest,
                                     User user,
                                     StudyGroup studyGroup,
                                     Room room) {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-
-        LocalDateTime sTime = LocalDateTime.parse(reservationRequest.getStartTime(), formatter);
-        LocalDateTime eTime = LocalDateTime.parse(reservationRequest.getEndTime(), formatter);
-
         return Reservation.builder()
                 .id(genReservationId(room, reservationRequest.getStartTime()))
-                .startTime(sTime)
-                .endTime(eTime)
+                .startTime(formatterLocalDateTime(reservationRequest.getStartTime()))
+                .endTime(formatterLocalDateTime(reservationRequest.getEndTime()))
                 .user(user)
                 .studyGroup(studyGroup)
                 .room(room)
