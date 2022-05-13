@@ -128,10 +128,11 @@ class StudyGroupControllerTest {
     }
 
     @Test
-    public void givenInvalidStudyGroupId_whenGet_thenReturnEmpty() throws Exception {
+    public void givenInvalidStudyGroupId_whenGet_thenReturn404() throws Exception {
         Long studyGroupId = 1L;
         // given - precondition or setup
-        given(studyGroupService.getById(studyGroupId)).willThrow(new ResourceNotFoundException(ErrorCode.NO_TARGET));
+        given(studyGroupService.getById(studyGroupId))
+                .willThrow(new ResourceNotFoundException(ErrorCode.NO_TARGET_1PARAM, studyGroupId, "studyGroup"));
 
         // when - action or the behaviour that we are going test
         // then - verify the output

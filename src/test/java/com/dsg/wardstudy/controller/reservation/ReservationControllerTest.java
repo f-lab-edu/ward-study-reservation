@@ -238,7 +238,8 @@ class ReservationControllerTest {
     public void givenInvalidRoomId_whenGet_thenReturn404() throws Exception {
         // given - precondition or setup
         Long roomId = 100L;
-        given(reservationService.getByRoomId(roomId)).willThrow(new ResourceNotFoundException(ErrorCode.NO_TARGET));
+        given(reservationService.getByRoomId(roomId))
+                .willThrow(new ResourceNotFoundException(ErrorCode.NO_TARGET_1PARAM, roomId, "room"));
 
         // when - action or the behaviour that we are going test
         // then - verify the output

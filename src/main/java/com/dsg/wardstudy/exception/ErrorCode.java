@@ -7,12 +7,11 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
 
-    NO_TARGET("해당되는 대상이 없습니다."),
-    DUPLICATED_ID("Id가 중복되어 있습니다."),
+    NO_TARGET_1PARAM,
+    NO_TARGET_2PARAM,
+    DUPLICATED_ID,
 
-    INTERNAL_SERVER_ERROR("서버에 오류가 발생했습니다."),
-    INVALID_REQUEST("잘못된 요청입니다.");
-
-    private final String message;
+    INTERNAL_SERVER_ERROR,
+    INVALID_REQUEST,
 
 }

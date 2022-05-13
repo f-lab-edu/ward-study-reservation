@@ -54,7 +54,7 @@ public class StudyGroupService {
         StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
                 .orElseThrow(() -> {
                     log.error("studyGroup 대상이 없습니다. studyGroupId: {}", studyGroupId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_TARGET);
+                    throw new ResourceNotFoundException(ErrorCode.NO_TARGET_1PARAM, studyGroupId, "studyGroup");
                 });
 
         return mapToDto(studyGroup);
@@ -74,7 +74,7 @@ public class StudyGroupService {
         StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
                 .orElseThrow(() -> {
                     log.error("studyGroup 대상이 없습니다. studyGroupId: {}", studyGroupId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_TARGET);
+                    throw new ResourceNotFoundException(ErrorCode.NO_TARGET_1PARAM, studyGroupId, "studyGroup");
                 });
 
         studyGroup.update(studyGroupRequest.getTitle(), studyGroupRequest.getContent());
