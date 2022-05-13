@@ -33,7 +33,7 @@ class StudyGroupServiceTest {
     private StudyGroupRepository studyGroupRepository;
 
     @InjectMocks
-    private StudyGroupService studyGroupService;
+    private StudyGroupServiceImpl studyGroupService;
 
     private StudyGroup studyGroup;
 

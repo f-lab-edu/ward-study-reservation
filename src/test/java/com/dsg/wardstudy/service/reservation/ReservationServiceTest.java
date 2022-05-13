@@ -54,7 +54,7 @@ class ReservationServiceTest {
     private RoomRepository roomRepository;
 
     @InjectMocks
-    private ReservationService reservationService;
+    private ReservationServiceImpl reservationService;
 
     private Reservation reservation;
     private User user;
