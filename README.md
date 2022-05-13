@@ -28,6 +28,12 @@ SpringBoot2.6, Spring Batch, Java11, Gradle7.4, JPA, Mysql8.0, Docker, Jenkins, 
 
 <br>
 
+## Reporting Issue
+
+
+
+<br>
+
 ## 클라이언트 화면
 
 ![image](https://user-images.githubusercontent.com/62453668/164407764-93ce620d-0823-4e64-bd41-2acd6ee01458.png)
