@@ -3,6 +3,13 @@ server:
   port: 8081
 
 spring:
+  batch:
+    job:
+      names: ${job.name:NONE}
+    jdbc:
+      initialize-schema: always
+  main:
+    web-application-type: none
 
   jackson:
     serialization:
