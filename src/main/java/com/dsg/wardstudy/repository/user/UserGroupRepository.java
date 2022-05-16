@@ -1,5 +1,6 @@
 package com.dsg.wardstudy.repository.user;
 
+import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.type.UserType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,5 +20,8 @@ public interface UserGroupRepository extends JpaRepository<UserGroup, Long> {
 
     @Query("select ug.studyGroup.id from UserGroup ug where ug.user.id = :userId")
     List<Long> findSgIdsByUserId(@Param("userId") Long userId);
+
+    @Query("select ug.user from UserGroup ug where ug.studyGroup.id = :sgId")
+    List<User> findUserBySGId(@Param("sgId") Long sgId);
 
 }
