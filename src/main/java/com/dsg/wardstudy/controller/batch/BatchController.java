@@ -19,16 +19,16 @@ import java.util.Map;
 public class BatchController {
 
     private final JobLauncher jobLauncher;
-    private final Job simpleJob;
+    private final Job notificationAlarmJob;
 
     @GetMapping("/job")
     public String startJob() throws Exception {
         System.out.println("Starting the batch job");
-        System.out.println("job: " +simpleJob);
+        System.out.println("job: " +notificationAlarmJob);
 
         Map<String, JobParameter> parameters = new HashMap<>();
         parameters.put("timestamp", new JobParameter(System.currentTimeMillis()));
-        JobExecution jobExecution = jobLauncher.run(simpleJob, new JobParameters(parameters));
+        JobExecution jobExecution = jobLauncher.run(notificationAlarmJob, new JobParameters(parameters));
         return "Batch job "+ jobExecution.getStatus();
 
     }
