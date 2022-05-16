@@ -101,23 +101,21 @@ public class NotificationAlarmJobConfig {
         };
     }
 
-    @StepScope
+/*    @StepScope
     @Bean
     public ItemWriter<NotificationAlarmDto> todoNotificationWriter() {
         return items -> {
             items.forEach(System.out::println);
             System.out.println("==== chunk is finished");
         };
-    }
-
-/*    @StepScope
-    @Bean
-    public ItemWriter<Reservation> notificationAlarmWriter(MailSendService mailSendService) {
-        return items -> items.forEach(
-                item -> mailSendService.sendMail("ehtjd33@gmail.com", "subject", "message")
-        );
     }*/
 
-
+    @StepScope
+    @Bean
+    public ItemWriter<NotificationAlarmDto> notificationAlarmWriter(MailSendService mailSendService) {
+        return items -> items.forEach(
+                item -> mailSendService.sendMail("ehtjd33@gmail.com", item.getId(), item.toMessage())
+        );
+    }
 
 }
