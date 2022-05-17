@@ -3,7 +3,9 @@ package com.dsg.wardstudy.config.batch;
 
 import com.dsg.wardstudy.adapter.MailSendService;
 import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.dto.NotificationAlarmDto;
+import com.dsg.wardstudy.dto.UserDto;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +26,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -71,7 +71,7 @@ public class NotificationAlarmJobConfig {
                 .methodName("findBy")
                 .pageSize(CHUNK_SIZE)
                 .arguments(List.of())
-                .sorts(Collections.singletonMap("id", Sort.Direction.DESC))
+                .sorts(Collections.singletonMap("id", Sort.Direction.ASC))
                 .build();
     }
 
@@ -79,42 +79,36 @@ public class NotificationAlarmJobConfig {
     @Bean
     public ItemProcessor<Reservation, NotificationAlarmDto> notificationAlarmProcessor() {
         return reservation -> {
-            // todo들 아직 compleated 안된 거 count로 표기
-/*            List<String> userEmails = userGroupRepository.findUserBySGId(1L).stream()
-                    .map(user -> user.getEmail())
+            // TODO : 해당 스터디그룹 users -> user.getEmail에 message 기입
+            List<User> users = userGroupRepository.findUserBySGId(reservation.getStudyGroup().getId());
+
+            List<UserDto> userDtos = users.stream()
+                    .map(u -> UserDto.builder()
+                            .name(u.getName())
+                            .email(u.getEmail())
+                            .build()
+                    )
                     .collect(Collectors.toList());
-
-            List<Reservation> reservationList = reservationRepository.findAll();
-
-            if (reservationList.isEmpty()) {
-                return null;
-            }*/
 
             return NotificationAlarmDto.builder()
                     .id(reservation.getId())
                     .startTime(reservation.getStartTime())
                     .endTime(reservation.getEndTime())
-//                    .userId(reservation.getUser().getId())
-//                    .studyGroupId(reservation.getStudyGroup().getId())
-//                    .roomId(reservation.getRoom().getId())
+                    .userDtos(userDtos)
+                    .studyGroup(reservation.getStudyGroup())
+                    .room(reservation.getRoom())
                     .build();
         };
     }
-
-/*    @StepScope
-    @Bean
-    public ItemWriter<NotificationAlarmDto> todoNotificationWriter() {
-        return items -> {
-            items.forEach(System.out::println);
-            System.out.println("==== chunk is finished");
-        };
-    }*/
 
     @StepScope
     @Bean
     public ItemWriter<NotificationAlarmDto> notificationAlarmWriter(MailSendService mailSendService) {
         return items -> items.forEach(
-                item -> mailSendService.sendMail("ehtjd33@gmail.com", item.getId(), item.toMessage())
+                item -> {
+                    log.info("message: {}", item.toMessage());
+                    mailSendService.sendMail("ehtjd33@gmail.com", item.getId(), item.toMessage());
+                }
         );
     }
 
