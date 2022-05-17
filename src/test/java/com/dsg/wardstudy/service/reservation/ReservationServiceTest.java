@@ -148,7 +148,7 @@ class ReservationServiceTest {
 
         Mockito.lenient().when(reservationRepository.findByRoomId(room.getId()))
                 .thenReturn(List.of(reservation));
-        Mockito.lenient().when(reservationRepository.findById(anyLong()))
+        Mockito.lenient().when(reservationRepository.findById(anyString()))
                 .thenReturn(Optional.empty());
 
         // when - action or the behaviour that we are going test
@@ -158,7 +158,7 @@ class ReservationServiceTest {
 
         // then - verify the output
         verify(reservationRepository, never()).findByRoomId(anyLong());
-        verify(reservationRepository, never()).findById(anyLong());
+        verify(reservationRepository, never()).findById(anyString());
 
     }
 

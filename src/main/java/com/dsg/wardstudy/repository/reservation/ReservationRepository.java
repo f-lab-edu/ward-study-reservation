@@ -11,11 +11,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface ReservationRepository extends JpaRepository<Reservation, Long> {
+public interface ReservationRepository extends JpaRepository<Reservation, String> {
 
     Page<Reservation> findBy(Pageable pageable);
-
-    Optional<Reservation> findById(String reservationId);
 
     @Query("select r from Reservation r left join fetch r.room where r.room.id = :roomId")
     List<Reservation> findByRoomId(@Param("roomId") Long roomId);
