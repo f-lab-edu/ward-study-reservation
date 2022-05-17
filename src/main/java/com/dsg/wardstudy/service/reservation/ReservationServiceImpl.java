@@ -43,21 +43,14 @@ public class ReservationServiceImpl implements ReservationService{
     @Override
     public ReservationDetails create(Long studyGroupId, Long roomId, ReservationCreateRequest reservationRequest) {
 
-        ValidateFindByIdDto validateFindByIdDto = validateCreateRequest(studyGroupId, roomId, reservationRequest);
-
-        Reservation reservation = mapToEntity(
-                reservationRequest
-                , validateFindByIdDto.getUser()
-                , validateFindByIdDto.getStudyGroup()
-                , validateFindByIdDto.getRoom()
-        );
+        Reservation reservation = validateCreateRequest(studyGroupId, roomId, reservationRequest);
         Reservation saveReservation = reservationRepository.save(reservation);
 
         return mapToDto(saveReservation);
 
     }
 
-    private ValidateFindByIdDto validateCreateRequest(
+    private Reservation validateCreateRequest(
             Long studyGroupId,
             Long roomId,
             ReservationCreateRequest reservationRequest) {
@@ -72,7 +65,20 @@ public class ReservationServiceImpl implements ReservationService{
             throw new WSApiException(ErrorCode.INVALID_REQUEST,
                     "Reservation registration is possible only if the user is the leader.");
         }
-        return validateFindByIdDto;
+        // 중복 reservation 체크
+        Reservation reservation = mapToEntity(
+                reservationRequest
+                , validateFindByIdDto.getUser()
+                , validateFindByIdDto.getStudyGroup()
+                , validateFindByIdDto.getRoom()
+        );
+
+        reservationRepository.findById(reservation.getId()).ifPresent( r -> {
+            log.error("Same reservationId is existing, can't make the reservation");
+            throw new WSApiException(ErrorCode.DUPLICATED_ENTITY, "The same reservation exists.");
+        });
+
+        return reservation;
     }
 
     private ValidateFindByIdDto validateFindById(Long userId, Long studyGroupId, Long roomId) {
@@ -170,7 +176,7 @@ public class ReservationServiceImpl implements ReservationService{
     @Transactional
     @Override
     public String updateById(Long roomId, String reservationId, ReservationUpdateRequest reservationRequest) {
-        // update 로직 변경 : find -> new save -> old delete
+        // update 로직 변경 : find old -> save new -> delete old
         Reservation oldReservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> {
                     log.error("reservation 대상이 없습니다. reservationId: {}", reservationId);
@@ -178,17 +184,7 @@ public class ReservationServiceImpl implements ReservationService{
                             " reservation id: " + reservationId);
                 });
 
-        ValidateFindByIdDto validateFindByIdDto = validateUpdateRequest(roomId, reservationRequest);
-
-        Reservation newReservation = Reservation.builder()
-                .id(genReservationId(validateFindByIdDto.getRoom(), reservationRequest.getStartTime()))
-                .startTime(formatterLocalDateTime(reservationRequest.getStartTime()))
-                .endTime(formatterLocalDateTime(reservationRequest.getEndTime()))
-                .user(validateFindByIdDto.getUser())
-                .studyGroup(validateFindByIdDto.getStudyGroup())
-                .room(validateFindByIdDto.getRoom())
-                .build();
-
+        Reservation newReservation = validateUpdateRequest(roomId, reservationRequest);
         Reservation updatedReservation = reservationRepository.save(newReservation);
         reservationRepository.delete(oldReservation);
 
@@ -199,7 +195,7 @@ public class ReservationServiceImpl implements ReservationService{
         return room.getId() + "||" + startTime;
     }
 
-    private ValidateFindByIdDto validateUpdateRequest(Long roomId, ReservationUpdateRequest reservationRequest) {
+    private Reservation validateUpdateRequest(Long roomId, ReservationUpdateRequest reservationRequest) {
 
         ValidateFindByIdDto validateFindByIdDto = validateFindById(reservationRequest.getUserId(),
                 reservationRequest.getStudyGroupId(),
@@ -211,7 +207,22 @@ public class ReservationServiceImpl implements ReservationService{
             log.error("userType이 Leader가 아닙니다.");
             throw new WSApiException(ErrorCode.INVALID_REQUEST, "Reservation modification is possible only if the user is the leader.");
         }
-        return validateFindByIdDto;
+
+        Reservation newReservation = Reservation.builder()
+                .id(genReservationId(validateFindByIdDto.getRoom(), reservationRequest.getStartTime()))
+                .startTime(formatterLocalDateTime(reservationRequest.getStartTime()))
+                .endTime(formatterLocalDateTime(reservationRequest.getEndTime()))
+                .user(validateFindByIdDto.getUser())
+                .studyGroup(validateFindByIdDto.getStudyGroup())
+                .room(validateFindByIdDto.getRoom())
+                .build();
+
+        reservationRepository.findById(newReservation.getId()).ifPresent( r -> {
+            log.error("Same reservationId is existing, can't make the reservation");
+            throw new WSApiException(ErrorCode.DUPLICATED_ENTITY, "The same reservation exists.");
+        });
+
+        return newReservation;
     }
 
     @Transactional
