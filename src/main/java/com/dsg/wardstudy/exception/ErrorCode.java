@@ -7,9 +7,8 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum ErrorCode {
 
-    NO_TARGET_1PARAM,
-    NO_TARGET_2PARAM,
-    DUPLICATED_ID,
+    NO_FOUND_ENTITY,
+    DUPLICATED_ENTITY,
 
     INTERNAL_SERVER_ERROR,
     INVALID_REQUEST,
