@@ -1,7 +1,7 @@
 package com.dsg.wardstudy.controller.reservation;
 
-import com.dsg.wardstudy.dto.reservation.ReservationDetails;
 import com.dsg.wardstudy.dto.reservation.ReservationCreateRequest;
+import com.dsg.wardstudy.dto.reservation.ReservationDetails;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
 import com.dsg.wardstudy.service.reservation.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +25,14 @@ public class ReservationController {
     public ResponseEntity<ReservationDetails> create(
             @PathVariable("studyGroupId") Long studyGroupId,
             @PathVariable("roomId") Long roomId,
-            @RequestBody ReservationCreateRequest reservationCreateRequest) {
-        log.info("reservation create, studyGroupId: {}, roomId: {}, request: {}", studyGroupId, roomId, reservationCreateRequest);
+            @RequestBody ReservationCreateRequest reservationCreateRequest) throws Exception {
+        log.info("reservation create, studyGroupId: {}, roomId: {}, request: {}",
+                studyGroupId,
+                roomId,
+                reservationCreateRequest);
+
         return new ResponseEntity<>(reservationService.create(
-                reservationCreateRequest, studyGroupId, roomId), HttpStatus.CREATED);
+                studyGroupId, roomId, reservationCreateRequest), HttpStatus.CREATED);
     }
 
     // 등록한 예약 상세 보기

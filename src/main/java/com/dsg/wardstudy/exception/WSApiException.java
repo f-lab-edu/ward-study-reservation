@@ -7,7 +7,6 @@ public class WSApiException extends RuntimeException {
     private final ErrorCode errorCode;
 
     public WSApiException(ErrorCode errorCode) {
-        super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
 

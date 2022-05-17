@@ -87,8 +87,8 @@ class ReservationControllerIntegrationTest {
 
     @Test
     @DisplayName("예약 등록")
-    void create() throws Exception {
-
+    void givenReservationCreateRequestAndSGIdAndRoomId_whenCreate_thenReturnReservationDetails() throws Exception {
+        // given - precondition or setup
         // LocalDateTime -> String 으로 변환
         String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -99,6 +99,8 @@ class ReservationControllerIntegrationTest {
                 .endTime(eTime)
                 .build();
 
+        // when - action or the behaviour that we are going test
+        // then - verify the output
         mockMvc.perform(post("/study-group/{studyGroupId}/room/{roomId}/reservation", studyGroup.getId(), room.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsBytes(createRequest)))
@@ -112,14 +114,16 @@ class ReservationControllerIntegrationTest {
 
     @Test
     @DisplayName("등록한 예약 상세 보기")
-    void getByIds() throws Exception {
-
+    void givenRoomIdAndReservationId_whenGet_thenReturnReservationDetails() throws Exception {
+        // given - precondition or setup
         // LocalDateTime -> String 으로 변환
         String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         Reservation savedReservation = reservationRepository.save(reservation);
 
+        // when - action or the behaviour that we are going test
+        // then - verify the output
         mockMvc.perform(get("/room/{roomId}/reservation/{reservationId}", room.getId(), savedReservation.getId()))
                 .andDo(print())
                 .andExpect(status().isOk())
@@ -130,8 +134,8 @@ class ReservationControllerIntegrationTest {
 
     @Test
     @DisplayName("해당 룸 예약 조회 startTime & endTime(o)")
-    void getByRoomIdAndTimePeriod() throws Exception {
-
+    void givenRoomIdAndTimePeriod_whenGet_thenReturnReservationDetailsList() throws Exception {
+        // given - precondition or setup
         LongStream.rangeClosed(1, 5).forEach(i -> {
             Reservation reservation = Reservation.builder()
                     .id(i + "||" + "2019-11-03 06:30:00")
@@ -145,21 +149,21 @@ class ReservationControllerIntegrationTest {
         String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-
+        // when - action or the behaviour that we are going test
+        // then - verify the output
         mockMvc.perform(get("/room/{roomId}/reservation/query", room.getId())
                         .param("startTime", sTime)
                         .param("endTime", eTime))
                 .andDo(print())
                 .andExpect(status().isOk());
 
-
     }
 
 
     @Test
     @DisplayName("해당 룸 예약 조회")
-    void getByRoomId() throws Exception {
-
+    void givenRoomId_whenGet_thenReturnReservationDetailsList() throws Exception {
+        // given - precondition or setup
         IntStream.rangeClosed(1, 5).forEach(i -> {
             Reservation reservation = Reservation.builder()
                     .id(i + "||" + "2019-11-03 06:30:00")
@@ -170,6 +174,8 @@ class ReservationControllerIntegrationTest {
             reservationRepository.save(reservation);
         });
 
+        // when - action or the behaviour that we are going test
+        // then - verify the output
         mockMvc.perform(get("/room/{roomId}/reservation", room.getId()))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -178,11 +184,13 @@ class ReservationControllerIntegrationTest {
 
     @Test
     @DisplayName("해당 룸 예약 조회 404에러")
-    public void getByRoomId_ThrowException() throws Exception {
-
+    public void givenInvalidRoomId_whenGet_thenReturn404() throws Exception {
+        // given - precondition or setup
         Long roomId = 100L;
         reservationRepository.save(reservation);
 
+        // when - action or the behaviour that we are going test
+        // then - verify the output
         mockMvc.perform(get("/room/{roomId}/reservation", roomId))
                 .andDo(print())
                 .andExpect(status().isNotFound());
@@ -192,8 +200,8 @@ class ReservationControllerIntegrationTest {
 
     @Test
     @DisplayName("해당 유저 예약 조회")
-    void getAllByUserId() throws Exception {
-
+    void givenUserId_whenGet_thenReturnReservationDetailsList() throws Exception {
+        // given - precondition or setup
         IntStream.rangeClosed(1, 5).forEach(i -> {
             Reservation reservation = Reservation.builder()
                     .id(i + "||" + "2019-11-03 06:30:00")
@@ -203,7 +211,8 @@ class ReservationControllerIntegrationTest {
                     .build();
             reservationRepository.save(reservation);
         });
-
+        // when - action or the behaviour that we are going test
+        // then - verify the output
         mockMvc.perform(get("/user/{userId}/reservation", user.getId()))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -212,8 +221,8 @@ class ReservationControllerIntegrationTest {
 
     @Test
     @DisplayName("예약 수정")
-    void updateById() throws Exception {
-
+    void givenReservationUpdateRequest_whenUpdate_thenReturnUpdatedReservationId() throws Exception {
+        // given - precondition or setup
         String updateSTime = LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30)
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String updateETime = LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30)
@@ -225,7 +234,8 @@ class ReservationControllerIntegrationTest {
                 .startTime(updateSTime)
                 .endTime(updateETime)
                 .build();
-
+        // when - action or the behaviour that we are going test
+        // then - verify the output
         mockMvc.perform(put("/room/{roomId}/reservation/{reservationId}", room.getId(), reservation.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
@@ -237,9 +247,12 @@ class ReservationControllerIntegrationTest {
 
     @Test
     @DisplayName("예약 삭제")
-    void deleteById() throws Exception {
+    void givenReservationId_whenDelete_thenReturn200() throws Exception {
+        // given - precondition or setup
         Reservation savedReservation = reservationRepository.save(reservation);
 
+        // when - action or the behaviour that we are going test
+        // then - verify the output
         mockMvc.perform(delete("/reservation/{reservationId}", savedReservation.getId()))
                 .andDo(print())
                 .andExpect(status().isOk());

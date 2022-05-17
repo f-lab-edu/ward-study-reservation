@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.AdditionalAnswers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -25,7 +24,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -35,7 +33,7 @@ class StudyGroupServiceTest {
     private StudyGroupRepository studyGroupRepository;
 
     @InjectMocks
-    private StudyGroupService studyGroupService;
+    private StudyGroupServiceImpl studyGroupService;
 
     private StudyGroup studyGroup;
 
@@ -51,10 +49,10 @@ class StudyGroupServiceTest {
     }
 
     @Test
-    public void create() {
+    public void givenStudyGroup_whenSave_thenReturnStudyGroupResponse() {
         // given - precondition or setup
-        when(studyGroupRepository.save(any(StudyGroup.class)))
-                .then(AdditionalAnswers.returnsFirstArg());
+        given(studyGroupRepository.save(any(StudyGroup.class)))
+                .willReturn(studyGroup);
 
         studyGroupRequest = StudyGroupRequest.builder()
                 .title(studyGroup.getTitle())
@@ -71,7 +69,8 @@ class StudyGroupServiceTest {
     }
 
     @Test
-    public void getById() {
+    public void givenStudyGroup_whenGetById_thenReturnStudyGroupResponse() {
+        // getById
         // given - precondition or setup
         Optional<StudyGroup> studyGroup = Optional.of(this.studyGroup);
         given(studyGroupRepository.findById(1L))
@@ -87,7 +86,7 @@ class StudyGroupServiceTest {
     }
 
     @Test
-    public void getById_ThrowsException() {
+    public void givenStudyGroup_whenGetById_thenThrowsException() {
         // given - precondition or setup
         // when - action or the behaviour that we are going test
         given(studyGroupRepository.findById(anyLong()))
@@ -100,7 +99,7 @@ class StudyGroupServiceTest {
 
 
     @Test
-    public void getAll() {
+    public void givenStudyGroupList_whenGetAll_thenReturnStudyGroupResponseList() {
         // given - precondition or setup
         StudyGroup studyGroup1 = StudyGroup.builder()
                 .id(100L)
@@ -119,7 +118,7 @@ class StudyGroupServiceTest {
     }
 
     @Test
-    public void getAll_negative() {
+    public void givenStudyGroupList_whenGetAll_Negative_thenReturnStudyGroupResponseList() {
         // given - precondition or setup
         StudyGroup studyGroup1 = StudyGroup.builder()
                 .id(2L)
@@ -138,7 +137,7 @@ class StudyGroupServiceTest {
     }
 
     @Test
-    public void updateById() {
+    public void givenStudyGroup_whenUpdate_thenReturnUpdatedStudyGroup() {
         // given - precondition or setup
         given(studyGroupRepository.findById(anyLong()))
                 .willReturn(Optional.of(studyGroup));
@@ -161,7 +160,7 @@ class StudyGroupServiceTest {
     }
 
     @Test
-    public void deleteById() {
+    public void givenStudyGroupId_whenDelete_thenNothing() {
         // given - precondition or setup
         Long studyGroupId = 1L;
         willDoNothing().given(studyGroupRepository).deleteById(studyGroupId);
