@@ -132,7 +132,8 @@ class StudyGroupControllerTest {
         Long studyGroupId = 1L;
         // given - precondition or setup
         given(studyGroupService.getById(studyGroupId))
-                .willThrow(new ResourceNotFoundException(ErrorCode.NO_TARGET_1PARAM, studyGroupId, "studyGroup"));
+                .willThrow(new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY,
+                        "can't find a studyGroup by " + "studyGroupId: " +  studyGroupId));
 
         // when - action or the behaviour that we are going test
         // then - verify the output

@@ -79,17 +79,20 @@ public class ReservationServiceImpl implements ReservationService{
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.error("user 대상이 없습니다. userId: {}", userId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_TARGET_1PARAM, userId, "user");
+                    throw new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by " +
+                            " userId: " + userId);
                 });
         StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
                 .orElseThrow(() -> {
                     log.error("studyGroup 대상이 없습니다. studyGroupId: {}", studyGroupId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_TARGET_1PARAM, studyGroupId, "studyGroup");
+                    throw new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY, "can't find a StudyGroup by " +
+                            " studyGroupId: " + studyGroupId);
                 });
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> {
                     log.error("room 대상이 없습니다. roomId: {}", roomId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_TARGET_1PARAM, roomId, "room");
+                    throw new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY, "can't find a Room by " +
+                            " roomId: " + roomId);
                 });
 
         return ValidateFindByIdDto.builder()
@@ -105,7 +108,8 @@ public class ReservationServiceImpl implements ReservationService{
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.error("user 대상이 없습니다. userId: {}", userId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_TARGET_1PARAM, userId, "user");
+                    throw new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by " +
+                            " userId: " + userId);
                 });
         List<Long> sgIds = userGroupRepository.findSgIdsByUserId(user.getId());
 
@@ -122,7 +126,8 @@ public class ReservationServiceImpl implements ReservationService{
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> {
                     log.error("room 대상이 없습니다. roomId: {}", roomId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_TARGET_1PARAM, roomId, "room");
+                    throw new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY, "can't find a Room by " +
+                            " roomId: " + roomId);
                 });
 
         LocalDateTime sTime = formatterLocalDateTime(startTime);
@@ -140,7 +145,8 @@ public class ReservationServiceImpl implements ReservationService{
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> {
                     log.error("room 대상이 없습니다. roomId: {}", roomId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_TARGET_1PARAM, roomId, "room");
+                    throw new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY, "can't find a Room by " +
+                            " roomId: " + roomId);
                 });
 
         return reservationRepository.findByRoomId(room.getId()).stream()
@@ -154,7 +160,9 @@ public class ReservationServiceImpl implements ReservationService{
         Reservation reservation = reservationRepository.findByRoomIdAndId(roomId, reservationId)
                 .orElseThrow(() -> {
                     log.error("reservation 대상이 없습니다. roomId: {}, reservationId: {}", roomId, reservationId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_TARGET_2PARAM, roomId, reservationId, "reservation");
+                    throw new ResourceNotFoundException(
+                            ErrorCode.NO_FOUND_ENTITY,  "can't find a reservation by " + "roomId: " +  roomId +
+                            " and reservationId: " + reservationId);
                 });
         return mapToDto(reservation);
     }
@@ -166,7 +174,8 @@ public class ReservationServiceImpl implements ReservationService{
         Reservation oldReservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> {
                     log.error("reservation 대상이 없습니다. reservationId: {}", reservationId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_TARGET_1PARAM, reservationId, "reservation");
+                    throw new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY, "can't find a reservation by " +
+                            " reservation id: " + reservationId);
                 });
 
         ValidateFindByIdDto validateFindByIdDto = validateUpdateRequest(roomId, reservationRequest);

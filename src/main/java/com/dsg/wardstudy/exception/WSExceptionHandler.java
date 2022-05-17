@@ -32,7 +32,7 @@ public class WSExceptionHandler extends ResponseEntityExceptionHandler {
 
         ErrorDetails errorDetails = ErrorDetails.builder()
                 .date(LocalDateTime.now())
-                .message(exception.errorMessage())
+                .message(exception.getDetailMessage())
                 .description(webRequest.getDescription(false))
                 .errorCode(exception.getErrorCode())
                 .build();

@@ -239,7 +239,8 @@ class ReservationControllerTest {
         // given - precondition or setup
         Long roomId = 100L;
         given(reservationService.getByRoomId(roomId))
-                .willThrow(new ResourceNotFoundException(ErrorCode.NO_TARGET_1PARAM, roomId, "room"));
+                .willThrow(new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY,
+                        "can't find a room by " + "roomId: " +  roomId));
 
         // when - action or the behaviour that we are going test
         // then - verify the output
