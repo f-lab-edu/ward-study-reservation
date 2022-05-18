@@ -51,7 +51,8 @@
 ![image](https://user-images.githubusercontent.com/62453668/164407464-9df1d184-da84-4e4f-b533-2aad2a5b3757.png)
 
 
-## 🎡 서버 구조도(업데이트 예정)
+## 🎡 서버 구조도
+- 업데이트예정
 ![image](https://user-images.githubusercontent.com/62453668/164407568-b361e935-1e87-4a0f-8023-a9a5508cd118.png)
 
 <br>
@@ -62,6 +63,8 @@
 <br>
 
 ## 🎞 ER 다이어그램
+- 업데이트예정
+![image](https://user-images.githubusercontent.com/62453668/169023418-d4bafc12-1cf2-4b77-a975-8fe9367f333c.png)
 
 <br>
 
