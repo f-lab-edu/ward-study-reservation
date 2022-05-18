@@ -138,11 +138,6 @@ class ReservationServiceTest {
         assertThat(details.getEndTime()).isEqualTo(reservation.getEndTime());
     }
 
-//    private String formatterString(LocalDateTime time) {
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-//        return time.format(formatter);
-//    }
-
     @Test
     public void givenRoomIdAndReservationId_whenGetById_thenReturnThrowException() {
         // getById_ThrowsException
