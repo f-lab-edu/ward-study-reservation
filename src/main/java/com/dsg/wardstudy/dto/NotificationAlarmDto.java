@@ -6,8 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Data
@@ -15,9 +13,9 @@ import java.util.List;
 public class NotificationAlarmDto {
 
     private String id;
-    private LocalDateTime startTime;
+    private String startTime;
 
-    private LocalDateTime endTime;
+    private String endTime;
 
     private List<UserDto> userDtos;         // user name, email List
 
@@ -26,7 +24,7 @@ public class NotificationAlarmDto {
     private Room room;
 
     @Builder
-    public NotificationAlarmDto(String id, LocalDateTime startTime, LocalDateTime endTime, List<UserDto> userDtos, StudyGroup studyGroup, Room room) {
+    public NotificationAlarmDto(String id, String startTime, String endTime, List<UserDto> userDtos, StudyGroup studyGroup, Room room) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -39,13 +37,8 @@ public class NotificationAlarmDto {
         return String.format("ward-study 예약룸 알림\n" +
                         String.format("스터디그룹: %s\n" +
                         "룸: %s\n", studyGroup.getTitle(), room.getName()) +
-                        "예약시간: [%s]-[%s]\n", formatterLocalDateTimeToString(startTime), formatterLocalDateTimeToString(endTime));
+                        "예약시간: [%s]-[%s]\n", startTime, endTime);
 
-    }
-
-    private String formatterLocalDateTimeToString(LocalDateTime time) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return time.format(formatter);
     }
 
 

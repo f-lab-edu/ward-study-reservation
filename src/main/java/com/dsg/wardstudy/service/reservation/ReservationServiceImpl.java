@@ -17,13 +17,13 @@ import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
 import com.dsg.wardstudy.type.UserType;
+import com.dsg.wardstudy.utils.TimeParsingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -38,6 +38,8 @@ public class ReservationServiceImpl implements ReservationService{
     private final UserGroupRepository userGroupRepository;
     private final ReservationRepository reservationRepository;
     private final RoomRepository roomRepository;
+
+    private final TimeParsingUtils timeParsingUtils;
 
     @Transactional
     @Override
@@ -136,8 +138,8 @@ public class ReservationServiceImpl implements ReservationService{
                             " roomId: " + roomId);
                 });
 
-        LocalDateTime sTime = formatterLocalDateTime(startTime);
-        LocalDateTime eTime = formatterLocalDateTime(endTime);
+        LocalDateTime sTime = timeParsingUtils.formatterLocalDateTime(startTime);
+        LocalDateTime eTime = timeParsingUtils.formatterLocalDateTime(endTime);
 
         return reservationRepository.findByRoomIdAndTimePeriod(room.getId(), sTime, eTime).stream()
                 .map(this::mapToDto)
@@ -210,8 +212,8 @@ public class ReservationServiceImpl implements ReservationService{
 
         Reservation newReservation = Reservation.builder()
                 .id(genReservationId(validateFindByIdDto.getRoom(), reservationRequest.getStartTime()))
-                .startTime(formatterLocalDateTime(reservationRequest.getStartTime()))
-                .endTime(formatterLocalDateTime(reservationRequest.getEndTime()))
+                .startTime(timeParsingUtils.formatterLocalDateTime(reservationRequest.getStartTime()))
+                .endTime(timeParsingUtils.formatterLocalDateTime(reservationRequest.getEndTime()))
                 .user(validateFindByIdDto.getUser())
                 .studyGroup(validateFindByIdDto.getStudyGroup())
                 .room(validateFindByIdDto.getRoom())
@@ -246,11 +248,6 @@ public class ReservationServiceImpl implements ReservationService{
                 .build();
     }
 
-    private LocalDateTime formatterLocalDateTime(String time) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return LocalDateTime.parse(time, formatter);
-    }
-
     private Reservation mapToEntity(ReservationCreateRequest reservationRequest,
                                     User user,
                                     StudyGroup studyGroup,
@@ -258,8 +255,8 @@ public class ReservationServiceImpl implements ReservationService{
 
         return Reservation.builder()
                 .id(genReservationId(room, reservationRequest.getStartTime()))
-                .startTime(formatterLocalDateTime(reservationRequest.getStartTime()))
-                .endTime(formatterLocalDateTime(reservationRequest.getEndTime()))
+                .startTime(timeParsingUtils.formatterLocalDateTime(reservationRequest.getStartTime()))
+                .endTime(timeParsingUtils.formatterLocalDateTime(reservationRequest.getEndTime()))
                 .user(user)
                 .studyGroup(studyGroup)
                 .room(room)

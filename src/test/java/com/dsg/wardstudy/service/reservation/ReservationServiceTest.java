@@ -15,6 +15,7 @@ import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
 import com.dsg.wardstudy.type.UserType;
+import com.dsg.wardstudy.utils.TimeParsingUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,6 +52,9 @@ class ReservationServiceTest {
     private StudyGroupRepository studyGroupRepository;
     @Mock
     private RoomRepository roomRepository;
+
+    @Mock
+    private TimeParsingUtils timeParsingUtils;
 
     @InjectMocks
     private ReservationServiceImpl reservationService;
@@ -102,8 +105,8 @@ class ReservationServiceTest {
     void givenReservation_whenSave_thenReturnReservationDetails() {
         // given - precondition or setup
         // LocalDateTime -> String 으로 변환
-        String sTime = formatterLocalDateTimeToString(reservation.getStartTime());
-        String eTime = formatterLocalDateTimeToString(reservation.getEndTime());
+        String sTime = timeParsingUtils.formatterString(reservation.getStartTime());
+        String eTime = timeParsingUtils.formatterString(reservation.getEndTime());
 
         createRequest = ReservationCreateRequest.builder()
                 .userId(user.getId())
@@ -135,10 +138,10 @@ class ReservationServiceTest {
         assertThat(details.getEndTime()).isEqualTo(reservation.getEndTime());
     }
 
-    private String formatterLocalDateTimeToString(LocalDateTime time) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return time.format(formatter);
-    }
+//    private String formatterString(LocalDateTime time) {
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//        return time.format(formatter);
+//    }
 
     @Test
     public void givenRoomIdAndReservationId_whenGetById_thenReturnThrowException() {
@@ -203,12 +206,15 @@ class ReservationServiceTest {
         given(roomRepository.findById(room.getId()))
                 .willReturn(Optional.of(room));
 
-        given(reservationRepository.findByRoomIdAndTimePeriod(room.getId(), startTime, endTime))
+        String sTime = timeParsingUtils.formatterString(startTime);
+        String eTime = timeParsingUtils.formatterString(endTime);
+
+        // parsing 작업 추가 String -> LocalDateTime
+        LocalDateTime parsingSTime = timeParsingUtils.formatterLocalDateTime(sTime);
+        LocalDateTime parsingETime = timeParsingUtils.formatterLocalDateTime(eTime);
+
+        given(reservationRepository.findByRoomIdAndTimePeriod(room.getId(), parsingSTime, parsingETime))
                 .willReturn(List.of(reservation, reservation1));
-
-        String sTime = formatterLocalDateTimeToString(startTime);
-        String eTime = formatterLocalDateTimeToString(endTime);
-
         // when - action or the behaviour that we are going test
         List<ReservationDetails> detailsList = reservationService.getByRoomIdAndTimePeriod(room.getId(), sTime, eTime);
         log.info("detailsList: {}", detailsList);
@@ -265,8 +271,8 @@ class ReservationServiceTest {
     @Test
     void givenReservationUpdateRequest_whenUpdate_thenReturnUpdatedReservationId() {
         // given - precondition or setup
-        String sTime = formatterLocalDateTimeToString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30));
-        String eTime = formatterLocalDateTimeToString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 7, 30));
+        String sTime = timeParsingUtils.formatterString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30));
+        String eTime = timeParsingUtils.formatterString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 7, 30));
         
         updateRequest = ReservationUpdateRequest.builder()
                 .userId(user.getId())

@@ -8,6 +8,7 @@ import com.dsg.wardstudy.dto.NotificationAlarmDto;
 import com.dsg.wardstudy.dto.UserDto;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
+import com.dsg.wardstudy.utils.TimeParsingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -38,6 +39,7 @@ public class NotificationAlarmJobConfig {
     private final StepBuilderFactory stepBuilderFactory;
     private final ReservationRepository reservationRepository;
     private final UserGroupRepository userGroupRepository;
+    private final TimeParsingUtils timeParsingUtils;
 
     private static final int CHUNK_SIZE = 4;
 
@@ -92,8 +94,8 @@ public class NotificationAlarmJobConfig {
 
             return NotificationAlarmDto.builder()
                     .id(reservation.getId())
-                    .startTime(reservation.getStartTime())
-                    .endTime(reservation.getEndTime())
+                    .startTime(timeParsingUtils.formatterString(reservation.getStartTime()))
+                    .endTime(timeParsingUtils.formatterString(reservation.getEndTime()))
                     .userDtos(userDtos)
                     .studyGroup(reservation.getStudyGroup())
                     .room(reservation.getRoom())
