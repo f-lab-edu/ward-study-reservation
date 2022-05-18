@@ -57,12 +57,15 @@
 <br>
 
 ## ❗ 이슈 정리
-
-
+[Wiki Issues & Trouble shooting](https://github.com/f-lab-edu/ward-study-reservation/wiki/4.-Issues-&-Trouble-shooting)에서 확인할 수 있습니다!
 
 <br>
 
-## 클라이언트 화면
+## 🎞 ER 다이어그램
+
+<br>
+
+## 🎨 클라이언트 화면
 
 ![image](https://user-images.githubusercontent.com/62453668/164407764-93ce620d-0823-4e64-bd41-2acd6ee01458.png)
 
