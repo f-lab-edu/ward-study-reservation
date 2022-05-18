@@ -1,5 +1,6 @@
 # 👯‍♀️ ward-study
 스터디모임 룸 예약 서비스 - **Ward Study Reservation**
+![ward-study_image](https://user-images.githubusercontent.com/62453668/169026026-6278161e-781f-4f9c-86fd-1d7a0e8c821f.jpg)
 
 언제 어디서든 소규모로 사용자들이 스터디모임을 활성화하기 위한 서비스로 도안하였습니다.
 스터디를 형성하는 데 많은 갈증을 느끼는 사용자가 하나의 연결 토픽을 중심으로 룸을 예약하여  “몰입의 경험”을 선사하는 것이 이 앱의 취지입니다.
