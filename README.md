@@ -1,4 +1,4 @@
-# 👯‍♀️ ward-study
+# 👯‍♀️ ward-study-reservation
 스터디모임 룸 예약 서비스 - **Ward Study Reservation**
 ![ward-study_image](https://user-images.githubusercontent.com/62453668/169026026-6278161e-781f-4f9c-86fd-1d7a0e8c821f.jpg)
 
