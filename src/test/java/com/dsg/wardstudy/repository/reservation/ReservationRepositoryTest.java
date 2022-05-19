@@ -14,6 +14,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -121,7 +125,7 @@ class ReservationRepositoryTest {
         LocalDateTime eTime = LocalDateTime.parse(endTime, formatter);
 
         Reservation reservation = Reservation.builder()
-                .id("3||2022-04-24 10:30:00")
+                .id("3||2022-08-07 12:30:00")
                 .user(savedUser)
                 .startTime(sTime)
                 .endTime(eTime)
@@ -261,6 +265,37 @@ class ReservationRepositoryTest {
 
         // then - verify the output
         assertThat(reservationRepository.findById(savedReservation.getId())).isEmpty();
+
+    }
+
+    @Test
+    public void givenSaveReservation_whenFindBy_thenPageOptional(){
+        // given - precondition or setup
+        StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
+        User savedUser = userRepository.save(user);
+
+        userGroup.setUser(savedUser);
+
+        IntStream.rangeClosed(1, 10).forEach(i -> {
+            userGroup.setStudyGroup(savedStudyGroup);
+            userGroupRepository.save(userGroup);
+            Reservation reservation = Reservation.builder()
+                    .id("3||2022-04-0" + i + " 10:30:00")
+                    .studyGroup(savedStudyGroup)
+                    .build();
+            reservationRepository.save(reservation);
+        });
+
+        Pageable pageable = PageRequest.of(0, 5, Sort.by("id").descending());
+
+        // when - action or the behaviour that we are going test
+        Page<Reservation> reservationPage = reservationRepository.findBy(pageable);
+
+        log.info("reservationPage: {}", reservationPage);
+        log.info("reservationPage.getContent(): {}", reservationPage.getContent());
+        reservationPage.get().forEach(System.out::println);
+        // then - verify the output
+        assertThat(reservationPage.getContent()).isNotNull();
 
     }
 }

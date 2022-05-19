@@ -36,6 +36,7 @@ class StudyGroupRepositoryTest {
     @BeforeEach
     void setup() {
         studyGroup = StudyGroup.builder()
+                .id(1L)
                 .title("testSG")
                 .content("인원 4명의 스터디그룹을 모집합니다.")
                 .build();
@@ -50,7 +51,6 @@ class StudyGroupRepositoryTest {
 
         // then - verify the output
         assertThat(savedStudyGroup).isNotNull();
-        assertThat(savedStudyGroup.getId()).isGreaterThan(0);
         assertThat(savedStudyGroup.getTitle()).isEqualTo("testSG");
 
     }
@@ -88,6 +88,7 @@ class StudyGroupRepositoryTest {
 
         // then - verify the output
         assertThat(this.studyGroup).isNotNull();
+        assertThat(studyGroup.getTitle()).isEqualTo("testSG");
 
     }
 
@@ -144,8 +145,8 @@ class StudyGroupRepositoryTest {
         // given - precondition or setup
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
         // when - action or the behaviour that we are going test
-        studyGroupRepository.deleteById(savedStudyGroup.getId());
-        Optional<StudyGroup> deletedStudyGroup = studyGroupRepository.findById(savedStudyGroup.getId());
+        studyGroupRepository.delete(savedStudyGroup);
+        Optional<StudyGroup> deletedStudyGroup = studyGroupRepository.findById(1L);
 
         // then - verify the output
         assertThat(deletedStudyGroup).isEmpty();
