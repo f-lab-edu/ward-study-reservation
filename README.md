@@ -98,7 +98,7 @@
 <br>
 
 ## 🎨 클라이언트 화면
-
+- 업데이트예정
 ![image](https://user-images.githubusercontent.com/62453668/164407764-93ce620d-0823-4e64-bd41-2acd6ee01458.png)
 
 
