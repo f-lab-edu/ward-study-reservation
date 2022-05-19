@@ -5,7 +5,7 @@ import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
 import com.dsg.wardstudy.exception.ErrorCode;
-import com.dsg.wardstudy.exception.ResourceNotFoundException;
+import com.dsg.wardstudy.exception.WSApiException;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +56,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
                 .orElseThrow(() -> {
                     log.error("studyGroup 대상이 없습니다. studyGroupId: {}", studyGroupId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY, "can't find a StudyGroup by " +
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a StudyGroup by " +
                             " studyGroupId: " + studyGroupId);
                 });
 
@@ -79,7 +79,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
                 .orElseThrow(() -> {
                     log.error("studyGroup 대상이 없습니다. studyGroupId: {}", studyGroupId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY, "can't find a StudyGroup by " +
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a StudyGroup by " +
                             " studyGroupId: " + studyGroupId);
                 });
 
