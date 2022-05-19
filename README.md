@@ -58,8 +58,36 @@
 
 <br>
 
-## ❗ 이슈 정리
+## 👁‍🗨 이슈 정리
 [Wiki Issues & Trouble shooting](https://github.com/f-lab-edu/ward-study-reservation/wiki/4.-Issues-&-Trouble-shooting)에서 확인할 수 있습니다!
+
+<br>
+
+## 🔖 Git-Flow 브랜치 및 PR 전략 
+
+✅ `master` : 제품으로 출시될 수 있는 브랜치를 의미합니다.
+
+✅ `develop` : 다음 출시 버전을 개발하는 브랜치입니다. feature에서 리뷰완료한 브랜치를 Merge하고 있습니다.
+
+✅ `feature` : 기능을 개발하는 브랜치
+
+✅ `release` : 이번 출시 버전을 준비하는 브랜치
+
+✅ `hotfix` : 출시 버전에서 발생한 버그를 수정하는 브랜치
+
+<br>
+
+- 신규개발 건은 `develop` 을 base로 `feature/#이슈번호` 의 브랜치명으로 생성 후 작업한 다음 **PR**을 날립니다.
+- 아직 개발 진행 중이라면 `In Progress` 라벨을 달고, 코드리뷰가 필요한 경우 `Asking for Review` 라벨을 답니다. 리뷰 후 리팩토링이 필요하다면 추가로 `refactoring` 라벨을 달아 진행합니다.
+- 모든 PR은 반드시 지정한 리뷰어에게 코드리뷰를 받아야만 합니다.
+- 코드리뷰어의` Approve` 를 받아야 `Merge pull request` 를 할 수 있습니다.
+
+<br>
+
+✳ 참고문헌 : 
+우아한 형제들 기술블로그 [우린 Git-flow를 사용하고 있어요](https://woowabros.github.io/experience/2017/10/30/baemin-mobile-git-branch-strategy.html)
+
+
 
 <br>
 
