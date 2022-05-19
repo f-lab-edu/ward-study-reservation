@@ -3,6 +3,7 @@ package com.dsg.wardstudy.dto.reservation;
 import com.dsg.wardstudy.domain.reservation.Room;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
+import com.dsg.wardstudy.type.Status;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
@@ -28,13 +29,21 @@ public class ReservationDetails {
 
     private Room room;
 
+    private Status status;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime dealDate;
+
     @Builder
-    public ReservationDetails(String id, LocalDateTime startTime, LocalDateTime endTime, User user, StudyGroup studyGroup, Room room) {
+    public ReservationDetails(String id, LocalDateTime startTime, LocalDateTime endTime, User user, StudyGroup studyGroup, Room room, Status status, LocalDateTime dealDate) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
         this.user = user;
         this.studyGroup = studyGroup;
         this.room = room;
+        this.status = status;
+        this.dealDate = dealDate;
+
     }
 }
