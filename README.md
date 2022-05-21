@@ -95,8 +95,7 @@
 <br>
 
 ## 🎞 ER 다이어그램
-- 업데이트예정
-![image](https://user-images.githubusercontent.com/62453668/169023418-d4bafc12-1cf2-4b77-a975-8fe9367f333c.png)
+![image](https://user-images.githubusercontent.com/62453668/169633501-01fe842c-e170-430f-a9c6-3a1090534da6.png)
 
 <br>
 
