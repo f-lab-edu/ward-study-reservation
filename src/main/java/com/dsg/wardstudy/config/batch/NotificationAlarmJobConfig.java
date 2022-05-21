@@ -1,6 +1,7 @@
 package com.dsg.wardstudy.config.batch;
 
 
+import com.dsg.wardstudy.adapter.MailMessageGenerator;
 import com.dsg.wardstudy.adapter.MailSendService;
 import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.reservation.ReservationDeal;
@@ -41,6 +42,7 @@ public class NotificationAlarmJobConfig {
     private final UserGroupRepository userGroupRepository;
     private final UserRepository userRepository;
     private final MailSendService mailSendService;
+    private final MailMessageGenerator messageGenerator;
 
     private static final int CHUNK_SIZE = 4;
 
@@ -84,8 +86,10 @@ public class NotificationAlarmJobConfig {
         return user -> {
 
             List<Long> sgIds = userGroupRepository.findSgIdsByUserId(user.getId());
+            log.info("sgIds: {}", sgIds);
 
             List<ReservationDeal> deals = reservationQueryRepository.findByStatusIsEnabledAndStartTimeBeforeNow(sgIds);
+            log.info("deals: {}", deals);
 
             List<Reservation> reservations = deals.stream()
                     .map(ReservationDeal::getReservation)
@@ -105,8 +109,9 @@ public class NotificationAlarmJobConfig {
         return items -> items.forEach(
                 item -> {
                     if(!item.getReservations().isEmpty()){
-                        log.info("sendMail: {}", item.toMessage());
-                        mailSendService.sendMail(item.getEmail(), "ward-study 예약룸 알림", item.toMessage());
+                        String toMessage = messageGenerator.toMessage(item.getUserName(), item.getReservations());
+                        log.info("sendMail: {}", toMessage);
+                        mailSendService.sendMail(item.getEmail(), "ward-study 예약룸 알림", toMessage);
                     }
                 }
         );
