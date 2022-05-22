@@ -36,8 +36,8 @@
 
 ## 🛒 사용 기술 스택
 - Java11
-- SpringBoot
-- Gradle
+- SpringBoot2.6
+- Gradle7.4
 - Mysql8.0 / Redis
 - JPA
 - JUnit5
