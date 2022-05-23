@@ -54,7 +54,7 @@
 
 ## 🎡 서버 구조도
 - 업데이트예정
-![image](https://user-images.githubusercontent.com/62453668/164407568-b361e935-1e87-4a0f-8023-a9a5508cd118.png)
+![image](https://user-images.githubusercontent.com/62453668/169858284-69526330-7e8f-48b5-b376-0673bd2fe994.png)
 
 <br>
 
@@ -101,7 +101,7 @@
 
 ## 🎨 클라이언트 화면
 - 업데이트예정
-![image](https://user-images.githubusercontent.com/62453668/164407764-93ce620d-0823-4e64-bd41-2acd6ee01458.png)
+![image](https://user-images.githubusercontent.com/62453668/169858412-601105f0-edd9-4966-b751-e95851d4a926.png)
 
 
 
