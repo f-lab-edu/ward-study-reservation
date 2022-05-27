@@ -54,7 +54,7 @@
 
 ## 🎡 서버 구조도
 - 업데이트예정
-![image](https://user-images.githubusercontent.com/62453668/169858284-69526330-7e8f-48b5-b376-0673bd2fe994.png)
+![image](https://user-images.githubusercontent.com/62453668/170675065-eb83f7d8-5759-49c4-89fe-ba315283c003.png)
 
 <br>
 
