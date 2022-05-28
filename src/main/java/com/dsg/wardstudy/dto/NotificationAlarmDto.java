@@ -1,45 +1,29 @@
 package com.dsg.wardstudy.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.dsg.wardstudy.domain.reservation.Reservation;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 public class NotificationAlarmDto {
 
     private String id;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime startTime;
+    private String email;
+    private String userName;
+    private List<Reservation> reservations;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime endTime;
 
-    private Long userId;
-
-    private Long studyGroupId;
-
-    private Long roomId;
 
     @Builder
-    public NotificationAlarmDto(String id, LocalDateTime startTime, LocalDateTime endTime, Long userId, Long studyGroupId, Long roomId) {
+    public NotificationAlarmDto(String id, String email, String userName, List<Reservation> reservations) {
         this.id = id;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        this.userId = userId;
-        this.studyGroupId = studyGroupId;
-        this.roomId = roomId;
-    }
-
-    public String toMessage() {
-        return String.format("%s님 예약룸 알림\n" +
-                "[%s]-[%s] 예약시간이 잡혔습니다.\n","dsg", startTime, endTime);
-//                +
-//                String.format("스터디그룹: %s\n" +
-//                        "룸: %s\n", studyGroup.getTitle(), room.getName());
+        this.email = email;
+        this.userName = userName;
+        this.reservations = reservations;
     }
 
 }

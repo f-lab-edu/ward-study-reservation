@@ -29,6 +29,8 @@ public class BatchController {
         Map<String, JobParameter> parameters = new HashMap<>();
         parameters.put("timestamp", new JobParameter(System.currentTimeMillis()));
         JobExecution jobExecution = jobLauncher.run(notificationAlarmJob, new JobParameters(parameters));
+        System.out.println("Batch job "+ jobExecution.getStatus());
+
         return "Batch job "+ jobExecution.getStatus();
 
     }

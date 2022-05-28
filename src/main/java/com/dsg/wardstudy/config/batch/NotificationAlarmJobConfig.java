@@ -1,11 +1,15 @@
 package com.dsg.wardstudy.config.batch;
 
 
+import com.dsg.wardstudy.adapter.MailMessageGenerator;
 import com.dsg.wardstudy.adapter.MailSendService;
 import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.reservation.ReservationDeal;
+import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.dto.NotificationAlarmDto;
-import com.dsg.wardstudy.repository.reservation.ReservationRepository;
+import com.dsg.wardstudy.repository.reservation.ReservationQueryRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
+import com.dsg.wardstudy.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -24,8 +28,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.Sort;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,8 +38,11 @@ import java.util.stream.Collectors;
 public class NotificationAlarmJobConfig {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
-    private final ReservationRepository reservationRepository;
+    private final ReservationQueryRepository reservationQueryRepository;
     private final UserGroupRepository userGroupRepository;
+    private final UserRepository userRepository;
+    private final MailSendService mailSendService;
+    private final MailMessageGenerator messageGenerator;
 
     private static final int CHUNK_SIZE = 4;
 
@@ -51,11 +56,11 @@ public class NotificationAlarmJobConfig {
 
     @JobScope
     @Bean("notificationAlarmStep")
-    public Step notificationAlarmStep(ItemReader<Reservation> notificationAlarmReader,
-                                      ItemProcessor<Reservation, NotificationAlarmDto> notificationAlarmProcessor,
+    public Step notificationAlarmStep(ItemReader<User> notificationAlarmReader,
+                                      ItemProcessor<User, NotificationAlarmDto> notificationAlarmProcessor,
                                       ItemWriter<NotificationAlarmDto> notificationAlarmWriter) {
         return stepBuilderFactory.get("notificationAlarmStep")
-                .<Reservation, NotificationAlarmDto>chunk(CHUNK_SIZE)
+                .<User, NotificationAlarmDto>chunk(CHUNK_SIZE)
                 .reader(notificationAlarmReader)
                 .processor(notificationAlarmProcessor)
                 .writer(notificationAlarmWriter)
@@ -64,57 +69,51 @@ public class NotificationAlarmJobConfig {
 
     @StepScope
     @Bean
-    public RepositoryItemReader<Reservation> notificationAlarmReader() {
-        return new RepositoryItemReaderBuilder<Reservation>()
+    public RepositoryItemReader<User> notificationAlarmReader() {
+        return new RepositoryItemReaderBuilder<User>()
                 .name("notificationAlarmReader")
-                .repository(reservationRepository)
+                .repository(userRepository)
                 .methodName("findBy")
                 .pageSize(CHUNK_SIZE)
                 .arguments(List.of())
-                .sorts(Collections.singletonMap("id", Sort.Direction.DESC))
+                .sorts(Collections.singletonMap("id", Sort.Direction.ASC))
                 .build();
     }
 
     @StepScope
     @Bean
-    public ItemProcessor<Reservation, NotificationAlarmDto> notificationAlarmProcessor() {
-        return reservation -> {
-            // todo들 아직 compleated 안된 거 count로 표기
-/*            List<String> userEmails = userGroupRepository.findUserBySGId(1L).stream()
-                    .map(user -> user.getEmail())
+    public ItemProcessor<User, NotificationAlarmDto> notificationAlarmProcessor() {
+        return user -> {
+
+            List<Long> sgIds = userGroupRepository.findSgIdsByUserId(user.getId());
+            log.info("sgIds: {}", sgIds);
+
+            List<ReservationDeal> deals = reservationQueryRepository.findByStatusIsEnabledAndStartTimeBeforeNow(sgIds);
+            log.info("deals: {}", deals);
+
+            List<Reservation> reservations = deals.stream()
+                    .map(ReservationDeal::getReservation)
                     .collect(Collectors.toList());
 
-            List<Reservation> reservationList = reservationRepository.findAll();
-
-            if (reservationList.isEmpty()) {
-                return null;
-            }*/
-
             return NotificationAlarmDto.builder()
-                    .id(reservation.getId())
-                    .startTime(reservation.getStartTime())
-                    .endTime(reservation.getEndTime())
-//                    .userId(reservation.getUser().getId())
-//                    .studyGroupId(reservation.getStudyGroup().getId())
-//                    .roomId(reservation.getRoom().getId())
+                    .email(user.getEmail())
+                    .userName(user.getName())
+                    .reservations(reservations)
                     .build();
         };
     }
 
-/*    @StepScope
-    @Bean
-    public ItemWriter<NotificationAlarmDto> todoNotificationWriter() {
-        return items -> {
-            items.forEach(System.out::println);
-            System.out.println("==== chunk is finished");
-        };
-    }*/
-
     @StepScope
     @Bean
-    public ItemWriter<NotificationAlarmDto> notificationAlarmWriter(MailSendService mailSendService) {
+    public ItemWriter<NotificationAlarmDto> notificationAlarmWriter() {
         return items -> items.forEach(
-                item -> mailSendService.sendMail("ehtjd33@gmail.com", item.getId(), item.toMessage())
+                item -> {
+                    if(!item.getReservations().isEmpty()){
+                        String toMessage = messageGenerator.toMessage(item.getUserName(), item.getReservations());
+                        log.info("sendMail: {}", toMessage);
+                        mailSendService.sendMail(item.getEmail(), "ward-study 예약룸 알림", toMessage);
+                    }
+                }
         );
     }
 

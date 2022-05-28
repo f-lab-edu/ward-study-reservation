@@ -17,6 +17,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -255,6 +259,23 @@ class ReservationRepositoryIntegrationTest {
 
         // then - verify the output
         assertThat(reservationRepository.findById(savedReservation.getId())).isEmpty();
+
+    }
+
+
+    @Test
+    public void givenSaveReservation_whenFindBy_thenPageOptional(){
+
+        Pageable pageable = PageRequest.of(0, 5, Sort.by("id").descending());
+
+        // when - action or the behaviour that we are going test
+        Page<Reservation> reservationPage = reservationRepository.findBy(pageable);
+
+        log.info("reservationPage: {}", reservationPage);
+        log.info("reservationPage.getContent(): {}", reservationPage.getContent());
+        reservationPage.get().forEach(System.out::println);
+        // then - verify the output
+        assertThat(reservationPage.getContent()).isNotNull();
 
     }
 }

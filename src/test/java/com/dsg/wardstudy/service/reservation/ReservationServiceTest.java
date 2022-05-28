@@ -1,6 +1,7 @@
 package com.dsg.wardstudy.service.reservation;
 
 import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.reservation.ReservationDeal;
 import com.dsg.wardstudy.domain.reservation.Room;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
@@ -9,12 +10,15 @@ import com.dsg.wardstudy.dto.reservation.ReservationCreateRequest;
 import com.dsg.wardstudy.dto.reservation.ReservationDetails;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
 import com.dsg.wardstudy.exception.ResourceNotFoundException;
+import com.dsg.wardstudy.repository.reservation.ReservationDealRepository;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.reservation.RoomRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
+import com.dsg.wardstudy.type.Status;
 import com.dsg.wardstudy.type.UserType;
+import com.dsg.wardstudy.utils.TimeParsingUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +30,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,6 +48,8 @@ class ReservationServiceTest {
     @Mock
     private ReservationRepository reservationRepository;
     @Mock
+    private ReservationDealRepository reservationDealRepository;
+    @Mock
     private UserRepository userRepository;
     @Mock
     private UserGroupRepository userGroupRepository;
@@ -53,10 +58,14 @@ class ReservationServiceTest {
     @Mock
     private RoomRepository roomRepository;
 
+    @Mock
+    private TimeParsingUtils timeParsingUtils;
+
     @InjectMocks
     private ReservationServiceImpl reservationService;
 
     private Reservation reservation;
+    private ReservationDeal deal;
     private User user;
     private UserGroup userGroup;
     private StudyGroup studyGroup;
@@ -96,14 +105,20 @@ class ReservationServiceTest {
                 .startTime(LocalDateTime.of(2019, Month.NOVEMBER, 3, 6, 30))
                 .endTime(LocalDateTime.of(2019, Month.NOVEMBER, 3, 7, 30))
                 .build();
+
+        deal = ReservationDeal.builder()
+                .reservation(reservation)
+                .status(Status.ENABLED)
+                .dealDate(LocalDateTime.now())
+                .build();
     }
 
     @Test
     void givenReservation_whenSave_thenReturnReservationDetails() {
         // given - precondition or setup
         // LocalDateTime -> String 으로 변환
-        String sTime = formatterLocalDateTimeToString(reservation.getStartTime());
-        String eTime = formatterLocalDateTimeToString(reservation.getEndTime());
+        String sTime = timeParsingUtils.formatterString(reservation.getStartTime());
+        String eTime = timeParsingUtils.formatterString(reservation.getEndTime());
 
         createRequest = ReservationCreateRequest.builder()
                 .userId(user.getId())
@@ -124,6 +139,9 @@ class ReservationServiceTest {
 
         given(reservationRepository.save(any(Reservation.class)))
                 .willReturn(reservation);
+        // Reservation_deal save 로직 추가
+        given(reservationDealRepository.save(any(ReservationDeal.class)))
+                .willReturn(deal);
 
         // when - action or the behaviour that we are going test
         ReservationDetails details = reservationService.create(studyGroup.getId(), room.getId(), createRequest);
@@ -133,11 +151,7 @@ class ReservationServiceTest {
         assertThat(details).isNotNull();
         assertThat(details.getStartTime()).isEqualTo(reservation.getStartTime());
         assertThat(details.getEndTime()).isEqualTo(reservation.getEndTime());
-    }
-
-    private String formatterLocalDateTimeToString(LocalDateTime time) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return time.format(formatter);
+        assertThat(details.getStatus()).isEqualTo(deal.getStatus());
     }
 
     @Test
@@ -148,7 +162,7 @@ class ReservationServiceTest {
 
         Mockito.lenient().when(reservationRepository.findByRoomId(room.getId()))
                 .thenReturn(List.of(reservation));
-        Mockito.lenient().when(reservationRepository.findById(anyLong()))
+        Mockito.lenient().when(reservationRepository.findById(anyString()))
                 .thenReturn(Optional.empty());
 
         // when - action or the behaviour that we are going test
@@ -158,7 +172,7 @@ class ReservationServiceTest {
 
         // then - verify the output
         verify(reservationRepository, never()).findByRoomId(anyLong());
-        verify(reservationRepository, never()).findById(anyLong());
+        verify(reservationRepository, never()).findById(anyString());
 
     }
 
@@ -203,12 +217,15 @@ class ReservationServiceTest {
         given(roomRepository.findById(room.getId()))
                 .willReturn(Optional.of(room));
 
-        given(reservationRepository.findByRoomIdAndTimePeriod(room.getId(), startTime, endTime))
+        String sTime = timeParsingUtils.formatterString(startTime);
+        String eTime = timeParsingUtils.formatterString(endTime);
+
+        // parsing 작업 추가 String -> LocalDateTime
+        LocalDateTime parsingSTime = timeParsingUtils.formatterLocalDateTime(sTime);
+        LocalDateTime parsingETime = timeParsingUtils.formatterLocalDateTime(eTime);
+
+        given(reservationRepository.findByRoomIdAndTimePeriod(room.getId(), parsingSTime, parsingETime))
                 .willReturn(List.of(reservation, reservation1));
-
-        String sTime = formatterLocalDateTimeToString(startTime);
-        String eTime = formatterLocalDateTimeToString(endTime);
-
         // when - action or the behaviour that we are going test
         List<ReservationDetails> detailsList = reservationService.getByRoomIdAndTimePeriod(room.getId(), sTime, eTime);
         log.info("detailsList: {}", detailsList);
@@ -265,8 +282,8 @@ class ReservationServiceTest {
     @Test
     void givenReservationUpdateRequest_whenUpdate_thenReturnUpdatedReservationId() {
         // given - precondition or setup
-        String sTime = formatterLocalDateTimeToString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30));
-        String eTime = formatterLocalDateTimeToString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 7, 30));
+        String sTime = timeParsingUtils.formatterString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30));
+        String eTime = timeParsingUtils.formatterString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 7, 30));
         
         updateRequest = ReservationUpdateRequest.builder()
                 .userId(user.getId())
@@ -312,15 +329,15 @@ class ReservationServiceTest {
     @Test
     void givenReservationId_whenDelete_thenNothing() {
         // given - precondition or setup
-        given(reservationRepository.findById(reservation.getId()))
-                .willReturn(Optional.of(reservation));
-        willDoNothing().given(reservationRepository).delete(reservation);
+        given(reservationDealRepository.findByReservationId(reservation.getId()))
+                .willReturn(Optional.of(deal));
 
         // when - action or the behaviour that we are going test
         reservationService.deleteById(reservation.getId());
 
+        log.info("deal: {}", deal);
         // then - verify the output
-        verify(reservationRepository).delete(reservation);
+        assertThat(deal.getStatus()).isEqualTo(Status.CANCELED);
 
     }
 }

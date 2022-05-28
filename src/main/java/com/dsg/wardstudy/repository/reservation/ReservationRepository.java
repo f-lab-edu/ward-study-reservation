@@ -11,11 +11,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface ReservationRepository extends JpaRepository<Reservation, Long> {
+public interface ReservationRepository extends JpaRepository<Reservation, String> {
 
     Page<Reservation> findBy(Pageable pageable);
-
-    Optional<Reservation> findById(String reservationId);
 
     @Query("select r from Reservation r left join fetch r.room where r.room.id = :roomId")
     List<Reservation> findByRoomId(@Param("roomId") Long roomId);
@@ -31,6 +29,6 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
     Optional<Reservation> findByRoomIdAndId(@Param("roomId") Long roomId, @Param("reservationId") String reservationId);
 
     @Query("select r from Reservation r left join fetch r.studyGroup where r.studyGroup.id in :sgIds")
-    List<Reservation> findByStudyGroupIds(List<Long> sgIds);
+    List<Reservation> findByStudyGroupIds(@Param("sgIds") List<Long> sgIds);
 
 }

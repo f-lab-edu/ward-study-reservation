@@ -1,6 +1,7 @@
 package com.dsg.wardstudy.service.reservation;
 
 import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.reservation.ReservationDeal;
 import com.dsg.wardstudy.domain.reservation.Room;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
@@ -11,22 +12,24 @@ import com.dsg.wardstudy.dto.reservation.ValidateFindByIdDto;
 import com.dsg.wardstudy.exception.ErrorCode;
 import com.dsg.wardstudy.exception.ResourceNotFoundException;
 import com.dsg.wardstudy.exception.WSApiException;
+import com.dsg.wardstudy.repository.reservation.ReservationDealRepository;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.reservation.RoomRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
+import com.dsg.wardstudy.type.Status;
 import com.dsg.wardstudy.type.UserType;
+import com.dsg.wardstudy.utils.TimeParsingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
+
 
 @Slf4j
 @Service
@@ -37,7 +40,10 @@ public class ReservationServiceImpl implements ReservationService{
     private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
     private final ReservationRepository reservationRepository;
+    private final ReservationDealRepository reservationDealRepository;
     private final RoomRepository roomRepository;
+
+    private final TimeParsingUtils timeParsingUtils;
 
     @Transactional
     @Override
@@ -45,8 +51,15 @@ public class ReservationServiceImpl implements ReservationService{
 
         Reservation reservation = validateCreateRequest(studyGroupId, roomId, reservationRequest);
         Reservation saveReservation = reservationRepository.save(reservation);
+        // Reservation_deal save 로직 추가
+        ReservationDeal deal = ReservationDeal.builder()
+                .reservation(saveReservation)
+                .status(Status.ENABLED)
+                .dealDate(LocalDateTime.now())
+                .build();
+        ReservationDeal savedReservationDeal = reservationDealRepository.save(deal);
 
-        return mapToDto(saveReservation);
+        return mapToDto(saveReservation, savedReservationDeal);
 
     }
 
@@ -136,8 +149,8 @@ public class ReservationServiceImpl implements ReservationService{
                             " roomId: " + roomId);
                 });
 
-        LocalDateTime sTime = formatterLocalDateTime(startTime);
-        LocalDateTime eTime = formatterLocalDateTime(endTime);
+        LocalDateTime sTime = timeParsingUtils.formatterLocalDateTime(startTime);
+        LocalDateTime eTime = timeParsingUtils.formatterLocalDateTime(endTime);
 
         return reservationRepository.findByRoomIdAndTimePeriod(room.getId(), sTime, eTime).stream()
                 .map(this::mapToDto)
@@ -210,8 +223,8 @@ public class ReservationServiceImpl implements ReservationService{
 
         Reservation newReservation = Reservation.builder()
                 .id(genReservationId(validateFindByIdDto.getRoom(), reservationRequest.getStartTime()))
-                .startTime(formatterLocalDateTime(reservationRequest.getStartTime()))
-                .endTime(formatterLocalDateTime(reservationRequest.getEndTime()))
+                .startTime(timeParsingUtils.formatterLocalDateTime(reservationRequest.getStartTime()))
+                .endTime(timeParsingUtils.formatterLocalDateTime(reservationRequest.getEndTime()))
                 .user(validateFindByIdDto.getUser())
                 .studyGroup(validateFindByIdDto.getStudyGroup())
                 .room(validateFindByIdDto.getRoom())
@@ -228,27 +241,35 @@ public class ReservationServiceImpl implements ReservationService{
     @Transactional
     @Override
     public void deleteById(String reservationId) {
-        Optional<Reservation> reservation = reservationRepository.findById(reservationId);
-        if (reservation.isPresent()) {
-            reservationRepository.delete(reservation.get());
-        }
+        // reservation 삭제시 reservationDeal status 기록(CANCELED) 남김
+        reservationDealRepository.findByReservationId(reservationId)
+                .ifPresent( rd -> {
+                    rd.changeStatus(Status.CANCELED);
+                });
     }
 
-    private ReservationDetails mapToDto(Reservation saveReservation) {
-
+    private ReservationDetails mapToDto(Reservation reservation) {
         return ReservationDetails.builder()
-                .id(saveReservation.getId())
-                .startTime(saveReservation.getStartTime())
-                .endTime(saveReservation.getEndTime())
-                .user(saveReservation.getUser())
-                .studyGroup(saveReservation.getStudyGroup())
-                .room(saveReservation.getRoom())
+                .id(reservation.getId())
+                .startTime(reservation.getStartTime())
+                .endTime(reservation.getEndTime())
+                .user(reservation.getUser())
+                .studyGroup(reservation.getStudyGroup())
+                .room(reservation.getRoom())
                 .build();
     }
 
-    private LocalDateTime formatterLocalDateTime(String time) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return LocalDateTime.parse(time, formatter);
+    private ReservationDetails mapToDto(Reservation reservation, ReservationDeal reservationDeal) {
+        return ReservationDetails.builder()
+                .id(reservation.getId())
+                .startTime(reservation.getStartTime())
+                .endTime(reservation.getEndTime())
+                .user(reservation.getUser())
+                .studyGroup(reservation.getStudyGroup())
+                .room(reservation.getRoom())
+                .status(reservationDeal.getStatus())
+                .dealDate(reservationDeal.getDealDate())
+                .build();
     }
 
     private Reservation mapToEntity(ReservationCreateRequest reservationRequest,
@@ -258,8 +279,8 @@ public class ReservationServiceImpl implements ReservationService{
 
         return Reservation.builder()
                 .id(genReservationId(room, reservationRequest.getStartTime()))
-                .startTime(formatterLocalDateTime(reservationRequest.getStartTime()))
-                .endTime(formatterLocalDateTime(reservationRequest.getEndTime()))
+                .startTime(timeParsingUtils.formatterLocalDateTime(reservationRequest.getStartTime()))
+                .endTime(timeParsingUtils.formatterLocalDateTime(reservationRequest.getEndTime()))
                 .user(user)
                 .studyGroup(studyGroup)
                 .room(room)
