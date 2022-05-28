@@ -33,8 +33,7 @@ import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 
-import static com.dsg.wardstudy.utils.TimeParsingUtils.formatterLocalDateTime;
-import static com.dsg.wardstudy.utils.TimeParsingUtils.formatterString;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -119,8 +118,8 @@ class ReservationServiceTest {
     void givenReservation_whenSave_thenReturnReservationDetails() {
         // given - precondition or setup
         // LocalDateTime -> String 으로 변환
-        String sTime = formatterString(reservation.getStartTime());
-        String eTime = formatterString(reservation.getEndTime());
+        String sTime = timeParsingUtils.formatterString(reservation.getStartTime());
+        String eTime = timeParsingUtils.formatterString(reservation.getEndTime());
 
         createRequest = ReservationCreateRequest.builder()
                 .userId(user.getId())
@@ -219,12 +218,12 @@ class ReservationServiceTest {
         given(roomRepository.findById(room.getId()))
                 .willReturn(Optional.of(room));
 
-        String sTime = formatterString(startTime);
-        String eTime = formatterString(endTime);
+        String sTime = timeParsingUtils.formatterString(startTime);
+        String eTime = timeParsingUtils.formatterString(endTime);
 
         // parsing 작업 추가 String -> LocalDateTime
-        LocalDateTime parsingSTime = formatterLocalDateTime(sTime);
-        LocalDateTime parsingETime = formatterLocalDateTime(eTime);
+        LocalDateTime parsingSTime = timeParsingUtils.formatterLocalDateTime(sTime);
+        LocalDateTime parsingETime = timeParsingUtils.formatterLocalDateTime(eTime);
 
         given(reservationRepository.findByRoomIdAndTimePeriod(room.getId(), parsingSTime, parsingETime))
                 .willReturn(List.of(reservation, reservation1));
@@ -284,8 +283,8 @@ class ReservationServiceTest {
     @Test
     void givenReservationUpdateRequest_whenUpdate_thenReturnUpdatedReservationId() {
         // given - precondition or setup
-        String sTime = formatterString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30));
-        String eTime = formatterString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 7, 30));
+        String sTime = timeParsingUtils.formatterString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30));
+        String eTime = timeParsingUtils.formatterString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 7, 30));
         
         updateRequest = ReservationUpdateRequest.builder()
                 .userId(user.getId())
