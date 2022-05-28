@@ -9,7 +9,7 @@ import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.dto.reservation.ReservationCreateRequest;
 import com.dsg.wardstudy.dto.reservation.ReservationDetails;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
-import com.dsg.wardstudy.exception.ResourceNotFoundException;
+import com.dsg.wardstudy.exception.WSApiException;
 import com.dsg.wardstudy.repository.reservation.ReservationDealRepository;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.reservation.RoomRepository;
@@ -32,6 +32,7 @@ import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.List;
 import java.util.Optional;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -168,7 +169,7 @@ class ReservationServiceTest {
         // when - action or the behaviour that we are going test
         assertThatThrownBy(() -> {
             reservationService.getByRoomIdAndReservationId(room.getId(), reservationId);
-        }).isInstanceOf(ResourceNotFoundException.class);
+        }).isInstanceOf(WSApiException.class);
 
         // then - verify the output
         verify(reservationRepository, never()).findByRoomId(anyLong());

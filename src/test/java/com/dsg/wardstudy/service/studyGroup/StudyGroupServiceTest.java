@@ -3,7 +3,7 @@ package com.dsg.wardstudy.service.studyGroup;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
-import com.dsg.wardstudy.exception.ResourceNotFoundException;
+import com.dsg.wardstudy.exception.WSApiException;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,7 +94,7 @@ class StudyGroupServiceTest {
         // then - verify the output
         assertThatThrownBy(() -> {
             studyGroupService.getById(1L);
-        }).isInstanceOf(ResourceNotFoundException.class);
+        }).isInstanceOf(WSApiException.class);
     }
 
 

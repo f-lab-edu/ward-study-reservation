@@ -98,19 +98,19 @@ public class ReservationServiceImpl implements ReservationService{
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.error("user 대상이 없습니다. userId: {}", userId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by " +
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by " +
                             " userId: " + userId);
                 });
         StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
                 .orElseThrow(() -> {
                     log.error("studyGroup 대상이 없습니다. studyGroupId: {}", studyGroupId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY, "can't find a StudyGroup by " +
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a StudyGroup by " +
                             " studyGroupId: " + studyGroupId);
                 });
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> {
                     log.error("room 대상이 없습니다. roomId: {}", roomId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY, "can't find a Room by " +
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a Room by " +
                             " roomId: " + roomId);
                 });
 
@@ -127,7 +127,7 @@ public class ReservationServiceImpl implements ReservationService{
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.error("user 대상이 없습니다. userId: {}", userId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by " +
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by " +
                             " userId: " + userId);
                 });
         List<Long> sgIds = userGroupRepository.findSgIdsByUserId(user.getId());
@@ -145,7 +145,7 @@ public class ReservationServiceImpl implements ReservationService{
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> {
                     log.error("room 대상이 없습니다. roomId: {}", roomId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY, "can't find a Room by " +
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a Room by " +
                             " roomId: " + roomId);
                 });
 
@@ -164,7 +164,7 @@ public class ReservationServiceImpl implements ReservationService{
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> {
                     log.error("room 대상이 없습니다. roomId: {}", roomId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY, "can't find a Room by " +
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a Room by " +
                             " roomId: " + roomId);
                 });
 
@@ -179,7 +179,7 @@ public class ReservationServiceImpl implements ReservationService{
         Reservation reservation = reservationRepository.findByRoomIdAndId(roomId, reservationId)
                 .orElseThrow(() -> {
                     log.error("reservation 대상이 없습니다. roomId: {}, reservationId: {}", roomId, reservationId);
-                    throw new ResourceNotFoundException(
+                    throw new WSApiException(
                             ErrorCode.NO_FOUND_ENTITY,  "can't find a reservation by " + "roomId: " +  roomId +
                             " and reservationId: " + reservationId);
                 });
@@ -193,7 +193,7 @@ public class ReservationServiceImpl implements ReservationService{
         Reservation oldReservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> {
                     log.error("reservation 대상이 없습니다. reservationId: {}", reservationId);
-                    throw new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY, "can't find a reservation by " +
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a reservation by " +
                             " reservation id: " + reservationId);
                 });
 
