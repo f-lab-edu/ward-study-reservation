@@ -41,14 +41,17 @@ public class Reservation extends BaseTimeEntity {
     @JsonIgnore
     private Room room;
 
+    private boolean isEmailSent;
+
     @Builder
-    public Reservation(String id, LocalDateTime startTime, LocalDateTime endTime, User user, StudyGroup studyGroup, Room room) {
+    public Reservation(String id, LocalDateTime startTime, LocalDateTime endTime, User user, StudyGroup studyGroup, Room room, boolean isEmailSent) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
         this.user = user;
         this.studyGroup = studyGroup;
         this.room = room;
+        this.isEmailSent = isEmailSent;
     }
 
 }
