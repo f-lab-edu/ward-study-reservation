@@ -119,9 +119,6 @@ public class NotificationAlarmJobConfig {
                         if(mailSendService.sendMail(item.getEmail(), "ward-study 예약룸 알림", toMessage)) {
                             for (Reservation r : item.getReservations()) {
                                 reservationService.changeIsEmailSent(r);
-//                                r.changeIsEmailSent(true);
-//                                Reservation save = reservationRepository.save(r);
-//                                log.info("save r: {}", save);
                             }
                         }
                     }
