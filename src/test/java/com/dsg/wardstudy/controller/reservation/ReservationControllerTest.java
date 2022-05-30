@@ -9,7 +9,7 @@ import com.dsg.wardstudy.dto.reservation.ReservationCreateRequest;
 import com.dsg.wardstudy.dto.reservation.ReservationDetails;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
 import com.dsg.wardstudy.exception.ErrorCode;
-import com.dsg.wardstudy.exception.ResourceNotFoundException;
+import com.dsg.wardstudy.exception.WSApiException;
 import com.dsg.wardstudy.service.reservation.ReservationService;
 import com.dsg.wardstudy.type.UserType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -239,7 +239,7 @@ class ReservationControllerTest {
         // given - precondition or setup
         Long roomId = 100L;
         given(reservationService.getByRoomId(roomId))
-                .willThrow(new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY,
+                .willThrow(new WSApiException(ErrorCode.NO_FOUND_ENTITY,
                         "can't find a room by " + "roomId: " +  roomId));
 
         // when - action or the behaviour that we are going test
