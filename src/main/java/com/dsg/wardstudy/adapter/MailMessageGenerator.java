@@ -16,8 +16,8 @@ public class MailMessageGenerator {
                 "%s 님, ward-study 예약룸 알림 전달드립니다.\n", userName)
                 +
                 reservations.stream()
-                        .map(r -> String.format("스터디그룹: %s, 스터디리더: %s 님,\n" +
-                                        "룸: %s, 예약시간: [%s]-[%s]\n",
+                        .map(r -> String.format("<p>스터디그룹: %s, 스터디리더: %s 님,\n" +
+                                        "룸: %s, 예약시간: [%s]-[%s]</p>\n",
                                 r.getStudyGroup().getTitle(), r.getUser().getName(),
                                 r.getRoom().getName(), formatterString(r.getStartTime()), formatterString(r.getEndTime())))
                         .collect(Collectors.joining());
