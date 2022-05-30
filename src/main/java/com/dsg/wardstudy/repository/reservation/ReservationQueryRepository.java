@@ -21,7 +21,7 @@ public class ReservationQueryRepository {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public List<ReservationDeal> findByStatusIsEnabledAndStartTimeBeforeNow(List<Long> sgIds) {
+    public List<ReservationDeal> findByStatusIsEnabledAndStartTimeAfterNow(List<Long> sgIds) {
         return queryFactory
                 .selectFrom(reservationDeal)
                 .join(reservationDeal.reservation, reservation)

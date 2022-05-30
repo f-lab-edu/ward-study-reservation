@@ -88,7 +88,7 @@ public class NotificationAlarmJobConfig {
             List<Long> sgIds = userGroupRepository.findSgIdsByUserId(user.getId());
             log.info("sgIds: {}", sgIds);
 
-            List<ReservationDeal> deals = reservationQueryRepository.findByStatusIsEnabledAndStartTimeBeforeNow(sgIds);
+            List<ReservationDeal> deals = reservationQueryRepository.findByStatusIsEnabledAndStartTimeAfterNow(sgIds);
             log.info("deals: {}", deals);
 
             List<Reservation> reservations = deals.stream()
