@@ -248,6 +248,13 @@ public class ReservationServiceImpl implements ReservationService{
                 });
     }
 
+    @Transactional
+    @Override
+    public void changeIsEmailSent(Reservation reservation) {
+        reservation.changeIsEmailSent(true);
+        log.info("reservation.changeIsEmailSent(true); 실행");
+    }
+
     private ReservationDetails mapToDto(Reservation reservation) {
         return ReservationDetails.builder()
                 .id(reservation.getId())

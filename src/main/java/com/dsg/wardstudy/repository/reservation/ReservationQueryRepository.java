@@ -21,13 +21,15 @@ public class ReservationQueryRepository {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public List<ReservationDeal> findByStatusIsEnabledAndStartTimeAfterNow(List<Long> sgIds) {
+    public List<ReservationDeal> findByStatusIsEnabledAndStartTimeAfterNowAndIsSentFalse(List<Long> sgIds) {
         return queryFactory
                 .selectFrom(reservationDeal)
                 .join(reservationDeal.reservation, reservation)
                 .where(reservationDeal.status.eq(Status.ENABLED)
                         .and(reservation.startTime.after(LocalDateTime.now()))
-                        .and(reservation.studyGroup.id.in(sgIds)))
+                        .and(reservation.studyGroup.id.in(sgIds))
+                        .and(reservation.isEmailSent.eq(false))
+                )
                 .fetch();
     }
 

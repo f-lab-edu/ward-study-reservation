@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "startTime", "endTime"})
+@ToString(of = {"id", "startTime", "endTime", "isEmailSent"})
 public class Reservation extends BaseTimeEntity {
 
     @Id
@@ -51,6 +51,10 @@ public class Reservation extends BaseTimeEntity {
         this.user = user;
         this.studyGroup = studyGroup;
         this.room = room;
+        this.isEmailSent = isEmailSent;
+    }
+
+    public void changeIsEmailSent(boolean isEmailSent) {
         this.isEmailSent = isEmailSent;
     }
 

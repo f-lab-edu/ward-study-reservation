@@ -10,6 +10,7 @@ import com.dsg.wardstudy.dto.NotificationAlarmDto;
 import com.dsg.wardstudy.repository.reservation.ReservationQueryRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
+import com.dsg.wardstudy.service.reservation.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
@@ -38,6 +39,8 @@ import java.util.stream.Collectors;
 public class NotificationAlarmJobConfig {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
+
+    private final ReservationService reservationService;
     private final ReservationQueryRepository reservationQueryRepository;
     private final UserGroupRepository userGroupRepository;
     private final UserRepository userRepository;
@@ -88,7 +91,9 @@ public class NotificationAlarmJobConfig {
             List<Long> sgIds = userGroupRepository.findSgIdsByUserId(user.getId());
             log.info("sgIds: {}", sgIds);
 
-            List<ReservationDeal> deals = reservationQueryRepository.findByStatusIsEnabledAndStartTimeAfterNow(sgIds);
+            List<ReservationDeal> deals =
+                    // IsEmailSent.eq(false)인 메일 축출 추가
+                    reservationQueryRepository.findByStatusIsEnabledAndStartTimeAfterNowAndIsSentFalse(sgIds);
             log.info("deals: {}", deals);
 
             List<Reservation> reservations = deals.stream()
@@ -111,7 +116,14 @@ public class NotificationAlarmJobConfig {
                     if(!item.getReservations().isEmpty()){
                         String toMessage = messageGenerator.toMessage(item.getUserName(), item.getReservations());
                         log.info("sendMail: {}", toMessage);
-                        mailSendService.sendMail(item.getEmail(), "ward-study 예약룸 알림", toMessage);
+                        if(mailSendService.sendMail(item.getEmail(), "ward-study 예약룸 알림", toMessage)) {
+                            for (Reservation r : item.getReservations()) {
+                                reservationService.changeIsEmailSent(r);
+//                                r.changeIsEmailSent(true);
+//                                Reservation save = reservationRepository.save(r);
+//                                log.info("save r: {}", save);
+                            }
+                        }
                     }
                 }
         );
