@@ -4,7 +4,7 @@ import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
 import com.dsg.wardstudy.exception.ErrorCode;
-import com.dsg.wardstudy.exception.ResourceNotFoundException;
+import com.dsg.wardstudy.exception.WSApiException;
 import com.dsg.wardstudy.service.studyGroup.StudyGroupService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -129,10 +129,10 @@ class StudyGroupControllerTest {
 
     @Test
     public void givenInvalidStudyGroupId_whenGet_thenReturn404() throws Exception {
-        Long studyGroupId = 1L;
+        Long studyGroupId = 190L;
         // given - precondition or setup
         given(studyGroupService.getById(studyGroupId))
-                .willThrow(new ResourceNotFoundException(ErrorCode.NO_FOUND_ENTITY,
+                .willThrow(new WSApiException(ErrorCode.NO_FOUND_ENTITY,
                         "can't find a studyGroup by " + "studyGroupId: " +  studyGroupId));
 
         // when - action or the behaviour that we are going test

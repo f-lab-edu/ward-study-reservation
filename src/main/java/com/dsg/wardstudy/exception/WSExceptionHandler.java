@@ -34,6 +34,8 @@ public class WSExceptionHandler extends ResponseEntityExceptionHandler {
                 .description(request.getDescription(false))
                 .errorCode(exception.getErrorCode())
                 .build();
+
+        log.info("errorDetails: {}", errorDetails);
         return new ResponseEntity<>(errorDetails, mapToStatus(errorDetails.getErrorCode()));
     }
 
@@ -46,14 +48,16 @@ public class WSExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("MethodArgumentNotValidException: ", ex);
 
         ErrorDetails errorDetails = ErrorDetails.builder()
-        .date(LocalDateTime.now())
-        .message(Optional.ofNullable(ex.getBindingResult()
-                .getFieldError())
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .orElse(ex.getMessage()))
-        .description(request.getDescription(false))
-        .errorCode(ErrorCode.INVALID_REQUEST)
-        .build();
+                .date(LocalDateTime.now())
+                .message(Optional.ofNullable(ex.getBindingResult()
+                                .getFieldError())
+                        .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                        .orElse(ex.getMessage()))
+                .description(request.getDescription(false))
+                .errorCode(ErrorCode.INVALID_REQUEST)
+                .build();
+
+        log.info("errorDetails: {}", errorDetails);
 
         return new ResponseEntity<>(errorDetails, mapToStatus(errorDetails.getErrorCode()));
     }
