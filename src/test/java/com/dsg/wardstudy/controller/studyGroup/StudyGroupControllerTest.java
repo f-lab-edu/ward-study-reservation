@@ -7,6 +7,7 @@ import com.dsg.wardstudy.exception.ErrorCode;
 import com.dsg.wardstudy.exception.WSApiException;
 import com.dsg.wardstudy.service.studyGroup.StudyGroupService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,9 @@ class StudyGroupControllerTest {
 
     @BeforeEach
     void setup() {
+
+        objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+
         studyGroup = StudyGroup.builder()
                 .title("testSG")
                 .content("인원 4명의 스터디그룹을 모집합니다.")
