@@ -16,6 +16,11 @@ spring:
     serialization:
       fail-on-empty-beans: false
 
+  redis:
+    host: localhost
+    port: 6379
+
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/ward_study?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8

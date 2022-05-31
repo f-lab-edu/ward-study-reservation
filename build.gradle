@@ -53,6 +53,16 @@ dependencies {
     //querydsl 추가
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
+
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // https://mvnrepository.com/artifact/redis.clients/jedis
+    implementation group: 'redis.clients', name: 'jedis', version: '3.3.0'
+    // redis-session
+    implementation 'org.springframework.session:spring-session-data-redis'
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-jsr310
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: '2.3.0-rc1'
+
 }
 
 tasks.named('test') {
