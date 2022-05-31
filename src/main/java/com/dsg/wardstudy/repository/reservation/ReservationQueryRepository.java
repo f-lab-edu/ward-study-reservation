@@ -1,7 +1,6 @@
 package com.dsg.wardstudy.repository.reservation;
 
-import com.dsg.wardstudy.domain.reservation.ReservationDeal;
-import com.dsg.wardstudy.type.Status;
+import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
@@ -10,7 +9,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.dsg.wardstudy.domain.reservation.QReservation.reservation;
-import static com.dsg.wardstudy.domain.reservation.QReservationDeal.reservationDeal;
 
 @Repository
 public class ReservationQueryRepository {
@@ -21,12 +19,10 @@ public class ReservationQueryRepository {
         this.queryFactory = new JPAQueryFactory(em);
     }
 
-    public List<ReservationDeal> findByStatusIsEnabledAndStartTimeAfterNowAndIsSentFalse(List<Long> sgIds) {
+    public List<Reservation> findByStartTimeAfterNowAndIsSentFalse(List<Long> sgIds) {
         return queryFactory
-                .selectFrom(reservationDeal)
-                .join(reservationDeal.reservation, reservation)
-                .where(reservationDeal.status.eq(Status.ENABLED)
-                        .and(reservation.startTime.after(LocalDateTime.now()))
+                .selectFrom(reservation)
+                .where(reservation.startTime.after(LocalDateTime.now())
                         .and(reservation.studyGroup.id.in(sgIds))
                         .and(reservation.isEmailSent.eq(false))
                 )

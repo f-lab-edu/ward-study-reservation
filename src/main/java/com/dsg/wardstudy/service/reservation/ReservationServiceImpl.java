@@ -1,7 +1,6 @@
 package com.dsg.wardstudy.service.reservation;
 
 import com.dsg.wardstudy.domain.reservation.Reservation;
-import com.dsg.wardstudy.domain.reservation.ReservationDeal;
 import com.dsg.wardstudy.domain.reservation.Room;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
@@ -10,15 +9,12 @@ import com.dsg.wardstudy.dto.reservation.ReservationDetails;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
 import com.dsg.wardstudy.dto.reservation.ValidateFindByIdDto;
 import com.dsg.wardstudy.exception.ErrorCode;
-import com.dsg.wardstudy.exception.ResourceNotFoundException;
 import com.dsg.wardstudy.exception.WSApiException;
-import com.dsg.wardstudy.repository.reservation.ReservationDealRepository;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.reservation.RoomRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
-import com.dsg.wardstudy.type.Status;
 import com.dsg.wardstudy.type.UserType;
 import com.dsg.wardstudy.utils.TimeParsingUtils;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -40,7 +37,6 @@ public class ReservationServiceImpl implements ReservationService{
     private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
     private final ReservationRepository reservationRepository;
-    private final ReservationDealRepository reservationDealRepository;
     private final RoomRepository roomRepository;
 
     private final TimeParsingUtils timeParsingUtils;
@@ -51,15 +47,7 @@ public class ReservationServiceImpl implements ReservationService{
 
         Reservation reservation = validateCreateRequest(studyGroupId, roomId, reservationRequest);
         Reservation saveReservation = reservationRepository.save(reservation);
-        // Reservation_deal save 로직 추가
-        ReservationDeal deal = ReservationDeal.builder()
-                .reservation(saveReservation)
-                .status(Status.ENABLED)
-                .dealDate(LocalDateTime.now())
-                .build();
-        ReservationDeal savedReservationDeal = reservationDealRepository.save(deal);
-
-        return mapToDto(saveReservation, savedReservationDeal);
+        return mapToDto(saveReservation);
 
     }
 
@@ -241,11 +229,8 @@ public class ReservationServiceImpl implements ReservationService{
     @Transactional
     @Override
     public void deleteById(String reservationId) {
-        // reservation 삭제시 reservationDeal status 기록(CANCELED) 남김
-        reservationDealRepository.findByReservationId(reservationId)
-                .ifPresent( rd -> {
-                    rd.changeStatus(Status.CANCELED);
-                });
+        Optional<Reservation> findReservation = reservationRepository.findById(reservationId);
+        findReservation.ifPresent(reservationRepository::delete);
     }
 
     @Transactional
@@ -263,19 +248,6 @@ public class ReservationServiceImpl implements ReservationService{
                 .user(reservation.getUser())
                 .studyGroup(reservation.getStudyGroup())
                 .room(reservation.getRoom())
-                .build();
-    }
-
-    private ReservationDetails mapToDto(Reservation reservation, ReservationDeal reservationDeal) {
-        return ReservationDetails.builder()
-                .id(reservation.getId())
-                .startTime(reservation.getStartTime())
-                .endTime(reservation.getEndTime())
-                .user(reservation.getUser())
-                .studyGroup(reservation.getStudyGroup())
-                .room(reservation.getRoom())
-                .status(reservationDeal.getStatus())
-                .dealDate(reservationDeal.getDealDate())
                 .build();
     }
 

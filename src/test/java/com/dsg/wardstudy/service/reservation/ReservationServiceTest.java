@@ -1,7 +1,6 @@
 package com.dsg.wardstudy.service.reservation;
 
 import com.dsg.wardstudy.domain.reservation.Reservation;
-import com.dsg.wardstudy.domain.reservation.ReservationDeal;
 import com.dsg.wardstudy.domain.reservation.Room;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
@@ -10,13 +9,11 @@ import com.dsg.wardstudy.dto.reservation.ReservationCreateRequest;
 import com.dsg.wardstudy.dto.reservation.ReservationDetails;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
 import com.dsg.wardstudy.exception.WSApiException;
-import com.dsg.wardstudy.repository.reservation.ReservationDealRepository;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.reservation.RoomRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
-import com.dsg.wardstudy.type.Status;
 import com.dsg.wardstudy.type.UserType;
 import com.dsg.wardstudy.utils.TimeParsingUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +30,6 @@ import java.time.Month;
 import java.util.List;
 import java.util.Optional;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -48,8 +44,6 @@ class ReservationServiceTest {
 
     @Mock
     private ReservationRepository reservationRepository;
-    @Mock
-    private ReservationDealRepository reservationDealRepository;
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -66,7 +60,6 @@ class ReservationServiceTest {
     private ReservationServiceImpl reservationService;
 
     private Reservation reservation;
-    private ReservationDeal deal;
     private User user;
     private UserGroup userGroup;
     private StudyGroup studyGroup;
@@ -106,12 +99,6 @@ class ReservationServiceTest {
                 .startTime(LocalDateTime.of(2019, Month.NOVEMBER, 3, 6, 30))
                 .endTime(LocalDateTime.of(2019, Month.NOVEMBER, 3, 7, 30))
                 .build();
-
-        deal = ReservationDeal.builder()
-                .reservation(reservation)
-                .status(Status.ENABLED)
-                .dealDate(LocalDateTime.now())
-                .build();
     }
 
     @Test
@@ -140,9 +127,6 @@ class ReservationServiceTest {
 
         given(reservationRepository.save(any(Reservation.class)))
                 .willReturn(reservation);
-        // Reservation_deal save 로직 추가
-        given(reservationDealRepository.save(any(ReservationDeal.class)))
-                .willReturn(deal);
 
         // when - action or the behaviour that we are going test
         ReservationDetails details = reservationService.create(studyGroup.getId(), room.getId(), createRequest);
@@ -152,7 +136,6 @@ class ReservationServiceTest {
         assertThat(details).isNotNull();
         assertThat(details.getStartTime()).isEqualTo(reservation.getStartTime());
         assertThat(details.getEndTime()).isEqualTo(reservation.getEndTime());
-        assertThat(details.getStatus()).isEqualTo(deal.getStatus());
     }
 
     @Test
@@ -330,15 +313,14 @@ class ReservationServiceTest {
     @Test
     void givenReservationId_whenDelete_thenNothing() {
         // given - precondition or setup
-        given(reservationDealRepository.findByReservationId(reservation.getId()))
-                .willReturn(Optional.of(deal));
+        given(reservationRepository.findById(reservation.getId()))
+                .willReturn(Optional.of(reservation));
 
         // when - action or the behaviour that we are going test
         reservationService.deleteById(reservation.getId());
 
-        log.info("deal: {}", deal);
         // then - verify the output
-        assertThat(deal.getStatus()).isEqualTo(Status.CANCELED);
+        verify(reservationRepository).delete(reservation);
 
     }
 }
