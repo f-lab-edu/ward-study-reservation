@@ -1,31 +1,41 @@
 package com.dsg.wardstudy.controller.user;
 
-import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.dto.user.SignUpRequest;
-import com.dsg.wardstudy.repository.user.UserRepository;
+import com.dsg.wardstudy.dto.user.UserDto;
+import com.dsg.wardstudy.service.user.LoginService;
+import com.dsg.wardstudy.service.user.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
+    private final UserService userService;
+    private final LoginService loginService;
 
-    private final UserRepository userRepository;
-
+    // 회원가입(register)
     @PostMapping("/signup")
-    public ResponseEntity<?> register(@RequestBody SignUpRequest signUpDto) {
-        User user = User.builder()
-                .name(signUpDto.getName())
-                .email(signUpDto.getEmail())
-                .nickname(signUpDto.getNickname())
-                .password(signUpDto.getPassword())
-                .build();
+    public ResponseEntity<?> signup(@RequestBody SignUpRequest signUpDto) {
 
-        User savedUser = userRepository.save(user);
+        log.info("users signup, signUpDto: {}", signUpDto);
+        UserDto userDto = userService.signUp(signUpDto);
+        return new ResponseEntity<>(userDto, HttpStatus.CREATED);
+    }
 
-        return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody UserDto userDto) {
+        UserDto findUserDto = userService.getByEmailAndPassword(userDto.getEmail(), userDto.getPassword());
+
+        loginService.loginUser(findUserDto.getId());
+
+        return ResponseEntity.ok("login success!");
     }
 }
