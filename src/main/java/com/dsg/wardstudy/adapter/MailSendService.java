@@ -16,7 +16,9 @@ public class MailSendService {
 
     private final JavaMailSender javaMailSender;
 
-    public void sendMail(String mail, String subject, String text) {
+    public boolean sendMail(String mail, String subject, String text) {
+
+        boolean result = false;
 
         MimeMessagePreparator msg = new MimeMessagePreparator() {
             @Override
@@ -30,10 +32,13 @@ public class MailSendService {
         try {
             javaMailSender.send(msg);
             log.info("javaMailSender.send");
+            result = true;
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return result;
 
     }
 

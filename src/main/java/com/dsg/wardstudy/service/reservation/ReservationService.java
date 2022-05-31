@@ -1,5 +1,6 @@
 package com.dsg.wardstudy.service.reservation;
 
+import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.dto.reservation.ReservationCreateRequest;
 import com.dsg.wardstudy.dto.reservation.ReservationDetails;
 import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
@@ -21,6 +22,8 @@ public interface ReservationService {
     String updateById(Long roomId, String reservationId, ReservationUpdateRequest reservationRequest);
 
     void deleteById(String reservationId);
+
+    void changeIsEmailSent(Reservation reservation);
 
 
 }

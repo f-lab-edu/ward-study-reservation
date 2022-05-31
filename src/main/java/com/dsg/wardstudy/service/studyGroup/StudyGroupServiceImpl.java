@@ -10,11 +10,15 @@ import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.dsg.wardstudy.config.redis.RedisCacheKey.STUDYGROUP_LIST;
 
 @Slf4j
 @Service
@@ -49,6 +53,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     }
 
 
+    @Cacheable(key = "#studyGroupId" ,value = STUDYGROUP_LIST, cacheManager = "redisCacheManager")
     @Transactional(readOnly = true)
     @Override
     public StudyGroupResponse getById(Long studyGroupId) {
@@ -89,6 +94,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     }
 
+    @CacheEvict(key = "#studyGroupId", value = STUDYGROUP_LIST, cacheManager = "redisCacheManager")
     @Transactional
     @Override
     public void deleteById(Long studyGroupId) {

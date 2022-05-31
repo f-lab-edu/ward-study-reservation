@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "startTime", "endTime"})
+@ToString(of = {"id", "startTime", "endTime", "isEmailSent"})
 public class Reservation extends BaseTimeEntity {
 
     @Id
@@ -41,14 +41,21 @@ public class Reservation extends BaseTimeEntity {
     @JsonIgnore
     private Room room;
 
+    private boolean isEmailSent;
+
     @Builder
-    public Reservation(String id, LocalDateTime startTime, LocalDateTime endTime, User user, StudyGroup studyGroup, Room room) {
+    public Reservation(String id, LocalDateTime startTime, LocalDateTime endTime, User user, StudyGroup studyGroup, Room room, boolean isEmailSent) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;
         this.user = user;
         this.studyGroup = studyGroup;
         this.room = room;
+        this.isEmailSent = isEmailSent;
+    }
+
+    public void changeIsEmailSent(boolean isEmailSent) {
+        this.isEmailSent = isEmailSent;
     }
 
 }

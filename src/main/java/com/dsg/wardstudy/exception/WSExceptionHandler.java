@@ -2,6 +2,8 @@ package com.dsg.wardstudy.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -36,21 +38,24 @@ public class WSExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     //BindingResult Validation 처리
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorDetails> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
-                                                               WebRequest request) {
-        log.error("MethodArgumentNotValidException: ", exception);
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatus status,
+                                                                  WebRequest request) {
+        log.error("MethodArgumentNotValidException: ", ex);
 
         ErrorDetails errorDetails = ErrorDetails.builder()
-                .date(LocalDateTime.now())
-                .message(Optional.ofNullable(exception.getBindingResult()
-                        .getFieldError())
-                        .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                        .orElse(exception.getMessage()))
-                .description(request.getDescription(false))
-                .errorCode(ErrorCode.INVALID_REQUEST)
-                .build();
+        .date(LocalDateTime.now())
+        .message(Optional.ofNullable(ex.getBindingResult()
+                .getFieldError())
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                .orElse(ex.getMessage()))
+        .description(request.getDescription(false))
+        .errorCode(ErrorCode.INVALID_REQUEST)
+        .build();
 
         return new ResponseEntity<>(errorDetails, mapToStatus(errorDetails.getErrorCode()));
     }
+
 }

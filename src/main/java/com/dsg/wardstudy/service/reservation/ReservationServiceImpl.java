@@ -30,7 +30,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.dsg.wardstudy.utils.TimeParsingUtils.formatterLocalDateTime;
 
 @Slf4j
 @Service
@@ -150,8 +149,8 @@ public class ReservationServiceImpl implements ReservationService{
                             " roomId: " + roomId);
                 });
 
-        LocalDateTime sTime = formatterLocalDateTime(startTime);
-        LocalDateTime eTime = formatterLocalDateTime(endTime);
+        LocalDateTime sTime = timeParsingUtils.formatterLocalDateTime(startTime);
+        LocalDateTime eTime = timeParsingUtils.formatterLocalDateTime(endTime);
 
         return reservationRepository.findByRoomIdAndTimePeriod(room.getId(), sTime, eTime).stream()
                 .map(this::mapToDto)
@@ -224,8 +223,8 @@ public class ReservationServiceImpl implements ReservationService{
 
         Reservation newReservation = Reservation.builder()
                 .id(genReservationId(validateFindByIdDto.getRoom(), reservationRequest.getStartTime()))
-                .startTime(formatterLocalDateTime(reservationRequest.getStartTime()))
-                .endTime(formatterLocalDateTime(reservationRequest.getEndTime()))
+                .startTime(timeParsingUtils.formatterLocalDateTime(reservationRequest.getStartTime()))
+                .endTime(timeParsingUtils.formatterLocalDateTime(reservationRequest.getEndTime()))
                 .user(validateFindByIdDto.getUser())
                 .studyGroup(validateFindByIdDto.getStudyGroup())
                 .room(validateFindByIdDto.getRoom())
@@ -247,6 +246,13 @@ public class ReservationServiceImpl implements ReservationService{
                 .ifPresent( rd -> {
                     rd.changeStatus(Status.CANCELED);
                 });
+    }
+
+    @Transactional
+    @Override
+    public void changeIsEmailSent(Reservation reservation) {
+        reservation.changeIsEmailSent(true);
+        log.info("reservation.changeIsEmailSent(true); 실행");
     }
 
     private ReservationDetails mapToDto(Reservation reservation) {
@@ -280,8 +286,8 @@ public class ReservationServiceImpl implements ReservationService{
 
         return Reservation.builder()
                 .id(genReservationId(room, reservationRequest.getStartTime()))
-                .startTime(formatterLocalDateTime(reservationRequest.getStartTime()))
-                .endTime(formatterLocalDateTime(reservationRequest.getEndTime()))
+                .startTime(timeParsingUtils.formatterLocalDateTime(reservationRequest.getStartTime()))
+                .endTime(timeParsingUtils.formatterLocalDateTime(reservationRequest.getEndTime()))
                 .user(user)
                 .studyGroup(studyGroup)
                 .room(room)
