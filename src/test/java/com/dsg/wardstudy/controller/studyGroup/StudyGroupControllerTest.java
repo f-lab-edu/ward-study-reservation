@@ -179,18 +179,19 @@ class StudyGroupControllerTest {
     public void givenStudyGroupIdAndUpdatedStudyGroupRequest_whenUpdate_thenReturnUpdateStudyGroupId() throws Exception {
         // given - precondition or setup
         Long studyGroupId = 1L;
+        Long userId = 1L;
 
         StudyGroupRequest updateStudyGroupRequest = StudyGroupRequest.builder()
                 .title("RamStudy")
                 .content("Ram effective Java study")
                 .build();
 
-        given(studyGroupService.updateById(studyGroupId, updateStudyGroupRequest))
+        given(studyGroupService.updateById(userId, studyGroupId, updateStudyGroupRequest))
                 .willReturn(studyGroupId);
 
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(put("/study-group/{id}", studyGroupId)
+        mockMvc.perform(put("/user/{userId}/study-group/{studyGroupId}",user.getId(), studyGroupId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateStudyGroupRequest)))
                 .andDo(print())

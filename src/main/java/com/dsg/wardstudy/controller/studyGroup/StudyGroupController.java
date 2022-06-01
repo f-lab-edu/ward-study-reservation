@@ -29,8 +29,8 @@ public class StudyGroupController {
     }
 
     // 스터디그룹 상세보기
-    @GetMapping("/study-group/{id}")
-    public ResponseEntity<StudyGroupResponse> getById(@PathVariable("id") Long studyGroupId) {
+    @GetMapping("/study-group/{studyGroupId}")
+    public ResponseEntity<StudyGroupResponse> getById(@PathVariable("studyGroupId") Long studyGroupId) {
         log.info("studyGroup getById, studyGroupId: {}", studyGroupId);
         return ResponseEntity.ok(studyGroupService.getById(studyGroupId));
     }
@@ -43,26 +43,27 @@ public class StudyGroupController {
     }
 
     // 사용자가 참여한 스터디그룹 조회
-    @GetMapping("/user/{id}/study-group")
+    @GetMapping("/user/{userId}/study-group")
     public ResponseEntity<List<StudyGroupResponse>> getAllByUserId(
-            @PathVariable("id") Long userId
+            @PathVariable("userId") Long userId
     ) {
         log.info("studyGroup getAllByUserId, userId: {}", userId);
         return ResponseEntity.ok(studyGroupService.getAllByUserId(userId));
     }
 
     // 스터디그룹 수정(리더만)
-    @PutMapping("/study-group/{id}")
+    @PutMapping("/user/{userId}/study-group/{studyGroupId}")
     public Long updateById(
-            @PathVariable("id") Long studyGroupId,
+            @PathVariable("userId") Long userId,
+            @PathVariable("studyGroupId") Long studyGroupId,
             @RequestBody StudyGroupRequest studyGroupRequest) {
         log.info("studyGroup updateById, studyGroupId: {}, ", studyGroupId);
-        return studyGroupService.updateById(studyGroupId, studyGroupRequest);
+        return studyGroupService.updateById(userId, studyGroupId, studyGroupRequest);
     }
 
     // 스터디그룹 삭제(리더만)
-    @DeleteMapping("/study-group/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable("id") Long studyGroupId) {
+    @DeleteMapping("/study-group/{studyGroupId}")
+    public ResponseEntity<String> deleteById(@PathVariable("studyGroupId") Long studyGroupId) {
         log.info("studyGroup deleteById, studyGroupId: {}", studyGroupId);
         studyGroupService.deleteById(studyGroupId);
         return new ResponseEntity<>("a study-group successfully deleted!", HttpStatus.OK);

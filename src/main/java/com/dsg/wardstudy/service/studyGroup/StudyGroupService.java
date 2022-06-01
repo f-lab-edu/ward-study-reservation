@@ -12,7 +12,7 @@ public interface StudyGroupService {
     StudyGroupResponse getById(Long studyGroupId);
     List<StudyGroupResponse> getAll();
 
-    Long updateById(Long studyGroupId, StudyGroupRequest studyGroupRequest);
+    Long updateById(Long userId, Long studyGroupId, StudyGroupRequest studyGroupRequest);
 
     void deleteById(Long studyGroupId);
 

@@ -167,8 +167,14 @@ class StudyGroupServiceTest {
     @Test
     public void givenStudyGroup_whenUpdate_thenReturnUpdatedStudyGroup() {
         // given - precondition or setup
+        given(userRepository.findById(anyLong()))
+                .willReturn(Optional.of(user));
+
         given(studyGroupRepository.findById(anyLong()))
                 .willReturn(Optional.of(studyGroup));
+
+        given(userGroupRepository.findUserTypeByUserIdAndSGId(anyLong(), anyLong()))
+                .willReturn(Optional.of(UserType.L));
 
         studyGroupRequest = StudyGroupRequest.builder()
                 .title("JumpToSpringboot_study")
@@ -176,12 +182,12 @@ class StudyGroupServiceTest {
                 .build();
 
         // when - action or the behaviour that we are going test
-        Long updateId = studyGroupService.updateById(studyGroup.getId(), studyGroupRequest);
-        log.info("updateId: {}", updateId);
-        StudyGroupResponse updatedResponse = studyGroupService.getById(updateId);
+        Long updatedStudyGroupId = studyGroupService.updateById(user.getId(), studyGroup.getId(), studyGroupRequest);
+        log.info("updatedStudyGroupId: {}", updatedStudyGroupId);
+        StudyGroupResponse updatedResponse = studyGroupService.getById(updatedStudyGroupId);
 
         // then - verify the output
-        assertThat(this.studyGroup.getId()).isEqualTo(updateId);
+        assertThat(this.studyGroup.getId()).isEqualTo(updatedStudyGroupId);
         assertThat(updatedResponse.getTitle()).isEqualTo(studyGroupRequest.getTitle());
         assertThat(updatedResponse.getContent()).isEqualTo(studyGroupRequest.getContent());
 

@@ -108,17 +108,32 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     @Transactional
     @Override
-    public Long updateById(Long studyGroupId, StudyGroupRequest studyGroupRequest) {
-        StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
+    public Long updateById(Long userId, Long studyGroupId, StudyGroupRequest studyGroupRequest) {
+
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.error("user 대상이 없습니다. userId: {}", userId);
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by " +
+                            " userId: " + userId);
+                });
+
+        StudyGroup findStudyGroup = studyGroupRepository.findById(studyGroupId)
                 .orElseThrow(() -> {
                     log.error("studyGroup 대상이 없습니다. studyGroupId: {}", studyGroupId);
                     throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a StudyGroup by " +
                             " studyGroupId: " + studyGroupId);
                 });
 
-        studyGroup.update(studyGroupRequest.getTitle(), studyGroupRequest.getContent());
+        UserType userType = userGroupRepository.findUserTypeByUserIdAndSGId(userId, studyGroupId).get();
+        if (!userType.equals(UserType.L)) {
+            log.error("userType이 Leader가 아닙니다.");
+            throw new WSApiException(ErrorCode.INVALID_REQUEST, "Reservation modification is possible only if the user is the leader.");
+        }
 
-        return studyGroup.getId();
+        findStudyGroup.update(studyGroupRequest.getTitle(), studyGroupRequest.getContent());
+        log.info("findStudyGroup: {}", findStudyGroup);
+
+        return findStudyGroup.getId();
 
     }
 
