@@ -148,7 +148,7 @@ class StudyGroupServiceTest {
 
     @Test
     public void givenStudyGroupList_whenGetAll_thenReturnStudyGroupResponseList() {
-        // TODO : paging NPE 발생
+        // TODO : paging NPE 발생 issue#23
         // given - precondition or setup
         StudyGroup studyGroup1 = StudyGroup.builder()
                 .id(100L)
