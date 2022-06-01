@@ -165,13 +165,23 @@ class StudyGroupControllerTest {
     }
 
     @Test
-    public void getAllByUserId() throws Exception {
-        // TODO : controller 메서드 만들기
+    public void givenUserId_whenGetAll_thenReturnStudyGroupResponseList() throws Exception {
         // given - precondition or setup
+        Long userId = 1L;
+        StudyGroupResponse studyGroupResponse = StudyGroupResponse.builder()
+                .title(studyGroup.getTitle())
+                .content(studyGroup.getContent())
+                .build();
+
+        given(studyGroupService.getAllByUserId(userId))
+                .willReturn(List.of(studyGroupResponse));
 
         // when - action or the behaviour that we are going test
-
         // then - verify the output
+        mockMvc.perform(get("/users/{userId}/study-group",userId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
 
     }
 
