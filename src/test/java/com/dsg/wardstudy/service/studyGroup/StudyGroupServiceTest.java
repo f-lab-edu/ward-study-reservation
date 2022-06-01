@@ -4,6 +4,7 @@ import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
+import com.dsg.wardstudy.dto.PageResponse;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
 import com.dsg.wardstudy.exception.WSApiException;
@@ -20,6 +21,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
 import java.util.List;
@@ -144,39 +148,49 @@ class StudyGroupServiceTest {
 
     @Test
     public void givenStudyGroupList_whenGetAll_thenReturnStudyGroupResponseList() {
+        // TODO : paging NPE 발생
         // given - precondition or setup
         StudyGroup studyGroup1 = StudyGroup.builder()
                 .id(100L)
                 .title("testSG2")
                 .content("인원 6명의 스터디그룹을 모집합니다.")
                 .build();
-        given(studyGroupRepository.findAll())
+
+        Pageable pageable = PageRequest.of(0, 2, Sort.by("id").descending());
+
+        given(studyGroupRepository.findAll(pageable).getContent())
                 .willReturn(List.of(studyGroup, studyGroup1));
         // when - action or the behaviour that we are going test
-        List<StudyGroupResponse> studyGroupResponses = studyGroupService.getAll();
-        log.info("studyGroupResponses: {}", studyGroupResponses);
+
+
+        PageResponse.StudyGroup studyGroupPageResponses = studyGroupService.getAll(pageable);
+        log.info("studyGroupPageResponses: {}", studyGroupPageResponses);
         // then - verify the output
-        assertThat(studyGroupResponses).isNotNull();
-        assertThat(studyGroupResponses.size()).isEqualTo(2);
+        assertThat(studyGroupPageResponses).isNotNull();
+        assertThat(studyGroupPageResponses.getTotalElements()).isEqualTo(2);
 
     }
 
     @Test
     public void givenStudyGroupList_whenGetAll_Negative_thenReturnStudyGroupResponseList() {
+        // TODO : paging NPE 발생
         // given - precondition or setup
         StudyGroup studyGroup1 = StudyGroup.builder()
                 .id(2L)
                 .title("testSG2")
                 .content("인원 6명의 스터디그룹을 모집합니다.")
                 .build();
-        given(studyGroupRepository.findAll())
+
+        Pageable pageable = PageRequest.of(0, 2, Sort.by("id").descending());
+
+        given(studyGroupRepository.findAll(pageable).getContent())
                 .willReturn(Collections.emptyList());
         // when - action or the behaviour that we are going test
-        List<StudyGroupResponse> studyGroupResponses = studyGroupService.getAll();
-        log.info("studyGroupResponses: {}", studyGroupResponses);
+        PageResponse.StudyGroup studyGroupPageResponses = studyGroupService.getAll(pageable);
+        log.info("studyGroupPageResponses: {}", studyGroupPageResponses);
         // then - verify the output
-        assertThat(studyGroupResponses).isEmpty();
-        assertThat(studyGroupResponses.size()).isEqualTo(0);
+        assertThat(studyGroupPageResponses).isNull();
+        assertThat(studyGroupPageResponses.getTotalElements()).isEqualTo(0);
 
     }
 

@@ -4,6 +4,7 @@ import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
+import com.dsg.wardstudy.dto.PageResponse;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
 import com.dsg.wardstudy.exception.ErrorCode;
@@ -18,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,12 +107,17 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<StudyGroupResponse> getAll() {
+    public PageResponse.StudyGroup getAll(Pageable pageable) {
 
-        List<StudyGroup> studyGroups = studyGroupRepository.findAll();
-        return studyGroups.stream()
-                .map(this::mapToDto)
-                .collect(Collectors.toList());
+        Page<StudyGroupResponse> studyGroupResponsePage = studyGroupRepository.findAll(pageable).map(this::mapToDto);
+        return PageResponse.StudyGroup.builder()
+                .content(studyGroupResponsePage.getContent())
+                .pageNo(pageable.getPageNumber())
+                .pageSize(pageable.getPageSize())
+                .totalElements(studyGroupResponsePage.getTotalElements())
+                .totalPages(studyGroupResponsePage.getTotalPages())
+                .last(studyGroupResponsePage.isLast())
+                .build();
     }
 
     @Transactional

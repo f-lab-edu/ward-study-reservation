@@ -1,11 +1,14 @@
 package com.dsg.wardstudy.controller.studyGroup;
 
-import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
+import com.dsg.wardstudy.dto.PageResponse;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
 import com.dsg.wardstudy.service.studyGroup.StudyGroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,9 +40,11 @@ public class StudyGroupController {
 
     // 스터디그룹 전체조회
     @GetMapping("/study-group")
-    public ResponseEntity<List<StudyGroupResponse>> getAll() {
+    public ResponseEntity<PageResponse.StudyGroup> getAllPage(
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+            ) {
         log.info("studyGroup getAll");
-        return ResponseEntity.ok(studyGroupService.getAll());
+        return ResponseEntity.ok(studyGroupService.getAll(pageable));
     }
 
     // 사용자가 참여한 스터디그룹 조회
