@@ -3,6 +3,7 @@ package com.dsg.wardstudy.controller.studyGroup;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
+import com.dsg.wardstudy.dto.PageResponse;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
 import com.dsg.wardstudy.exception.ErrorCode;
@@ -16,6 +17,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -28,6 +32,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -102,32 +107,42 @@ class StudyGroupControllerTest {
 
     }
 
-//    @Test
-//    public void givenListOfStudyGroupResponses_whenGet_thenReturnStudyGroupResponseList() throws Exception {
-//        // TODO : paging controller
-//        // given - precondition or setup
-//        int length = 10;
-//        List<StudyGroupResponse> studyGroupResponses = new ArrayList<>();
-//        StudyGroupResponse studyGroupResponse = StudyGroupResponse.builder()
-//                .title(studyGroup.getTitle())
-//                .content(studyGroup.getContent())
-//                .build();
-//        for (int i = 0; i < length; i++) {
-//            studyGroupResponses.add(
-//                    studyGroupResponse
-//            );
-//        }
-//
-//        given(studyGroupService.getAll()).willReturn(studyGroupResponses);
-//
-//        // when - action or the behaviour that we are going test
-//        // then - verify the output
-//        mockMvc.perform(get("/study-group"))
-//                .andDo(print())
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.length()").value(length));
-//
-//    }
+    @Test
+    public void givenListOfStudyGroupResponses_whenGet_thenReturnStudyGroupResponseList() throws Exception {
+        // given - precondition or setup
+        int length = 10;
+        List<StudyGroupResponse> studyGroupResponses = new ArrayList<>();
+        StudyGroupResponse studyGroupResponse = StudyGroupResponse.builder()
+                .title(studyGroup.getTitle())
+                .content(studyGroup.getContent())
+                .build();
+        for (int i = 0; i < length; i++) {
+            studyGroupResponses.add(
+                    studyGroupResponse
+            );
+        }
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
+
+        given(studyGroupService.getAll(pageable))
+                .willReturn(PageResponse.StudyGroup.builder()
+                        .content(studyGroupResponses)
+                        .pageNo(pageable.getPageNumber())
+                        .pageSize(pageable.getPageSize())
+                        .totalElements(length)
+                        .build());
+
+        // when - action or the behaviour that we are going test
+        // then - verify the output
+        mockMvc.perform(get("/study-group")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("sort", "id,desc")
+                )
+                .andDo(print())
+                .andExpect(status().isOk());
+
+        verify(studyGroupService).getAll(pageable);
+    }
 
     @Test
     public void givenStudyGroupId_whenGet_thenReturnStudyGroupResponse() throws Exception {

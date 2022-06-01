@@ -173,7 +173,6 @@ class StudyGroupServiceTest {
 
     @Test
     public void givenStudyGroupList_whenGetAll_Negative_thenReturnStudyGroupResponseList() {
-        // TODO : paging NPE 발생
         // given - precondition or setup
         StudyGroup studyGroup1 = StudyGroup.builder()
                 .id(2L)
@@ -181,7 +180,7 @@ class StudyGroupServiceTest {
                 .content("인원 6명의 스터디그룹을 모집합니다.")
                 .build();
 
-        Pageable pageable = PageRequest.of(0, 2, Sort.by("id").descending());
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
 
         given(studyGroupRepository.findAll(pageable).getContent())
                 .willReturn(Collections.emptyList());

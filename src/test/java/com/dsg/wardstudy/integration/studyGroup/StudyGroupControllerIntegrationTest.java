@@ -108,7 +108,11 @@ class StudyGroupControllerIntegrationTest {
 
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(get("/study-group"))
+        mockMvc.perform(get("/study-group")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("sort", "id,desc")
+                )
                 .andDo(print())
                 .andExpect(status().isOk());
 
