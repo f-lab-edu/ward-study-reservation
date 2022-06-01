@@ -9,15 +9,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StudyGroupResponse {
 
+    private Long studyGroupId;
     private String title;
     private String content;
 
-    private UserGroup userGroup;
-
     @Builder
-    public StudyGroupResponse(String title, String content, UserGroup userGroup) {
+    public StudyGroupResponse(Long studyGroupId, String title, String content) {
+        this.studyGroupId = studyGroupId;
         this.title = title;
         this.content = content;
-        this.userGroup = userGroup;
     }
 }

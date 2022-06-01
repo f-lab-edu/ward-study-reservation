@@ -69,7 +69,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     private StudyGroupResponse mapToResponse(UserGroup savedUserGroup) {
         return StudyGroupResponse.builder()
-                .userGroup(savedUserGroup)
+                .studyGroupId(savedUserGroup.getStudyGroup().getId())
                 .title(savedUserGroup.getStudyGroup().getTitle())
                 .content(savedUserGroup.getStudyGroup().getContent())
                 .build();
@@ -84,6 +84,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     private StudyGroupResponse mapToDto(StudyGroup savedGroup) {
         return StudyGroupResponse.builder()
+                .studyGroupId(savedGroup.getId())
                 .title(savedGroup.getTitle())
                 .content(savedGroup.getContent())
                 .build();
