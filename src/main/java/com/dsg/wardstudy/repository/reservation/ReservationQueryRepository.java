@@ -29,4 +29,13 @@ public class ReservationQueryRepository {
                 .fetch();
     }
 
+    public Reservation findByUserIdAndStudyGroupId(Long userId, Long studyGroupId) {
+        return queryFactory
+                .selectFrom(reservation)
+                .where(reservation.user.id.eq(userId)
+                        .and(reservation.studyGroup.id.eq(studyGroupId))
+                )
+                .fetchOne();
+
+    }
 }

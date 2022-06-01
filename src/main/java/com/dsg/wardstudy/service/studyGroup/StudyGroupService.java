@@ -14,7 +14,7 @@ public interface StudyGroupService {
 
     Long updateById(Long userId, Long studyGroupId, StudyGroupRequest studyGroupRequest);
 
-    void deleteById(Long studyGroupId);
+    void deleteById(Long userId, Long studyGroupId);
 
     List<StudyGroupResponse> getAllByUserId(Long userId);
 }

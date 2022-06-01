@@ -66,7 +66,7 @@ public class ReservationController {
 
 
     // 해당 유저 예약  조회
-    @GetMapping("/user/{userId}/reservation")
+    @GetMapping("/users/{userId}/reservation")
     public ResponseEntity<List<ReservationDetails>> getAllByUserId(@PathVariable("userId") Long userId) {
         log.info("reservation getAllByUserId, userId: {}", userId);
         return ResponseEntity.ok(reservationService.getAllByUserId(userId));

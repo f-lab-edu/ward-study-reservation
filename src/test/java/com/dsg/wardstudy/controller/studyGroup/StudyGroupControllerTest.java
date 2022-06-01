@@ -89,7 +89,7 @@ class StudyGroupControllerTest {
                 .willReturn(studyGroupResponse);
 
         // when - action or the behaviour that we are going test
-        ResultActions resultActions = mockMvc.perform(post("/user/{userId}/study-group", user.getId())
+        ResultActions resultActions = mockMvc.perform(post("/users/{userId}/study-group", user.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(studyGroupRequest)));
 
@@ -191,7 +191,7 @@ class StudyGroupControllerTest {
 
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(put("/user/{userId}/study-group/{studyGroupId}",user.getId(), studyGroupId)
+        mockMvc.perform(put("/users/{userId}/study-group/{studyGroupId}",user.getId(), studyGroupId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateStudyGroupRequest)))
                 .andDo(print())
@@ -202,12 +202,13 @@ class StudyGroupControllerTest {
     @Test
     public void givenStudyGroupId_whenDelete_thenReturn200() throws Exception {
         // given - precondition or setup
+        Long userId = 1L;
         Long studyGroupId = 1L;
-        willDoNothing().given(studyGroupService).deleteById(studyGroupId);
+        willDoNothing().given(studyGroupService).deleteById(userId, studyGroupId);
 
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(delete("/study-group/{id}", studyGroupId))
+        mockMvc.perform(delete("/users/{userId}/study-group/{studyGroupId}",userId, studyGroupId))
                 .andDo(print())
                 .andExpect(status().isOk());
 
