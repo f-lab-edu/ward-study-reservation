@@ -1,10 +1,15 @@
 package com.dsg.wardstudy.service.studyGroup;
 
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
+import com.dsg.wardstudy.domain.user.User;
+import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
 import com.dsg.wardstudy.exception.WSApiException;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
+import com.dsg.wardstudy.repository.user.UserGroupRepository;
+import com.dsg.wardstudy.repository.user.UserRepository;
+import com.dsg.wardstudy.type.UserType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,11 +36,18 @@ class StudyGroupServiceTest {
 
     @Mock
     private StudyGroupRepository studyGroupRepository;
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private UserGroupRepository userGroupRepository;
 
     @InjectMocks
     private StudyGroupServiceImpl studyGroupService;
 
     private StudyGroup studyGroup;
+    private User user;
+    private UserGroup userGroup;
 
     private StudyGroupRequest studyGroupRequest;
 
@@ -46,25 +58,41 @@ class StudyGroupServiceTest {
                 .title("testSG")
                 .content("인원 4명의 스터디그룹을 모집합니다.")
                 .build();
+
+        user = User.builder()
+                .id(1L)
+                .build();
+
+        userGroup = UserGroup.builder()
+                .user(user)
+                .studyGroup(studyGroup)
+                .userType(UserType.L)
+                .build();
     }
 
     @Test
     public void givenStudyGroup_whenSave_thenReturnStudyGroupResponse() {
         // given - precondition or setup
+        given(userRepository.findById(anyLong()))
+                .willReturn(Optional.ofNullable(user));
         given(studyGroupRepository.save(any(StudyGroup.class)))
                 .willReturn(studyGroup);
+
+        given(userGroupRepository.save(any(UserGroup.class)))
+                .willReturn(userGroup);
 
         studyGroupRequest = StudyGroupRequest.builder()
                 .title(studyGroup.getTitle())
                 .content(studyGroup.getContent())
                 .build();
         // when - action or the behaviour that we are going test
-        StudyGroupResponse studyGroupResponse = studyGroupService.create(studyGroupRequest);
+        StudyGroupResponse studyGroupResponse = studyGroupService.create(user.getId(), studyGroupRequest);
         log.info("studyGroupResponse: {}", studyGroupResponse);
 
         // then - verify the output
         assertThat(studyGroupResponse).isNotNull();
-        assertThat(studyGroupResponse.getTitle()).isEqualTo("testSG");
+        assertThat(studyGroupResponse.getTitle()).isEqualTo(studyGroupRequest.getTitle());
+        assertThat(studyGroupResponse.getContent()).isEqualTo(studyGroupRequest.getContent());
 
     }
 

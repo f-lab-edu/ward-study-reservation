@@ -1,6 +1,7 @@
 package com.dsg.wardstudy.service.studyGroup;
 
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
+import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
@@ -8,6 +9,8 @@ import com.dsg.wardstudy.exception.ErrorCode;
 import com.dsg.wardstudy.exception.WSApiException;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
+import com.dsg.wardstudy.repository.user.UserRepository;
+import com.dsg.wardstudy.type.UserType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -27,15 +30,40 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     private final StudyGroupRepository studyGroupRepository;
     private final UserGroupRepository userGroupRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     @Override
-    public StudyGroupResponse create(StudyGroupRequest studyGroupRequest) {
+    public StudyGroupResponse create(Long userId, StudyGroupRequest studyGroupRequest) {
+
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.error("user 대상이 없습니다. userId: {}", userId);
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by " +
+                            " userId: " + userId);
+                });
 
         StudyGroup studyGroup = mapToEntity(studyGroupRequest);
-        StudyGroup savedGroup = studyGroupRepository.save(studyGroup);
+        StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
 
-        return mapToDto(savedGroup);
+        // UserType L(리더)로 등록
+        UserGroup userGroup = UserGroup.builder()
+                .studyGroup(savedStudyGroup)
+                .user(findUser)
+                .userType(UserType.L)
+                .build();
+
+        UserGroup savedUserGroup = userGroupRepository.save(userGroup);
+
+        return mapToResponse(savedUserGroup);
+    }
+
+    private StudyGroupResponse mapToResponse(UserGroup savedUserGroup) {
+        return StudyGroupResponse.builder()
+                .userGroup(savedUserGroup)
+                .title(savedUserGroup.getStudyGroup().getTitle())
+                .content(savedUserGroup.getStudyGroup().getContent())
+                .build();
     }
 
     private StudyGroup mapToEntity(StudyGroupRequest studyGroupRequest) {

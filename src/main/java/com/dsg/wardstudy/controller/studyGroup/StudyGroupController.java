@@ -19,25 +19,30 @@ public class StudyGroupController {
 
     private final StudyGroupService studyGroupService;
 
-    @PostMapping("/study-group")
-    public ResponseEntity<StudyGroupResponse> create(@RequestBody StudyGroupRequest studyGroupRequest) {
-        log.info("studyGroup create, studyGroupRequest: {}", studyGroupRequest);
-        return new ResponseEntity<>(studyGroupService.create(studyGroupRequest), HttpStatus.CREATED);
+    // 스터디그룹 등록(리더만)
+    @PostMapping("/user/{userId}/study-group")
+    public ResponseEntity<StudyGroupResponse> create(
+            @PathVariable("userId") Long userId,
+            @RequestBody StudyGroupRequest studyGroupRequest) {
+        log.info("studyGroup create, userId: {}, studyGroupRequest: {}", userId, studyGroupRequest);
+        return new ResponseEntity<>(studyGroupService.create(userId, studyGroupRequest), HttpStatus.CREATED);
     }
 
+    // 스터디그룹 상세보기
     @GetMapping("/study-group/{id}")
     public ResponseEntity<StudyGroupResponse> getById(@PathVariable("id") Long studyGroupId) {
         log.info("studyGroup getById, studyGroupId: {}", studyGroupId);
         return ResponseEntity.ok(studyGroupService.getById(studyGroupId));
     }
 
+    // 스터디그룹 전체조회
     @GetMapping("/study-group")
     public ResponseEntity<List<StudyGroupResponse>> getAll() {
         log.info("studyGroup getAll");
         return ResponseEntity.ok(studyGroupService.getAll());
     }
 
-
+    // 사용자가 참여한 스터디그룹 조회
     @GetMapping("/user/{id}/study-group")
     public ResponseEntity<List<StudyGroupResponse>> getAllByUserId(
             @PathVariable("id") Long userId
@@ -46,6 +51,7 @@ public class StudyGroupController {
         return ResponseEntity.ok(studyGroupService.getAllByUserId(userId));
     }
 
+    // 스터디그룹 수정(리더만)
     @PutMapping("/study-group/{id}")
     public Long updateById(
             @PathVariable("id") Long studyGroupId,
@@ -54,6 +60,7 @@ public class StudyGroupController {
         return studyGroupService.updateById(studyGroupId, studyGroupRequest);
     }
 
+    // 스터디그룹 삭제(리더만)
     @DeleteMapping("/study-group/{id}")
     public ResponseEntity<String> deleteById(@PathVariable("id") Long studyGroupId) {
         log.info("studyGroup deleteById, studyGroupId: {}", studyGroupId);

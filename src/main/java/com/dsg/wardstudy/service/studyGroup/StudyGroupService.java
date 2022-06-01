@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface StudyGroupService {
 
-    StudyGroupResponse create(StudyGroupRequest studyGroupRequest);
+    StudyGroupResponse create(Long userId, StudyGroupRequest studyGroupRequest);
 
     StudyGroupResponse getById(Long studyGroupId);
     List<StudyGroupResponse> getAll();

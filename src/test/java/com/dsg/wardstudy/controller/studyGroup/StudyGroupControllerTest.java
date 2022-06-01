@@ -1,11 +1,14 @@
 package com.dsg.wardstudy.controller.studyGroup;
 
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
+import com.dsg.wardstudy.domain.user.User;
+import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
 import com.dsg.wardstudy.exception.ErrorCode;
 import com.dsg.wardstudy.exception.WSApiException;
 import com.dsg.wardstudy.service.studyGroup.StudyGroupService;
+import com.dsg.wardstudy.type.UserType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,6 +46,8 @@ class StudyGroupControllerTest {
     private ObjectMapper objectMapper;
 
     private StudyGroup studyGroup;
+    private User user;
+    private UserGroup userGroup;
 
     @BeforeEach
     void setup() {
@@ -53,6 +58,18 @@ class StudyGroupControllerTest {
                 .title("testSG")
                 .content("인원 4명의 스터디그룹을 모집합니다.")
                 .build();
+
+        user = User.builder()
+                .id(1L)
+                .build();
+
+        userGroup = UserGroup.builder()
+                .user(user)
+                .studyGroup(studyGroup)
+                .userType(UserType.L)
+                .build();
+
+
     }
 
     @Test
@@ -64,15 +81,15 @@ class StudyGroupControllerTest {
                 .build();
 
         StudyGroupResponse studyGroupResponse = StudyGroupResponse.builder()
-                .title(studyGroup.getTitle())
-                .content(studyGroup.getContent())
+                .title(userGroup.getStudyGroup().getTitle())
+                .content(userGroup.getStudyGroup().getContent())
                 .build();
 
-        given(studyGroupService.create(any(StudyGroupRequest.class)))
+        given(studyGroupService.create(anyLong(), any(StudyGroupRequest.class)))
                 .willReturn(studyGroupResponse);
 
         // when - action or the behaviour that we are going test
-        ResultActions resultActions = mockMvc.perform(post("/study-group")
+        ResultActions resultActions = mockMvc.perform(post("/user/{userId}/study-group", user.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(studyGroupRequest)));
 
