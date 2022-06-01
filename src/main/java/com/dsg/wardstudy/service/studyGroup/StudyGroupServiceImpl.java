@@ -145,7 +145,15 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     @Transactional(readOnly = true)
     @Override
     public List<StudyGroupResponse> getAllByUserId(Long userId) {
-        List<UserGroup> userGroups = userGroupRepository.findByUserId(userId);
+
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.error("user 대상이 없습니다. userId: {}", userId);
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by " +
+                            " userId: " + userId);
+                });
+
+        List<UserGroup> userGroups = userGroupRepository.findByUserId(findUser.getId());
 
         List<Long> studyGroupsIds = userGroups.stream()
                 .map(d -> d.getStudyGroup().getId())
