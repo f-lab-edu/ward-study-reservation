@@ -7,9 +7,15 @@
 
 <br>
 
-## 🔍 서비스 기능
+## 🔍 서비스 `MVP(Minimum Valuable Product)`
 
-[Wiki UseCase](https://github.com/f-lab-edu/ward-study-reservation/wiki/3.-UseCase-:-%EA%B8%B0%EB%8A%A5-%EA%B5%AC%ED%98%84-%EC%82%AC%EC%A0%84-%EC%84%A4%EA%B3%84)에서 확인할 수 있습니다!
+**1. 사용자(리더)가 Reservation 등록**
+
+**2. 사용자가 등록한 StudyGroup의 Reservation 조회**
+
+**3. 해당 Room의 Rservation 조회**
+
+**4. Reservation의 해당 사용자들에게 Notification 이메일 알람**
 
 <br>
 
