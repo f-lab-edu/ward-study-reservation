@@ -137,20 +137,18 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     @Transactional
     @Override
     public void deleteById(Long userId, Long studyGroupId) {
-        StudyGroup studyGroup = validateStudyGroup(userId, studyGroupId);
+        // 외래키를 가진 reservation이 존재한다면 먼저 삭제되어야만 studyGroup도 지울 수 있음!
+        reservationQueryRepository.findByUserIdAndStudyGroupId(userId, studyGroupId)
+                .ifPresent(reservation -> {
+                    log.info("reservation: {}", reservation);
+                    reservationRepository.delete(reservation);
+                });
+        Optional<StudyGroup> studyGroup = validateDeleteStudyGroup(userId, studyGroupId);
         log.info("studyGroup: {}", studyGroup);
-
-        Reservation reservation = reservationQueryRepository.findByUserIdAndStudyGroupId(userId, studyGroupId);
-        log.info("reservation: {}", reservation);
-
-        if (Optional.of(reservation).isPresent()) {
-            // 외래키를 가진 reservation이 먼저 삭제되어야만 studyGroup도 지울 수 있음!
-            reservationRepository.delete(reservation);
-            studyGroupRepository.delete(studyGroup);
-        }
+        studyGroup.ifPresent(studyGroupRepository::delete);
     }
 
-    @Cacheable(key = "#userId" ,value = STUDY_GROUP_LIST, cacheManager = "redisCacheManager")
+    @Cacheable(key = "#userId", value = STUDY_GROUP_LIST, cacheManager = "redisCacheManager")
     @Transactional(readOnly = true)
     @Override
     public List<StudyGroupResponse> getAllByUserId(Long userId) {
@@ -158,8 +156,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.error("user 대상이 없습니다. userId: {}", userId);
-                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by " +
-                            " userId: " + userId);
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by userId: " + userId);
                 });
 
         List<UserGroup> userGroups = userGroupRepository.findByUserId(findUser.getId());
@@ -175,12 +172,28 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     }
 
+    private Optional<StudyGroup> validateDeleteStudyGroup(Long userId, Long studyGroupId) {
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.error("user 대상이 없습니다. userId: {}", userId);
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by userId: " + userId);
+                });
+
+        userGroupRepository.findUserTypeByUserIdAndSGId(userId, studyGroupId)
+                .ifPresent(userType -> {
+                    if (!userType.equals(UserType.L)) {
+                        log.error("userType이 Leader가 아닙니다.");
+                        throw new WSApiException(ErrorCode.INVALID_REQUEST, "StudyGroup modification is possible only if the user is the leader.");
+                    }
+                });
+        return studyGroupRepository.findById(studyGroupId);
+    }
+
     private StudyGroup validateStudyGroup(Long userId, Long studyGroupId) {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.error("user 대상이 없습니다. userId: {}", userId);
-                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by " +
-                            " userId: " + userId);
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by userId: " + userId);
                 });
 
         StudyGroup findStudyGroup = studyGroupRepository.findById(studyGroupId)
@@ -190,11 +203,13 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                             " studyGroupId: " + studyGroupId);
                 });
 
-        UserType userType = userGroupRepository.findUserTypeByUserIdAndSGId(userId, studyGroupId).get();
-        if (!userType.equals(UserType.L)) {
-            log.error("userType이 Leader가 아닙니다.");
-            throw new WSApiException(ErrorCode.INVALID_REQUEST, "StudyGroup modification is possible only if the user is the leader.");
-        }
+        userGroupRepository.findUserTypeByUserIdAndSGId(userId, studyGroupId)
+                .ifPresent(userType -> {
+                    if (!userType.equals(UserType.L)) {
+                        log.error("userType이 Leader가 아닙니다.");
+                        throw new WSApiException(ErrorCode.INVALID_REQUEST, "StudyGroup modification is possible only if the user is the leader.");
+                    }
+                });
         return findStudyGroup;
     }
 }

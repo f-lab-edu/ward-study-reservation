@@ -320,11 +320,11 @@ class ReservationControllerTest {
     @DisplayName("예약 삭제")
     void givenReservationId_whenDelete_thenReturn200() throws Exception {
         // given - precondition or setup
-        willDoNothing().given(reservationService).deleteById(reservation.getId());
+        willDoNothing().given(reservationService).deleteById(user.getId(), reservation.getId());
 
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(delete("/reservation/{reservationId}", reservation.getId()))
+        mockMvc.perform(delete("/users/{userId}/reservation/{reservationId}",user.getId(), reservation.getId()))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

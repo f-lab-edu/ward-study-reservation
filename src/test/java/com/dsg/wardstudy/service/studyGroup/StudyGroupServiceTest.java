@@ -228,17 +228,17 @@ class StudyGroupServiceTest {
         Long userId = 1L;
         Long studyGroupId = 1L;
 
+        given(reservationQueryRepository.findByUserIdAndStudyGroupId(anyLong(), anyLong()))
+                .willReturn(Optional.ofNullable(reservation));
+
         given(userRepository.findById(anyLong()))
                 .willReturn(Optional.of(user));
-
-        given(studyGroupRepository.findById(anyLong()))
-                .willReturn(Optional.of(studyGroup));
 
         given(userGroupRepository.findUserTypeByUserIdAndSGId(anyLong(), anyLong()))
                 .willReturn(Optional.of(UserType.L));
 
-        given(reservationQueryRepository.findByUserIdAndStudyGroupId(anyLong(), anyLong()))
-                .willReturn(reservation);
+        given(studyGroupRepository.findById(anyLong()))
+                .willReturn(Optional.of(studyGroup));
 
         willDoNothing().given(reservationRepository).delete(reservation);
         willDoNothing().given(studyGroupRepository).delete(studyGroup);
