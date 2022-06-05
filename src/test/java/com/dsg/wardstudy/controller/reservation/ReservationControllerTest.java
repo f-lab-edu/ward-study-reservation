@@ -107,11 +107,11 @@ class ReservationControllerTest {
                 .build();
 
         ReservationDetails reservationDetails = ReservationDetails.builder()
-                .startTime(reservation.getStartTime())
-                .endTime(reservation.getEndTime())
-                .user(user)
-                .studyGroup(studyGroup)
-                .room(room)
+                .startTime(sTime)
+                .endTime(eTime)
+                .registerId(user.getId())
+                .studyGroupId(studyGroup.getId())
+                .roomId(room.getId())
                 .build();
 
         given(reservationService.create(studyGroup.getId(), room.getId(), createRequest))
@@ -140,11 +140,11 @@ class ReservationControllerTest {
         String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         ReservationDetails reservationDetails = ReservationDetails.builder()
-                .startTime(reservation.getStartTime())
-                .endTime(reservation.getEndTime())
-                .user(user)
-                .studyGroup(studyGroup)
-                .room(room)
+                .startTime(sTime)
+                .endTime(eTime)
+                .registerId(user.getId())
+                .studyGroupId(studyGroup.getId())
+                .roomId(room.getId())
                 .build();
         given(reservationService.getByRoomIdAndReservationId(room.getId(), reservation.getId()))
                 .willReturn(reservationDetails);
@@ -164,22 +164,21 @@ class ReservationControllerTest {
     void givenRoomIdAndTimePeriod_whenGet_thenReturnReservationDetailsList() throws Exception {
         // getByRoomIdAndTimePeriod
         // given - precondition or setup
+        String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
         List<ReservationDetails> detailsList = new ArrayList<>();
         ReservationDetails reservationDetails = ReservationDetails.builder()
-                .startTime(reservation.getStartTime())
-                .endTime(reservation.getEndTime())
-                .user(user)
-                .studyGroup(studyGroup)
-                .room(room)
+                .startTime(sTime)
+                .endTime(eTime)
+                .registerId(user.getId())
+                .studyGroupId(studyGroup.getId())
+                .roomId(room.getId())
                 .build();
 
         IntStream.rangeClosed(1, 5).forEach(i -> {
             detailsList.add(reservationDetails);
         });
-
-        // LocalDateTime -> String 으로 변환
-        String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         given(reservationService.getByRoomIdAndTimePeriod(room.getId(), sTime, eTime))
                 .willReturn(detailsList);
@@ -204,22 +203,22 @@ class ReservationControllerTest {
     void givenRoomId_whenGet_thenReturnReservationDetailsList() throws Exception {
         // getByRoomId
         // given - precondition or setup
+        String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
         List<ReservationDetails> detailsList = new ArrayList<>();
         ReservationDetails reservationDetails = ReservationDetails.builder()
-                .startTime(reservation.getStartTime())
-                .endTime(reservation.getEndTime())
-                .user(user)
-                .studyGroup(studyGroup)
-                .room(room)
+                .startTime(sTime)
+                .endTime(eTime)
+                .registerId(user.getId())
+                .studyGroupId(studyGroup.getId())
+                .roomId(room.getId())
                 .build();
 
         IntStream.rangeClosed(1, 5).forEach(i -> {
             detailsList.add(reservationDetails);
         });
 
-        // LocalDateTime -> String 으로 변환
-        String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         given(reservationService.getByRoomId(room.getId()))
                 .willReturn(detailsList);
@@ -258,22 +257,21 @@ class ReservationControllerTest {
     void givenUserId_whenGet_thenReturnReservationDetailsList() throws Exception {
         // getAllByUserId
         // given - precondition or setup
+        String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
         List<ReservationDetails> detailsList = new ArrayList<>();
         ReservationDetails reservationDetails = ReservationDetails.builder()
-                .startTime(reservation.getStartTime())
-                .endTime(reservation.getEndTime())
-                .user(user)
-                .studyGroup(studyGroup)
-                .room(room)
+                .startTime(sTime)
+                .endTime(eTime)
+                .registerId(user.getId())
+                .studyGroupId(studyGroup.getId())
+                .roomId(room.getId())
                 .build();
 
         IntStream.rangeClosed(1, 5).forEach(i -> {
             detailsList.add(reservationDetails);
         });
-
-        // LocalDateTime -> String 으로 변환
-        String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         given(reservationService.getAllByUserId(user.getId()))
                 .willReturn(detailsList);

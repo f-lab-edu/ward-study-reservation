@@ -19,6 +19,8 @@ import com.dsg.wardstudy.type.UserType;
 import com.dsg.wardstudy.utils.TimeParsingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.dsg.wardstudy.config.redis.RedisCacheKey.RESERVATION_LIST;
 
 
 @Slf4j
@@ -41,6 +45,7 @@ public class ReservationServiceImpl implements ReservationService{
 
     private final TimeParsingUtils timeParsingUtils;
 
+    @CacheEvict(key = "#roomId", value = RESERVATION_LIST, cacheManager = "redisCacheManager")
     @Transactional
     @Override
     public ReservationDetails create(Long studyGroupId, Long roomId, ReservationCreateRequest reservationRequest) {
@@ -146,6 +151,7 @@ public class ReservationServiceImpl implements ReservationService{
 
     }
 
+    @Cacheable(key = "#roomId", value = RESERVATION_LIST, cacheManager = "redisCacheManager")
     @Transactional(readOnly = true)
     @Override
     public List<ReservationDetails> getByRoomId(Long roomId) {
@@ -243,11 +249,14 @@ public class ReservationServiceImpl implements ReservationService{
     private ReservationDetails mapToDto(Reservation reservation) {
         ReservationDetails results = ReservationDetails.builder()
                 .id(reservation.getId())
-                .startTime(reservation.getStartTime())
-                .endTime(reservation.getEndTime())
-                .user(reservation.getUser())
-                .studyGroup(reservation.getStudyGroup())
-                .room(reservation.getRoom())
+                .startTime(timeParsingUtils.formatterString(reservation.getStartTime()))
+                .endTime(timeParsingUtils.formatterString(reservation.getEndTime()))
+                .registerId(reservation.getUser().getId())
+                .registerEmail(reservation.getUser().getEmail())
+                .studyGroupId(reservation.getStudyGroup().getId())
+                .studyGroupTitle(reservation.getStudyGroup().getTitle())
+                .roomId(reservation.getRoom().getId())
+                .roomName(reservation.getRoom().getName())
                 .build();
         // TODO : 해결o, 원인파악 x - log를 붙이면 user, studyGroup null이 안나오는 현상
         log.info("results: {}", results);

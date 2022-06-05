@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.dsg.wardstudy.config.redis.RedisCacheKey.STUDYGROUP_LIST;
+import static com.dsg.wardstudy.config.redis.RedisCacheKey.STUDY_GROUP_LIST;
 
 @Slf4j
 @Service
@@ -91,7 +91,6 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     }
 
 
-    @Cacheable(key = "#studyGroupId" ,value = STUDYGROUP_LIST, cacheManager = "redisCacheManager")
     @Transactional(readOnly = true)
     @Override
     public StudyGroupResponse getById(Long studyGroupId) {
@@ -121,6 +120,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 .build();
     }
 
+    @CacheEvict(key = "#userId", value = STUDY_GROUP_LIST, cacheManager = "redisCacheManager")
     @Transactional
     @Override
     public Long updateById(Long userId, Long studyGroupId, StudyGroupRequest studyGroupRequest) {
@@ -134,7 +134,6 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     }
 
-    @CacheEvict(key = "#studyGroupId", value = STUDYGROUP_LIST, cacheManager = "redisCacheManager")
     @Transactional
     @Override
     public void deleteById(Long userId, Long studyGroupId) {
@@ -151,6 +150,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         }
     }
 
+    @Cacheable(key = "#userId" ,value = STUDY_GROUP_LIST, cacheManager = "redisCacheManager")
     @Transactional(readOnly = true)
     @Override
     public List<StudyGroupResponse> getAllByUserId(Long userId) {
