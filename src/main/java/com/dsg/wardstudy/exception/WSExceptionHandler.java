@@ -1,8 +1,5 @@
 package com.dsg.wardstudy.exception;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
@@ -28,7 +25,7 @@ public class WSExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(WSApiException.class)
     public ResponseEntity<Object> handleWSApiException(
             WSApiException exception,
-            WebRequest request) throws JsonProcessingException {
+            WebRequest request) {
 
 
         log.error("WSApiException: ", exception);
