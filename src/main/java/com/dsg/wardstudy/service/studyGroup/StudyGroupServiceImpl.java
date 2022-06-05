@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.service.studyGroup;
 
-import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.studyGroup.QStudyGroup;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
@@ -15,6 +15,8 @@ import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
 import com.dsg.wardstudy.type.UserType;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
@@ -107,9 +109,13 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     @Transactional(readOnly = true)
     @Override
-    public PageResponse.StudyGroup getAll(Pageable pageable) {
+    public PageResponse.StudyGroup getAll(Pageable pageable, String type, String keyword) {
+        // 검색조건
+        BooleanBuilder booleanBuilder = getSearch(type, keyword);
+        log.info("booleanBuilder getSearch: {}", booleanBuilder);
 
-        Page<StudyGroupResponse> studyGroupResponsePage = studyGroupRepository.findAll(pageable).map(this::mapToDto);
+        Page<StudyGroupResponse> studyGroupResponsePage = studyGroupRepository.findAll(booleanBuilder, pageable)
+                .map(this::mapToDto);
         return PageResponse.StudyGroup.builder()
                 .content(studyGroupResponsePage.getContent())
                 .pageNo(pageable.getPageNumber())
@@ -118,6 +124,35 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 .totalPages(studyGroupResponsePage.getTotalPages())
                 .last(studyGroupResponsePage.isLast())
                 .build();
+    }
+
+    private BooleanBuilder getSearch(String type, String keyword) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
+
+        QStudyGroup qStudyGroup = QStudyGroup.studyGroup;
+
+        BooleanExpression booleanExpression = qStudyGroup.id.gt(0L);
+
+        booleanBuilder.and(booleanExpression);
+
+        // 검색 조건이 없는 경우
+        if (type == null || type.trim().length() == 0) {
+            return booleanBuilder;
+        }
+
+        BooleanBuilder conditionBuilder = new BooleanBuilder();
+
+        if(type.contains("t")) {
+            conditionBuilder.or(qStudyGroup.title.contains(keyword));
+        }
+        if(type.contains("c")) {
+            conditionBuilder.or(qStudyGroup.content.contains(keyword));
+        }
+
+        // 모든 조건 통합
+        booleanBuilder.and(conditionBuilder);
+
+        return booleanBuilder;
     }
 
     @CacheEvict(key = "#userId", value = STUDY_GROUP_LIST, cacheManager = "redisCacheManager")
