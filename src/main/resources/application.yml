@@ -22,7 +22,7 @@ spring:
   redis:
     host: localhost
     session:
-      port: 6378
+      port: 6379  # port 바꿀 것 6378
     cache:
       port: 6379
 
