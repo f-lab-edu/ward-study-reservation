@@ -247,7 +247,7 @@ public class ReservationServiceImpl implements ReservationService{
     }
 
     private ReservationDetails mapToDto(Reservation reservation) {
-        ReservationDetails results = ReservationDetails.builder()
+        return ReservationDetails.builder()
                 .id(reservation.getId())
                 .startTime(timeParsingUtils.formatterString(reservation.getStartTime()))
                 .endTime(timeParsingUtils.formatterString(reservation.getEndTime()))
@@ -258,9 +258,6 @@ public class ReservationServiceImpl implements ReservationService{
                 .roomId(reservation.getRoom().getId())
                 .roomName(reservation.getRoom().getName())
                 .build();
-        // TODO : 해결o, 원인파악 x - log를 붙이면 user, studyGroup null이 안나오는 현상
-        log.info("results: {}", results);
-        return results;
     }
 
     private Reservation mapToEntity(ReservationCreateRequest reservationRequest,
