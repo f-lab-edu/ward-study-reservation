@@ -56,9 +56,6 @@ class StudyGroupControllerTest {
 
     @BeforeEach
     void setup() {
-
-        objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-
         studyGroup = StudyGroup.builder()
                 .title("testSG")
                 .content("인원 4명의 스터디그룹을 모집합니다.")

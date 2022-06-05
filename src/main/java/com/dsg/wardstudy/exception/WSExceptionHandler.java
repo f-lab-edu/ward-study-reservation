@@ -24,12 +24,6 @@ import static com.dsg.wardstudy.exception.ErrorHttpStatusMapper.mapToStatus;
 @ControllerAdvice
 public class WSExceptionHandler extends ResponseEntityExceptionHandler {
 
-    private final ObjectMapper objectMapper;
-
-    public WSExceptionHandler() {
-        this.objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-    }
-
     // handle specific exceptions
     @ExceptionHandler(WSApiException.class)
     public ResponseEntity<Object> handleWSApiException(
@@ -47,7 +41,7 @@ public class WSExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
 
         log.info("errorDetails: {}", errorDetails);
-        return new ResponseEntity<>(objectMapper.writeValueAsString(errorDetails), mapToStatus(errorDetails.getErrorCode()));
+        return new ResponseEntity<>(errorDetails, mapToStatus(errorDetails.getErrorCode()));
     }
 
     //BindingResult Validation 처리
@@ -69,13 +63,8 @@ public class WSExceptionHandler extends ResponseEntityExceptionHandler {
                 .build();
 
         log.info("errorDetails: {}", errorDetails);
+        return new ResponseEntity<>(errorDetails, mapToStatus(errorDetails.getErrorCode()));
 
-        try {
-            return new ResponseEntity<>(objectMapper.writeValueAsString(errorDetails), mapToStatus(errorDetails.getErrorCode()));
-        } catch (JsonProcessingException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
 }

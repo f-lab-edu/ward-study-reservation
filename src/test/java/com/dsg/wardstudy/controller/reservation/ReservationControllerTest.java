@@ -61,8 +61,6 @@ class ReservationControllerTest {
 
     @BeforeEach
     void setUp() {
-        objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-
         user = User.builder()
                 .id(1L)
                 .build();
