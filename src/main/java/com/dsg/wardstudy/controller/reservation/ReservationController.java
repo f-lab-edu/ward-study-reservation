@@ -87,7 +87,7 @@ public class ReservationController {
     public ResponseEntity<String> deleteById(
             @PathVariable("userId") Long userId,
             @PathVariable("reservationId") String reservationId) {
-        log.info("reservation deleteById, reservationId: {}", reservationId);
+        log.info("reservation deleteById, userId: {}, reservationId: {}" ,userId, reservationId);
         reservationService.deleteById(userId, reservationId);
         return new ResponseEntity<>("a reservation successfully deleted!", HttpStatus.OK);
     }
