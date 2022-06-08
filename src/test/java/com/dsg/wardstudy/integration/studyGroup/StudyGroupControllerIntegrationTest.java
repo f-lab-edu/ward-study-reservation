@@ -1,9 +1,16 @@
 package com.dsg.wardstudy.integration.studyGroup;
 
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
+import com.dsg.wardstudy.domain.user.User;
+import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
+import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
+import com.dsg.wardstudy.repository.user.UserGroupRepository;
+import com.dsg.wardstudy.repository.user.UserRepository;
+import com.dsg.wardstudy.type.UserType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +39,36 @@ class StudyGroupControllerIntegrationTest {
     private StudyGroupRepository studyGroupRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private UserGroupRepository userGroupRepository;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     private StudyGroup studyGroup;
 
+    private User user;
+    private UserGroup userGroup;
+
     @BeforeEach
     void setup() {
+        objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
+
         studyGroup = StudyGroup.builder()
                 .title("testSG")
                 .content("인원 4명의 스터디그룹을 모집합니다.")
+                .build();
+
+        user = User.builder()
+                .id(1L)
+                .build();
+
+        userGroup = UserGroup.builder()
+                .user(user)
+                .studyGroup(studyGroup)
+                .userType(UserType.L)
                 .build();
     }
 
@@ -80,7 +108,11 @@ class StudyGroupControllerIntegrationTest {
 
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(get("/study-group"))
+        mockMvc.perform(get("/study-group")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("sort", "id,desc")
+                )
                 .andDo(print())
                 .andExpect(status().isOk());
 
@@ -117,13 +149,21 @@ class StudyGroupControllerIntegrationTest {
     }
 
     @Test
-    public void getAllByUserId() throws Exception {
-        // TODO : controller 메서드 만들기
+    public void givenUserId_whenGetAll_thenReturnStudyGroupResponseList() throws Exception {
         // given - precondition or setup
+        Long userId = 1L;
+
+        studyGroupRepository.save(studyGroup);
+        User savedUser = userRepository.save(user);
+        userGroupRepository.save(userGroup);
+
 
         // when - action or the behaviour that we are going test
-
         // then - verify the output
+        mockMvc.perform(get("/users/{userId}/study-group",savedUser.getId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk());
 
     }
 

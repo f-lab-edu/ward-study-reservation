@@ -21,7 +21,7 @@ public interface ReservationService {
 
     String updateById(Long roomId, String reservationId, ReservationUpdateRequest reservationRequest);
 
-    void deleteById(String reservationId);
+    void deleteById(Long userId, String reservationId);
 
     void changeIsEmailSent(Reservation reservation);
 
