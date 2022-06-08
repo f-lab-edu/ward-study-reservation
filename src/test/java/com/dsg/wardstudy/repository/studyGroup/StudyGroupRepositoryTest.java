@@ -4,6 +4,7 @@ import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
+import com.dsg.wardstudy.repository.user.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +29,8 @@ class StudyGroupRepositoryTest {
     @Autowired
     private StudyGroupRepository studyGroupRepository;
 
+    @Autowired
+    private UserRepository userRepository;
     @Autowired
     private UserGroupRepository userGroupRepository;
 
@@ -110,7 +113,8 @@ class StudyGroupRepositoryTest {
     @DisplayName("스터디그룹들 userId로 가져오기")
     public void givenUserId_whenFindByUserId_thenReturnStudyGroupsIdList() {
         // given - precondition or setup
-        // TODO : User, UserGroup save API 만들어야
+        userRepository.save(user);
+        studyGroupRepository.save(studyGroup);
         userGroupRepository.save(userGroup);
 
         // when - action or the behaviour that we are going test

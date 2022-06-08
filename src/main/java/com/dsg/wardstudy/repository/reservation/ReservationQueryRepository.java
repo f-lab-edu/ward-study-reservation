@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.EntityManager;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static com.dsg.wardstudy.domain.reservation.QReservation.reservation;
 
@@ -29,4 +30,12 @@ public class ReservationQueryRepository {
                 .fetch();
     }
 
+    public Optional<Reservation> findByUserIdAndStudyGroupId(Long userId, Long studyGroupId) {
+        return queryFactory
+                .selectFrom(reservation)
+                .where(reservation.user.id.eq(userId)
+                        .and(reservation.studyGroup.id.eq(studyGroupId))
+                ).stream().findFirst();
+
+    }
 }
