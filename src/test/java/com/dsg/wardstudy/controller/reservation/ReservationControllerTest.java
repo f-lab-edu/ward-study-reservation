@@ -13,7 +13,6 @@ import com.dsg.wardstudy.exception.WSApiException;
 import com.dsg.wardstudy.service.reservation.ReservationService;
 import com.dsg.wardstudy.type.UserType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -61,8 +60,6 @@ class ReservationControllerTest {
 
     @BeforeEach
     void setUp() {
-        objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-
         user = User.builder()
                 .id(1L)
                 .build();
@@ -320,11 +317,11 @@ class ReservationControllerTest {
     @DisplayName("예약 삭제")
     void givenReservationId_whenDelete_thenReturn200() throws Exception {
         // given - precondition or setup
-        willDoNothing().given(reservationService).deleteById(reservation.getId());
+        willDoNothing().given(reservationService).deleteById(user.getId(), reservation.getId());
 
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(delete("/reservation/{reservationId}", reservation.getId()))
+        mockMvc.perform(delete("/users/{userId}/reservation/{reservationId}",user.getId(), reservation.getId()))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
