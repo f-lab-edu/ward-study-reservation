@@ -1,8 +1,10 @@
 package com.dsg.wardstudy.controller.studyGroup;
 
+import com.dsg.wardstudy.domain.studyGroup.QStudyGroup;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
+import com.dsg.wardstudy.dto.PageResponse;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
 import com.dsg.wardstudy.exception.ErrorCode;
@@ -10,12 +12,15 @@ import com.dsg.wardstudy.exception.WSApiException;
 import com.dsg.wardstudy.service.studyGroup.StudyGroupService;
 import com.dsg.wardstudy.type.UserType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.querydsl.core.BooleanBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -28,6 +33,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -51,9 +57,6 @@ class StudyGroupControllerTest {
 
     @BeforeEach
     void setup() {
-
-        objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-
         studyGroup = StudyGroup.builder()
                 .title("testSG")
                 .content("인원 4명의 스터디그룹을 모집합니다.")
@@ -116,16 +119,44 @@ class StudyGroupControllerTest {
                     studyGroupResponse
             );
         }
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
 
-        given(studyGroupService.getAll()).willReturn(studyGroupResponses);
+        QStudyGroup qStudyGroup = QStudyGroup.studyGroup;
+
+        String type = "t";
+        String keyword = "test";
+
+        // 검색조건 추가
+        BooleanBuilder conditionBuilder = new BooleanBuilder();
+
+        if(type.contains("t")) {
+            conditionBuilder.or(qStudyGroup.title.contains(keyword));
+        }
+        if(type.contains("c")) {
+            conditionBuilder.or(qStudyGroup.content.contains(keyword));
+        }
+
+        given(studyGroupService.getAll(pageable, type, keyword))
+                .willReturn(PageResponse.StudyGroup.builder()
+                        .content(studyGroupResponses)
+                        .pageNo(pageable.getPageNumber())
+                        .pageSize(pageable.getPageSize())
+                        .totalElements(length)
+                        .build());
 
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(get("/study-group"))
+        mockMvc.perform(get("/study-group")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("sort", "id,desc")
+                        .param("type", "t")
+                        .param("keyword", "test")
+                )
                 .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(length));
+                .andExpect(status().isOk());
 
+        verify(studyGroupService).getAll(pageable, type, keyword);
     }
 
     @Test

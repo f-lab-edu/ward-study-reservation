@@ -1,9 +1,11 @@
 package com.dsg.wardstudy.service.studyGroup;
 
 import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.studyGroup.QStudyGroup;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
+import com.dsg.wardstudy.dto.PageResponse;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
 import com.dsg.wardstudy.exception.WSApiException;
@@ -13,6 +15,7 @@ import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
 import com.dsg.wardstudy.type.UserType;
+import com.querydsl.core.BooleanBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +23,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
 import java.util.List;
@@ -144,39 +150,79 @@ class StudyGroupServiceTest {
 
     @Test
     public void givenStudyGroupList_whenGetAll_thenReturnStudyGroupResponseList() {
+        // TODO : paging NPE 발생 issue#23 findAll(pageable)부터 안됐음.
         // given - precondition or setup
         StudyGroup studyGroup1 = StudyGroup.builder()
                 .id(100L)
                 .title("testSG2")
                 .content("인원 6명의 스터디그룹을 모집합니다.")
                 .build();
-        given(studyGroupRepository.findAll())
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
+
+        QStudyGroup qStudyGroup = QStudyGroup.studyGroup;
+
+        String type = "t";
+        String keyword = "test";
+
+        // 검색조건 추가
+        BooleanBuilder conditionBuilder = new BooleanBuilder();
+
+        if(type.contains("t")) {
+            conditionBuilder.or(qStudyGroup.title.contains(keyword));
+        }
+        if(type.contains("c")) {
+            conditionBuilder.or(qStudyGroup.content.contains(keyword));
+        }
+
+        given(studyGroupRepository.findAll(conditionBuilder, pageable).getContent())
                 .willReturn(List.of(studyGroup, studyGroup1));
         // when - action or the behaviour that we are going test
-        List<StudyGroupResponse> studyGroupResponses = studyGroupService.getAll();
-        log.info("studyGroupResponses: {}", studyGroupResponses);
+
+
+        PageResponse.StudyGroup studyGroupPageResponses = studyGroupService.getAll(pageable, type, keyword);
+        log.info("studyGroupPageResponses: {}", studyGroupPageResponses);
         // then - verify the output
-        assertThat(studyGroupResponses).isNotNull();
-        assertThat(studyGroupResponses.size()).isEqualTo(2);
+        assertThat(studyGroupPageResponses).isNotNull();
+        assertThat(studyGroupPageResponses.getTotalElements()).isEqualTo(2);
 
     }
 
     @Test
     public void givenStudyGroupList_whenGetAll_Negative_thenReturnStudyGroupResponseList() {
+        // TODO : paging NPE 발생 issue#23
         // given - precondition or setup
         StudyGroup studyGroup1 = StudyGroup.builder()
                 .id(2L)
                 .title("testSG2")
                 .content("인원 6명의 스터디그룹을 모집합니다.")
                 .build();
-        given(studyGroupRepository.findAll())
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
+
+        QStudyGroup qStudyGroup = QStudyGroup.studyGroup;
+
+        String type = "t";
+        String keyword = "test";
+
+        // 검색조건 추가
+        BooleanBuilder conditionBuilder = new BooleanBuilder();
+
+        if(type.contains("t")) {
+            conditionBuilder.or(qStudyGroup.title.contains(keyword));
+        }
+        if(type.contains("c")) {
+            conditionBuilder.or(qStudyGroup.content.contains(keyword));
+        }
+
+        given(studyGroupRepository.findAll(conditionBuilder, pageable).getContent())
                 .willReturn(Collections.emptyList());
         // when - action or the behaviour that we are going test
-        List<StudyGroupResponse> studyGroupResponses = studyGroupService.getAll();
-        log.info("studyGroupResponses: {}", studyGroupResponses);
+        PageResponse.StudyGroup studyGroupPageResponses = studyGroupService.getAll(pageable, type, keyword);
+        log.info("studyGroupPageResponses: {}", studyGroupPageResponses);
         // then - verify the output
-        assertThat(studyGroupResponses).isEmpty();
-        assertThat(studyGroupResponses.size()).isEqualTo(0);
+        assertThat(studyGroupPageResponses).isNull();
+        assertThat(studyGroupPageResponses.getTotalElements()).isEqualTo(0);
 
     }
 
@@ -215,17 +261,17 @@ class StudyGroupServiceTest {
         Long userId = 1L;
         Long studyGroupId = 1L;
 
+        given(reservationQueryRepository.findByUserIdAndStudyGroupId(anyLong(), anyLong()))
+                .willReturn(Optional.ofNullable(reservation));
+
         given(userRepository.findById(anyLong()))
                 .willReturn(Optional.of(user));
-
-        given(studyGroupRepository.findById(anyLong()))
-                .willReturn(Optional.of(studyGroup));
 
         given(userGroupRepository.findUserTypeByUserIdAndSGId(anyLong(), anyLong()))
                 .willReturn(Optional.of(UserType.L));
 
-        given(reservationQueryRepository.findByUserIdAndStudyGroupId(anyLong(), anyLong()))
-                .willReturn(reservation);
+        given(studyGroupRepository.findById(anyLong()))
+                .willReturn(Optional.of(studyGroup));
 
         willDoNothing().given(reservationRepository).delete(reservation);
         willDoNothing().given(studyGroupRepository).delete(studyGroup);
