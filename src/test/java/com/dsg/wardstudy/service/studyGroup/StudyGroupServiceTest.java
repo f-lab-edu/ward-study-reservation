@@ -1,6 +1,7 @@
 package com.dsg.wardstudy.service.studyGroup;
 
 import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.studyGroup.QStudyGroup;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
@@ -14,6 +15,7 @@ import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
 import com.dsg.wardstudy.type.UserType;
+import com.querydsl.core.BooleanBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -148,7 +150,7 @@ class StudyGroupServiceTest {
 
     @Test
     public void givenStudyGroupList_whenGetAll_thenReturnStudyGroupResponseList() {
-        // TODO : paging NPE 발생 issue#23
+        // TODO : paging NPE 발생 issue#23 findAll(pageable)부터 안됐음.
         // given - precondition or setup
         StudyGroup studyGroup1 = StudyGroup.builder()
                 .id(100L)
@@ -156,14 +158,29 @@ class StudyGroupServiceTest {
                 .content("인원 6명의 스터디그룹을 모집합니다.")
                 .build();
 
-        Pageable pageable = PageRequest.of(0, 2, Sort.by("id").descending());
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
 
-        given(studyGroupRepository.findAll(pageable).getContent())
+        QStudyGroup qStudyGroup = QStudyGroup.studyGroup;
+
+        String type = "t";
+        String keyword = "test";
+
+        // 검색조건 추가
+        BooleanBuilder conditionBuilder = new BooleanBuilder();
+
+        if(type.contains("t")) {
+            conditionBuilder.or(qStudyGroup.title.contains(keyword));
+        }
+        if(type.contains("c")) {
+            conditionBuilder.or(qStudyGroup.content.contains(keyword));
+        }
+
+        given(studyGroupRepository.findAll(conditionBuilder, pageable).getContent())
                 .willReturn(List.of(studyGroup, studyGroup1));
         // when - action or the behaviour that we are going test
 
 
-        PageResponse.StudyGroup studyGroupPageResponses = studyGroupService.getAll(pageable);
+        PageResponse.StudyGroup studyGroupPageResponses = studyGroupService.getAll(pageable, type, keyword);
         log.info("studyGroupPageResponses: {}", studyGroupPageResponses);
         // then - verify the output
         assertThat(studyGroupPageResponses).isNotNull();
@@ -173,6 +190,7 @@ class StudyGroupServiceTest {
 
     @Test
     public void givenStudyGroupList_whenGetAll_Negative_thenReturnStudyGroupResponseList() {
+        // TODO : paging NPE 발생 issue#23
         // given - precondition or setup
         StudyGroup studyGroup1 = StudyGroup.builder()
                 .id(2L)
@@ -182,10 +200,25 @@ class StudyGroupServiceTest {
 
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
 
-        given(studyGroupRepository.findAll(pageable).getContent())
+        QStudyGroup qStudyGroup = QStudyGroup.studyGroup;
+
+        String type = "t";
+        String keyword = "test";
+
+        // 검색조건 추가
+        BooleanBuilder conditionBuilder = new BooleanBuilder();
+
+        if(type.contains("t")) {
+            conditionBuilder.or(qStudyGroup.title.contains(keyword));
+        }
+        if(type.contains("c")) {
+            conditionBuilder.or(qStudyGroup.content.contains(keyword));
+        }
+
+        given(studyGroupRepository.findAll(conditionBuilder, pageable).getContent())
                 .willReturn(Collections.emptyList());
         // when - action or the behaviour that we are going test
-        PageResponse.StudyGroup studyGroupPageResponses = studyGroupService.getAll(pageable);
+        PageResponse.StudyGroup studyGroupPageResponses = studyGroupService.getAll(pageable, type, keyword);
         log.info("studyGroupPageResponses: {}", studyGroupPageResponses);
         // then - verify the output
         assertThat(studyGroupPageResponses).isNull();
@@ -228,17 +261,17 @@ class StudyGroupServiceTest {
         Long userId = 1L;
         Long studyGroupId = 1L;
 
+        given(reservationQueryRepository.findByUserIdAndStudyGroupId(anyLong(), anyLong()))
+                .willReturn(Optional.ofNullable(reservation));
+
         given(userRepository.findById(anyLong()))
                 .willReturn(Optional.of(user));
-
-        given(studyGroupRepository.findById(anyLong()))
-                .willReturn(Optional.of(studyGroup));
 
         given(userGroupRepository.findUserTypeByUserIdAndSGId(anyLong(), anyLong()))
                 .willReturn(Optional.of(UserType.L));
 
-        given(reservationQueryRepository.findByUserIdAndStudyGroupId(anyLong(), anyLong()))
-                .willReturn(reservation);
+        given(studyGroupRepository.findById(anyLong()))
+                .willReturn(Optional.of(studyGroup));
 
         willDoNothing().given(reservationRepository).delete(reservation);
         willDoNothing().given(studyGroupRepository).delete(studyGroup);

@@ -25,6 +25,7 @@ public class User extends BaseTimeEntity {
     private String email;
     private String password;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserGroup> userGroups = new ArrayList<>();
 

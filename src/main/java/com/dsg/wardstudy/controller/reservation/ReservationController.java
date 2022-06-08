@@ -83,10 +83,12 @@ public class ReservationController {
     }
 
     // 예약 삭제
-    @DeleteMapping("/reservation/{reservationId}")
-    public ResponseEntity<String> deleteById(@PathVariable("reservationId") String reservationId) {
-        log.info("reservation deleteById, reservationId: {}", reservationId);
-        reservationService.deleteById(reservationId);
+    @DeleteMapping("/users/{userId}/reservation/{reservationId}")
+    public ResponseEntity<String> deleteById(
+            @PathVariable("userId") Long userId,
+            @PathVariable("reservationId") String reservationId) {
+        log.info("reservation deleteById, userId: {}, reservationId: {}" ,userId, reservationId);
+        reservationService.deleteById(userId, reservationId);
         return new ResponseEntity<>("a reservation successfully deleted!", HttpStatus.OK);
     }
 
