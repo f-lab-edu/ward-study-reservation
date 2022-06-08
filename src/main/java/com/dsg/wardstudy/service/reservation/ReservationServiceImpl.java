@@ -19,6 +19,8 @@ import com.dsg.wardstudy.type.UserType;
 import com.dsg.wardstudy.utils.TimeParsingUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +28,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.dsg.wardstudy.config.redis.RedisCacheKey.RESERVATION_LIST;
 
 
 @Slf4j
@@ -41,6 +45,7 @@ public class ReservationServiceImpl implements ReservationService{
 
     private final TimeParsingUtils timeParsingUtils;
 
+    @CacheEvict(key = "#roomId", value = RESERVATION_LIST, cacheManager = "redisCacheManager")
     @Transactional
     @Override
     public ReservationDetails create(Long studyGroupId, Long roomId, ReservationCreateRequest reservationRequest) {
@@ -58,14 +63,14 @@ public class ReservationServiceImpl implements ReservationService{
 
         ValidateFindByIdDto validateFindByIdDto = validateFindById(reservationRequest.getUserId(), studyGroupId, roomId);
 
-        UserType userType = userGroupRepository.findUserTypeByUserIdAndSGId(
-                reservationRequest.getUserId(), studyGroupId).get();
-
-        if (!userType.equals(UserType.L)) {
-            log.error("userType이 Leader가 아닙니다.");
-            throw new WSApiException(ErrorCode.INVALID_REQUEST,
-                    "Reservation registration is possible only if the user is the leader.");
-        }
+        userGroupRepository.findUserTypeByUserIdAndSGId(
+                reservationRequest.getUserId(), studyGroupId)
+                .ifPresent(userType -> {
+                    if (!userType.equals(UserType.L)) {
+                        log.error("userType이 Leader가 아닙니다.");
+                        throw new WSApiException(ErrorCode.INVALID_REQUEST, "Reservation registration is possible only if the user is the leader.");
+                    }
+                });
         // 중복 reservation 체크
         Reservation reservation = mapToEntity(
                 reservationRequest
@@ -146,6 +151,7 @@ public class ReservationServiceImpl implements ReservationService{
 
     }
 
+    @Cacheable(key = "#roomId", value = RESERVATION_LIST, cacheManager = "redisCacheManager")
     @Transactional(readOnly = true)
     @Override
     public List<ReservationDetails> getByRoomId(Long roomId) {
@@ -202,12 +208,14 @@ public class ReservationServiceImpl implements ReservationService{
                 reservationRequest.getStudyGroupId(),
                 roomId);
 
-        UserType userType = userGroupRepository.findUserTypeByUserIdAndSGId(
-                reservationRequest.getUserId(), reservationRequest.getStudyGroupId()).get();
-        if (!userType.equals(UserType.L)) {
-            log.error("userType이 Leader가 아닙니다.");
-            throw new WSApiException(ErrorCode.INVALID_REQUEST, "Reservation modification is possible only if the user is the leader.");
-        }
+        userGroupRepository.findUserTypeByUserIdAndSGId(
+                reservationRequest.getUserId(), reservationRequest.getStudyGroupId())
+                .ifPresent(userType -> {
+                    if (!userType.equals(UserType.L)) {
+                        log.error("userType이 Leader가 아닙니다.");
+                        throw new WSApiException(ErrorCode.INVALID_REQUEST, "Reservation modification is possible only if the user is the leader.");
+                    }
+                });
 
         Reservation newReservation = Reservation.builder()
                 .id(genReservationId(validateFindByIdDto.getRoom(), reservationRequest.getStartTime()))
@@ -228,9 +236,23 @@ public class ReservationServiceImpl implements ReservationService{
 
     @Transactional
     @Override
-    public void deleteById(String reservationId) {
-        Optional<Reservation> findReservation = reservationRepository.findById(reservationId);
-        findReservation.ifPresent(reservationRepository::delete);
+    public void deleteById(Long userId, String reservationId) {
+        userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.error("user 대상이 없습니다. userId: {}", userId);
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by userId: " + userId);
+                });
+        // 해당 register 인지 validate
+        reservationRepository.findById(reservationId)
+                .ifPresent(reservation -> {
+                    log.info("해당 reservation register: {}", reservation.getUser().getId());
+                    if (reservation.getUser().getId().equals(userId)) {
+                        reservationRepository.delete(reservation);
+                    } else {
+                        log.error("해당 reservation register가 아닙니다.");
+                        throw new WSApiException(ErrorCode.INVALID_REQUEST, "Reservation modification is possible only if the user is the register.");
+                    }
+                });
     }
 
     @Transactional
@@ -241,17 +263,17 @@ public class ReservationServiceImpl implements ReservationService{
     }
 
     private ReservationDetails mapToDto(Reservation reservation) {
-        ReservationDetails results = ReservationDetails.builder()
+        return ReservationDetails.builder()
                 .id(reservation.getId())
-                .startTime(reservation.getStartTime())
-                .endTime(reservation.getEndTime())
-                .user(reservation.getUser())
-                .studyGroup(reservation.getStudyGroup())
-                .room(reservation.getRoom())
+                .startTime(timeParsingUtils.formatterString(reservation.getStartTime()))
+                .endTime(timeParsingUtils.formatterString(reservation.getEndTime()))
+                .registerId(reservation.getUser().getId())
+                .registerEmail(reservation.getUser().getEmail())
+                .studyGroupId(reservation.getStudyGroup().getId())
+                .studyGroupTitle(reservation.getStudyGroup().getTitle())
+                .roomId(reservation.getRoom().getId())
+                .roomName(reservation.getRoom().getName())
                 .build();
-        // TODO : 해결o, 원인파악 x - log를 붙이면 user, studyGroup null이 안나오는 현상
-        log.info("results: {}", results);
-        return results;
     }
 
     private Reservation mapToEntity(ReservationCreateRequest reservationRequest,

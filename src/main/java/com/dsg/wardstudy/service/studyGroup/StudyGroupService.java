@@ -13,7 +13,7 @@ public interface StudyGroupService {
 
     StudyGroupResponse getById(Long studyGroupId);
 
-    PageResponse.StudyGroup getAll(Pageable pageable);
+    PageResponse.StudyGroup getAll(Pageable pageable, String type, String keyword);
 
     Long updateById(Long userId, Long studyGroupId, StudyGroupRequest studyGroupRequest);
 

@@ -313,11 +313,13 @@ class ReservationServiceTest {
     @Test
     void givenReservationId_whenDelete_thenNothing() {
         // given - precondition or setup
+        given(userRepository.findById(user.getId()))
+                .willReturn(Optional.of(user));
         given(reservationRepository.findById(reservation.getId()))
                 .willReturn(Optional.of(reservation));
 
         // when - action or the behaviour that we are going test
-        reservationService.deleteById(reservation.getId());
+        reservationService.deleteById(user.getId(), reservation.getId());
 
         // then - verify the output
         verify(reservationRepository).delete(reservation);

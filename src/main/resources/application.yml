@@ -16,9 +16,15 @@ spring:
     serialization:
       fail-on-empty-beans: false
 
+  session:
+    store-type: redis
+
   redis:
     host: localhost
-    port: 6379
+    session:
+      port: 6379  # port 바꿀 것 6378
+    cache:
+      port: 6379
 
 
   datasource:
