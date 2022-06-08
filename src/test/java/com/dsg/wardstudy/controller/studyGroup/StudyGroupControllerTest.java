@@ -1,5 +1,6 @@
 package com.dsg.wardstudy.controller.studyGroup;
 
+import com.dsg.wardstudy.domain.studyGroup.QStudyGroup;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
@@ -11,6 +12,7 @@ import com.dsg.wardstudy.exception.WSApiException;
 import com.dsg.wardstudy.service.studyGroup.StudyGroupService;
 import com.dsg.wardstudy.type.UserType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.querydsl.core.BooleanBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,7 +121,22 @@ class StudyGroupControllerTest {
         }
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
 
-        given(studyGroupService.getAll(pageable))
+        QStudyGroup qStudyGroup = QStudyGroup.studyGroup;
+
+        String type = "t";
+        String keyword = "test";
+
+        // 검색조건 추가
+        BooleanBuilder conditionBuilder = new BooleanBuilder();
+
+        if(type.contains("t")) {
+            conditionBuilder.or(qStudyGroup.title.contains(keyword));
+        }
+        if(type.contains("c")) {
+            conditionBuilder.or(qStudyGroup.content.contains(keyword));
+        }
+
+        given(studyGroupService.getAll(pageable, type, keyword))
                 .willReturn(PageResponse.StudyGroup.builder()
                         .content(studyGroupResponses)
                         .pageNo(pageable.getPageNumber())
@@ -133,11 +150,13 @@ class StudyGroupControllerTest {
                         .param("page", "0")
                         .param("size", "10")
                         .param("sort", "id,desc")
+                        .param("type", "t")
+                        .param("keyword", "test")
                 )
                 .andDo(print())
                 .andExpect(status().isOk());
 
-        verify(studyGroupService).getAll(pageable);
+        verify(studyGroupService).getAll(pageable, type, keyword);
     }
 
     @Test

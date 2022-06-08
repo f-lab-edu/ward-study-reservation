@@ -41,10 +41,12 @@ public class StudyGroupController {
     // 스터디그룹 전체조회
     @GetMapping("/study-group")
     public ResponseEntity<PageResponse.StudyGroup> getAllPage(
-            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value = "keyword", required = false) String keyword
             ) {
-        log.info("studyGroup getAll");
-        return ResponseEntity.ok(studyGroupService.getAll(pageable));
+        log.info("studyGroup getAll type: {}, keyword: {}", type, keyword);
+        return ResponseEntity.ok(studyGroupService.getAll(pageable, type, keyword));
     }
 
     // 사용자가 참여한 스터디그룹 조회
