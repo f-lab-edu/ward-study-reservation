@@ -4,7 +4,6 @@ package com.dsg.wardstudy.config.batch;
 import com.dsg.wardstudy.adapter.MailMessageGenerator;
 import com.dsg.wardstudy.adapter.MailSendService;
 import com.dsg.wardstudy.domain.reservation.Reservation;
-import com.dsg.wardstudy.domain.reservation.ReservationDeal;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.dto.NotificationAlarmDto;
 import com.dsg.wardstudy.repository.reservation.ReservationQueryRepository;
@@ -31,7 +30,6 @@ import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Configuration
@@ -91,14 +89,10 @@ public class NotificationAlarmJobConfig {
             List<Long> sgIds = userGroupRepository.findSgIdsByUserId(user.getId());
             log.info("sgIds: {}", sgIds);
 
-            List<ReservationDeal> deals =
+            List<Reservation> reservations =
                     // IsEmailSent.eq(false)인 메일 축출 추가
-                    reservationQueryRepository.findByStatusIsEnabledAndStartTimeAfterNowAndIsSentFalse(sgIds);
-            log.info("deals: {}", deals);
-
-            List<Reservation> reservations = deals.stream()
-                    .map(ReservationDeal::getReservation)
-                    .collect(Collectors.toList());
+                    reservationQueryRepository.findByStartTimeAfterNowAndIsSentFalse(sgIds);
+            log.info("reservations: {}", reservations);
 
             return NotificationAlarmDto.builder()
                     .email(user.getEmail())

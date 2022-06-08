@@ -30,5 +30,5 @@ DELETE {{host}}/study-group/6
 
 
 ### getAllByUserId
-GET {{host}}/user/1/study-group
+GET {{host}}/users/1/study-group
 

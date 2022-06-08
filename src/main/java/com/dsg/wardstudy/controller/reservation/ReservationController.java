@@ -66,7 +66,7 @@ public class ReservationController {
 
 
     // 해당 유저 예약  조회
-    @GetMapping("/user/{userId}/reservation")
+    @GetMapping("/users/{userId}/reservation")
     public ResponseEntity<List<ReservationDetails>> getAllByUserId(@PathVariable("userId") Long userId) {
         log.info("reservation getAllByUserId, userId: {}", userId);
         return ResponseEntity.ok(reservationService.getAllByUserId(userId));
@@ -83,10 +83,12 @@ public class ReservationController {
     }
 
     // 예약 삭제
-    @DeleteMapping("/reservation/{reservationId}")
-    public ResponseEntity<String> deleteById(@PathVariable("reservationId") String reservationId) {
-        log.info("reservation deleteById, reservationId: {}", reservationId);
-        reservationService.deleteById(reservationId);
+    @DeleteMapping("/users/{userId}/reservation/{reservationId}")
+    public ResponseEntity<String> deleteById(
+            @PathVariable("userId") Long userId,
+            @PathVariable("reservationId") String reservationId) {
+        log.info("reservation deleteById, userId: {}, reservationId: {}" ,userId, reservationId);
+        reservationService.deleteById(userId, reservationId);
         return new ResponseEntity<>("a reservation successfully deleted!", HttpStatus.OK);
     }
 

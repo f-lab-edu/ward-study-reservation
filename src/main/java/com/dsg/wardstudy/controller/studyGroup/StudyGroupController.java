@@ -1,11 +1,14 @@
 package com.dsg.wardstudy.controller.studyGroup;
 
-import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
+import com.dsg.wardstudy.dto.PageResponse;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
 import com.dsg.wardstudy.service.studyGroup.StudyGroupService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,45 +22,59 @@ public class StudyGroupController {
 
     private final StudyGroupService studyGroupService;
 
-    @PostMapping("/study-group")
-    public ResponseEntity<StudyGroupResponse> create(@RequestBody StudyGroupRequest studyGroupRequest) {
-        log.info("studyGroup create, studyGroupRequest: {}", studyGroupRequest);
-        return new ResponseEntity<>(studyGroupService.create(studyGroupRequest), HttpStatus.CREATED);
+    // 스터디그룹 등록(리더만)
+    @PostMapping("/users/{userId}/study-group")
+    public ResponseEntity<StudyGroupResponse> create(
+            @PathVariable("userId") Long userId,
+            @RequestBody StudyGroupRequest studyGroupRequest) {
+        log.info("studyGroup create, userId: {}, studyGroupRequest: {}", userId, studyGroupRequest);
+        return new ResponseEntity<>(studyGroupService.create(userId, studyGroupRequest), HttpStatus.CREATED);
     }
 
-    @GetMapping("/study-group/{id}")
-    public ResponseEntity<StudyGroupResponse> getById(@PathVariable("id") Long studyGroupId) {
+    // 스터디그룹 상세보기
+    @GetMapping("/study-group/{studyGroupId}")
+    public ResponseEntity<StudyGroupResponse> getById(@PathVariable("studyGroupId") Long studyGroupId) {
         log.info("studyGroup getById, studyGroupId: {}", studyGroupId);
         return ResponseEntity.ok(studyGroupService.getById(studyGroupId));
     }
 
+    // 스터디그룹 전체조회
     @GetMapping("/study-group")
-    public ResponseEntity<List<StudyGroupResponse>> getAll() {
-        log.info("studyGroup getAll");
-        return ResponseEntity.ok(studyGroupService.getAll());
+    public ResponseEntity<PageResponse.StudyGroup> getAllPage(
+            @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
+            @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value = "keyword", required = false) String keyword
+            ) {
+        log.info("studyGroup getAll type: {}, keyword: {}", type, keyword);
+        return ResponseEntity.ok(studyGroupService.getAll(pageable, type, keyword));
     }
 
-
-    @GetMapping("/user/{id}/study-group")
+    // 사용자가 참여한 스터디그룹 조회
+    @GetMapping("/users/{userId}/study-group")
     public ResponseEntity<List<StudyGroupResponse>> getAllByUserId(
-            @PathVariable("id") Long userId
+            @PathVariable("userId") Long userId
     ) {
         log.info("studyGroup getAllByUserId, userId: {}", userId);
         return ResponseEntity.ok(studyGroupService.getAllByUserId(userId));
     }
 
-    @PutMapping("/study-group/{id}")
+    // 스터디그룹 수정(리더만)
+    @PutMapping("/users/{userId}/study-group/{studyGroupId}")
     public Long updateById(
-            @PathVariable("id") Long studyGroupId,
+            @PathVariable("userId") Long userId,
+            @PathVariable("studyGroupId") Long studyGroupId,
             @RequestBody StudyGroupRequest studyGroupRequest) {
-        log.info("studyGroup updateById, studyGroupId: {}, ", studyGroupId);
-        return studyGroupService.updateById(studyGroupId, studyGroupRequest);
+        log.info("studyGroup updateById, userId: {}, studyGroupId: {}, ", userId, studyGroupId);
+        return studyGroupService.updateById(userId, studyGroupId, studyGroupRequest);
     }
 
-    @DeleteMapping("/study-group/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable("id") Long studyGroupId) {
-        log.info("studyGroup deleteById, studyGroupId: {}", studyGroupId);
-        studyGroupService.deleteById(studyGroupId);
+    // 스터디그룹 삭제(리더만)
+    @DeleteMapping("/users/{userId}/study-group/{studyGroupId}")
+    public ResponseEntity<String> deleteById(
+            @PathVariable("userId") Long userId,
+            @PathVariable("studyGroupId") Long studyGroupId) {
+        log.info("studyGroup deleteById, userId: {}, studyGroupId: {}", userId, studyGroupId);
+        studyGroupService.deleteById(userId, studyGroupId);
         return new ResponseEntity<>("a study-group successfully deleted!", HttpStatus.OK);
     }
 }

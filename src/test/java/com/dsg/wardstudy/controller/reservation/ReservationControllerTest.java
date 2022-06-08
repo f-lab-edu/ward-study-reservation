@@ -60,7 +60,6 @@ class ReservationControllerTest {
 
     @BeforeEach
     void setUp() {
-
         user = User.builder()
                 .id(1L)
                 .build();
@@ -105,11 +104,11 @@ class ReservationControllerTest {
                 .build();
 
         ReservationDetails reservationDetails = ReservationDetails.builder()
-                .startTime(reservation.getStartTime())
-                .endTime(reservation.getEndTime())
-                .user(user)
-                .studyGroup(studyGroup)
-                .room(room)
+                .startTime(sTime)
+                .endTime(eTime)
+                .registerId(user.getId())
+                .studyGroupId(studyGroup.getId())
+                .roomId(room.getId())
                 .build();
 
         given(reservationService.create(studyGroup.getId(), room.getId(), createRequest))
@@ -119,7 +118,7 @@ class ReservationControllerTest {
         // then - verify the output
         mockMvc.perform(post("/study-group/{studyGroupId}/room/{roomId}/reservation", studyGroup.getId(), room.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(createRequest)))
+                        .content(objectMapper.writeValueAsString(createRequest)))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.startTime", is(sTime)))
@@ -138,11 +137,11 @@ class ReservationControllerTest {
         String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         ReservationDetails reservationDetails = ReservationDetails.builder()
-                .startTime(reservation.getStartTime())
-                .endTime(reservation.getEndTime())
-                .user(user)
-                .studyGroup(studyGroup)
-                .room(room)
+                .startTime(sTime)
+                .endTime(eTime)
+                .registerId(user.getId())
+                .studyGroupId(studyGroup.getId())
+                .roomId(room.getId())
                 .build();
         given(reservationService.getByRoomIdAndReservationId(room.getId(), reservation.getId()))
                 .willReturn(reservationDetails);
@@ -162,22 +161,21 @@ class ReservationControllerTest {
     void givenRoomIdAndTimePeriod_whenGet_thenReturnReservationDetailsList() throws Exception {
         // getByRoomIdAndTimePeriod
         // given - precondition or setup
+        String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
         List<ReservationDetails> detailsList = new ArrayList<>();
         ReservationDetails reservationDetails = ReservationDetails.builder()
-                .startTime(reservation.getStartTime())
-                .endTime(reservation.getEndTime())
-                .user(user)
-                .studyGroup(studyGroup)
-                .room(room)
+                .startTime(sTime)
+                .endTime(eTime)
+                .registerId(user.getId())
+                .studyGroupId(studyGroup.getId())
+                .roomId(room.getId())
                 .build();
 
         IntStream.rangeClosed(1, 5).forEach(i -> {
             detailsList.add(reservationDetails);
         });
-
-        // LocalDateTime -> String 으로 변환
-        String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         given(reservationService.getByRoomIdAndTimePeriod(room.getId(), sTime, eTime))
                 .willReturn(detailsList);
@@ -202,22 +200,22 @@ class ReservationControllerTest {
     void givenRoomId_whenGet_thenReturnReservationDetailsList() throws Exception {
         // getByRoomId
         // given - precondition or setup
+        String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
         List<ReservationDetails> detailsList = new ArrayList<>();
         ReservationDetails reservationDetails = ReservationDetails.builder()
-                .startTime(reservation.getStartTime())
-                .endTime(reservation.getEndTime())
-                .user(user)
-                .studyGroup(studyGroup)
-                .room(room)
+                .startTime(sTime)
+                .endTime(eTime)
+                .registerId(user.getId())
+                .studyGroupId(studyGroup.getId())
+                .roomId(room.getId())
                 .build();
 
         IntStream.rangeClosed(1, 5).forEach(i -> {
             detailsList.add(reservationDetails);
         });
 
-        // LocalDateTime -> String 으로 변환
-        String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         given(reservationService.getByRoomId(room.getId()))
                 .willReturn(detailsList);
@@ -256,29 +254,28 @@ class ReservationControllerTest {
     void givenUserId_whenGet_thenReturnReservationDetailsList() throws Exception {
         // getAllByUserId
         // given - precondition or setup
+        String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
         List<ReservationDetails> detailsList = new ArrayList<>();
         ReservationDetails reservationDetails = ReservationDetails.builder()
-                .startTime(reservation.getStartTime())
-                .endTime(reservation.getEndTime())
-                .user(user)
-                .studyGroup(studyGroup)
-                .room(room)
+                .startTime(sTime)
+                .endTime(eTime)
+                .registerId(user.getId())
+                .studyGroupId(studyGroup.getId())
+                .roomId(room.getId())
                 .build();
 
         IntStream.rangeClosed(1, 5).forEach(i -> {
             detailsList.add(reservationDetails);
         });
 
-        // LocalDateTime -> String 으로 변환
-        String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-
         given(reservationService.getAllByUserId(user.getId()))
                 .willReturn(detailsList);
 
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(get("/user/{userId}/reservation", user.getId()))
+        mockMvc.perform(get("/users/{userId}/reservation", user.getId()))
                 .andDo(print())
                 .andExpect(jsonPath("$.length()", is(5)))
                 .andExpect(jsonPath("$.[0].startTime", is(sTime)))
@@ -320,11 +317,11 @@ class ReservationControllerTest {
     @DisplayName("예약 삭제")
     void givenReservationId_whenDelete_thenReturn200() throws Exception {
         // given - precondition or setup
-        willDoNothing().given(reservationService).deleteById(reservation.getId());
+        willDoNothing().given(reservationService).deleteById(user.getId(), reservation.getId());
 
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(delete("/reservation/{reservationId}", reservation.getId()))
+        mockMvc.perform(delete("/users/{userId}/reservation/{reservationId}",user.getId(), reservation.getId()))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

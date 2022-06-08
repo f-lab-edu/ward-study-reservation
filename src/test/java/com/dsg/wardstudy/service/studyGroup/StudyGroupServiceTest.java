@@ -1,10 +1,21 @@
 package com.dsg.wardstudy.service.studyGroup;
 
+import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.studyGroup.QStudyGroup;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
+import com.dsg.wardstudy.domain.user.User;
+import com.dsg.wardstudy.domain.user.UserGroup;
+import com.dsg.wardstudy.dto.PageResponse;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
 import com.dsg.wardstudy.exception.WSApiException;
+import com.dsg.wardstudy.repository.reservation.ReservationQueryRepository;
+import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
+import com.dsg.wardstudy.repository.user.UserGroupRepository;
+import com.dsg.wardstudy.repository.user.UserRepository;
+import com.dsg.wardstudy.type.UserType;
+import com.querydsl.core.BooleanBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,6 +23,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,12 +44,25 @@ import static org.mockito.Mockito.verify;
 class StudyGroupServiceTest {
 
     @Mock
+    private ReservationRepository reservationRepository;
+    @Mock
+    private ReservationQueryRepository reservationQueryRepository;
+    @Mock
     private StudyGroupRepository studyGroupRepository;
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private UserGroupRepository userGroupRepository;
 
     @InjectMocks
     private StudyGroupServiceImpl studyGroupService;
 
     private StudyGroup studyGroup;
+    private User user;
+    private UserGroup userGroup;
+
+    private Reservation reservation;
 
     private StudyGroupRequest studyGroupRequest;
 
@@ -46,25 +73,48 @@ class StudyGroupServiceTest {
                 .title("testSG")
                 .content("인원 4명의 스터디그룹을 모집합니다.")
                 .build();
+
+        user = User.builder()
+                .id(1L)
+                .build();
+
+        userGroup = UserGroup.builder()
+                .user(user)
+                .studyGroup(studyGroup)
+                .userType(UserType.L)
+                .build();
+
+        reservation = Reservation.builder()
+                .id("1||2019-11-03 06:30:00")
+                .user(user)
+                .studyGroup(studyGroup)
+                .build();
+
     }
 
     @Test
     public void givenStudyGroup_whenSave_thenReturnStudyGroupResponse() {
         // given - precondition or setup
+        given(userRepository.findById(anyLong()))
+                .willReturn(Optional.ofNullable(user));
         given(studyGroupRepository.save(any(StudyGroup.class)))
                 .willReturn(studyGroup);
+
+        given(userGroupRepository.save(any(UserGroup.class)))
+                .willReturn(userGroup);
 
         studyGroupRequest = StudyGroupRequest.builder()
                 .title(studyGroup.getTitle())
                 .content(studyGroup.getContent())
                 .build();
         // when - action or the behaviour that we are going test
-        StudyGroupResponse studyGroupResponse = studyGroupService.create(studyGroupRequest);
+        StudyGroupResponse studyGroupResponse = studyGroupService.create(user.getId(), studyGroupRequest);
         log.info("studyGroupResponse: {}", studyGroupResponse);
 
         // then - verify the output
         assertThat(studyGroupResponse).isNotNull();
-        assertThat(studyGroupResponse.getTitle()).isEqualTo("testSG");
+        assertThat(studyGroupResponse.getTitle()).isEqualTo(studyGroupRequest.getTitle());
+        assertThat(studyGroupResponse.getContent()).isEqualTo(studyGroupRequest.getContent());
 
     }
 
@@ -100,47 +150,93 @@ class StudyGroupServiceTest {
 
     @Test
     public void givenStudyGroupList_whenGetAll_thenReturnStudyGroupResponseList() {
+        // TODO : paging NPE 발생 issue#23 findAll(pageable)부터 안됐음.
         // given - precondition or setup
         StudyGroup studyGroup1 = StudyGroup.builder()
                 .id(100L)
                 .title("testSG2")
                 .content("인원 6명의 스터디그룹을 모집합니다.")
                 .build();
-        given(studyGroupRepository.findAll())
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
+
+        QStudyGroup qStudyGroup = QStudyGroup.studyGroup;
+
+        String type = "t";
+        String keyword = "test";
+
+        // 검색조건 추가
+        BooleanBuilder conditionBuilder = new BooleanBuilder();
+
+        if(type.contains("t")) {
+            conditionBuilder.or(qStudyGroup.title.contains(keyword));
+        }
+        if(type.contains("c")) {
+            conditionBuilder.or(qStudyGroup.content.contains(keyword));
+        }
+
+        given(studyGroupRepository.findAll(conditionBuilder, pageable).getContent())
                 .willReturn(List.of(studyGroup, studyGroup1));
         // when - action or the behaviour that we are going test
-        List<StudyGroupResponse> studyGroupResponses = studyGroupService.getAll();
-        log.info("studyGroupResponses: {}", studyGroupResponses);
+
+
+        PageResponse.StudyGroup studyGroupPageResponses = studyGroupService.getAll(pageable, type, keyword);
+        log.info("studyGroupPageResponses: {}", studyGroupPageResponses);
         // then - verify the output
-        assertThat(studyGroupResponses).isNotNull();
-        assertThat(studyGroupResponses.size()).isEqualTo(2);
+        assertThat(studyGroupPageResponses).isNotNull();
+        assertThat(studyGroupPageResponses.getTotalElements()).isEqualTo(2);
 
     }
 
     @Test
     public void givenStudyGroupList_whenGetAll_Negative_thenReturnStudyGroupResponseList() {
+        // TODO : paging NPE 발생 issue#23
         // given - precondition or setup
         StudyGroup studyGroup1 = StudyGroup.builder()
                 .id(2L)
                 .title("testSG2")
                 .content("인원 6명의 스터디그룹을 모집합니다.")
                 .build();
-        given(studyGroupRepository.findAll())
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
+
+        QStudyGroup qStudyGroup = QStudyGroup.studyGroup;
+
+        String type = "t";
+        String keyword = "test";
+
+        // 검색조건 추가
+        BooleanBuilder conditionBuilder = new BooleanBuilder();
+
+        if(type.contains("t")) {
+            conditionBuilder.or(qStudyGroup.title.contains(keyword));
+        }
+        if(type.contains("c")) {
+            conditionBuilder.or(qStudyGroup.content.contains(keyword));
+        }
+
+        given(studyGroupRepository.findAll(conditionBuilder, pageable).getContent())
                 .willReturn(Collections.emptyList());
         // when - action or the behaviour that we are going test
-        List<StudyGroupResponse> studyGroupResponses = studyGroupService.getAll();
-        log.info("studyGroupResponses: {}", studyGroupResponses);
+        PageResponse.StudyGroup studyGroupPageResponses = studyGroupService.getAll(pageable, type, keyword);
+        log.info("studyGroupPageResponses: {}", studyGroupPageResponses);
         // then - verify the output
-        assertThat(studyGroupResponses).isEmpty();
-        assertThat(studyGroupResponses.size()).isEqualTo(0);
+        assertThat(studyGroupPageResponses).isNull();
+        assertThat(studyGroupPageResponses.getTotalElements()).isEqualTo(0);
 
     }
 
     @Test
     public void givenStudyGroup_whenUpdate_thenReturnUpdatedStudyGroup() {
         // given - precondition or setup
+        given(userRepository.findById(anyLong()))
+                .willReturn(Optional.of(user));
+
         given(studyGroupRepository.findById(anyLong()))
                 .willReturn(Optional.of(studyGroup));
+
+        given(userGroupRepository.findUserTypeByUserIdAndSGId(anyLong(), anyLong()))
+                .willReturn(Optional.of(UserType.L));
 
         studyGroupRequest = StudyGroupRequest.builder()
                 .title("JumpToSpringboot_study")
@@ -148,12 +244,12 @@ class StudyGroupServiceTest {
                 .build();
 
         // when - action or the behaviour that we are going test
-        Long updateId = studyGroupService.updateById(studyGroup.getId(), studyGroupRequest);
-        log.info("updateId: {}", updateId);
-        StudyGroupResponse updatedResponse = studyGroupService.getById(updateId);
+        Long updatedStudyGroupId = studyGroupService.updateById(user.getId(), studyGroup.getId(), studyGroupRequest);
+        log.info("updatedStudyGroupId: {}", updatedStudyGroupId);
+        StudyGroupResponse updatedResponse = studyGroupService.getById(updatedStudyGroupId);
 
         // then - verify the output
-        assertThat(this.studyGroup.getId()).isEqualTo(updateId);
+        assertThat(this.studyGroup.getId()).isEqualTo(updatedStudyGroupId);
         assertThat(updatedResponse.getTitle()).isEqualTo(studyGroupRequest.getTitle());
         assertThat(updatedResponse.getContent()).isEqualTo(studyGroupRequest.getContent());
 
@@ -162,15 +258,30 @@ class StudyGroupServiceTest {
     @Test
     public void givenStudyGroupId_whenDelete_thenNothing() {
         // given - precondition or setup
+        Long userId = 1L;
         Long studyGroupId = 1L;
-        willDoNothing().given(studyGroupRepository).deleteById(studyGroupId);
+
+        given(reservationQueryRepository.findByUserIdAndStudyGroupId(anyLong(), anyLong()))
+                .willReturn(Optional.ofNullable(reservation));
+
+        given(userRepository.findById(anyLong()))
+                .willReturn(Optional.of(user));
+
+        given(userGroupRepository.findUserTypeByUserIdAndSGId(anyLong(), anyLong()))
+                .willReturn(Optional.of(UserType.L));
+
+        given(studyGroupRepository.findById(anyLong()))
+                .willReturn(Optional.of(studyGroup));
+
+        willDoNothing().given(reservationRepository).delete(reservation);
+        willDoNothing().given(studyGroupRepository).delete(studyGroup);
 
         // when - action or the behaviour that we are going test
-        studyGroupService.deleteById(studyGroupId);
+        studyGroupService.deleteById(userId, studyGroupId);
 
         // then - verify the output
-        verify(studyGroupRepository).deleteById(studyGroupId);
-        assertThat(studyGroupRepository.findById(studyGroupId)).isEmpty();
+        verify(reservationRepository).delete(reservation);
+        verify(studyGroupRepository).delete(studyGroup);
 
     }
 

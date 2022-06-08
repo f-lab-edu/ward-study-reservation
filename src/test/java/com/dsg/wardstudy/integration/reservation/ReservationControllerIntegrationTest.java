@@ -213,7 +213,7 @@ class ReservationControllerIntegrationTest {
         });
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(get("/user/{userId}/reservation", user.getId()))
+        mockMvc.perform(get("/users/{userId}/reservation", user.getId()))
                 .andDo(print())
                 .andExpect(status().isOk());
 
