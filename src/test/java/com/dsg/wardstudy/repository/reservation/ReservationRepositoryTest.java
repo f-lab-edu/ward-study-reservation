@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -98,6 +99,8 @@ class ReservationRepositoryTest {
         Reservation savedReservation = reservationRepository.save(reservation);
         log.info("savedReservation: {}", savedReservation);
 
+        Reservation reservation1 = reservationRepository.findById(savedReservation.getId()).get();
+        log.info("reservation1: {}", reservation1);
         // then - verify the output
         assertThat(savedReservation).isNotNull();
         assertThat(savedReservation.getId()).isEqualTo("3||2022-04-24 10:30:00");
@@ -105,6 +108,34 @@ class ReservationRepositoryTest {
         assertThat(savedReservation.getUser().getEmail()).isEqualTo(this.user.getEmail());
         assertThat(savedReservation.getStudyGroup().getTitle()).isEqualTo(this.studyGroup.getTitle());
         assertThat(savedReservation.getRoom().getName()).isEqualTo(this.room.getName());
+
+    }
+
+    @Test
+    public void given_whenFindAll_thenReservationList(){
+        // given - precondition or setup
+        String startTime = "2021-08-07 12:00:00";
+        String endTime = "2021-08-07 13:00:00";
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        LocalDateTime sTime = LocalDateTime.parse(startTime, formatter);
+        LocalDateTime eTime = LocalDateTime.parse(endTime, formatter);
+
+        LongStream.rangeClosed(1,20).forEach(i -> {
+            Reservation reservation = Reservation.builder()
+                    .id("i_"+i)
+                    .startTime(sTime)
+                    .endTime(eTime)
+                    .build();
+
+            reservationRepository.save(reservation);
+        });
+        // when - action or the behaviour that we are going test
+        List<Reservation> all = reservationRepository.findAll();
+        log.info("all: {}", all);
+        // then - verify the output
+        assertThat(all.size()).isEqualTo(20);
 
     }
 
@@ -236,6 +267,7 @@ class ReservationRepositoryTest {
 
         Reservation oldReservation = reservationRepository.findById(savedReservation.getId()).get();
         Room findRoom = roomRepository.findById(savedRoom.getId()).get();
+        log.info("oldReservation: {}, findRoom: {}", oldReservation, findRoom);
 
         Reservation newReservation = Reservation.builder()
                 .id(findRoom.getId() + "||" + startTime)
