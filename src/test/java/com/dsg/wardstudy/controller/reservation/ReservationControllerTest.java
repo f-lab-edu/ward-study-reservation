@@ -104,8 +104,8 @@ class ReservationControllerTest {
                 .build();
 
         ReservationDetails reservationDetails = ReservationDetails.builder()
-                .startTime(sTime)
-                .endTime(eTime)
+                .startTime(reservation.getStartTime())
+                .endTime(reservation.getEndTime())
                 .registerId(user.getId())
                 .studyGroupId(studyGroup.getId())
                 .roomId(room.getId())
@@ -137,8 +137,8 @@ class ReservationControllerTest {
         String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         ReservationDetails reservationDetails = ReservationDetails.builder()
-                .startTime(sTime)
-                .endTime(eTime)
+                .startTime(reservation.getStartTime())
+                .endTime(reservation.getEndTime())
                 .registerId(user.getId())
                 .studyGroupId(studyGroup.getId())
                 .roomId(room.getId())
@@ -166,8 +166,8 @@ class ReservationControllerTest {
 
         List<ReservationDetails> detailsList = new ArrayList<>();
         ReservationDetails reservationDetails = ReservationDetails.builder()
-                .startTime(sTime)
-                .endTime(eTime)
+                .startTime(reservation.getStartTime())
+                .endTime(reservation.getEndTime())
                 .registerId(user.getId())
                 .studyGroupId(studyGroup.getId())
                 .roomId(room.getId())
@@ -205,8 +205,8 @@ class ReservationControllerTest {
 
         List<ReservationDetails> detailsList = new ArrayList<>();
         ReservationDetails reservationDetails = ReservationDetails.builder()
-                .startTime(sTime)
-                .endTime(eTime)
+                .startTime(reservation.getStartTime())
+                .endTime(reservation.getEndTime())
                 .registerId(user.getId())
                 .studyGroupId(studyGroup.getId())
                 .roomId(room.getId())
@@ -259,8 +259,8 @@ class ReservationControllerTest {
 
         List<ReservationDetails> detailsList = new ArrayList<>();
         ReservationDetails reservationDetails = ReservationDetails.builder()
-                .startTime(sTime)
-                .endTime(eTime)
+                .startTime(reservation.getStartTime())
+                .endTime(reservation.getEndTime())
                 .registerId(user.getId())
                 .studyGroupId(studyGroup.getId())
                 .roomId(room.getId())

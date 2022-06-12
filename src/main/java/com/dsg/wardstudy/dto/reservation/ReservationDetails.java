@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 public class ReservationDetails {
@@ -12,10 +14,10 @@ public class ReservationDetails {
     private String id;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private String startTime;
+    private LocalDateTime startTime;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private String endTime;
+    private LocalDateTime endTime;
 
 
     private Long registerId;
@@ -30,7 +32,7 @@ public class ReservationDetails {
     private String roomName;
 
     @Builder
-    public ReservationDetails(String id, String startTime, String endTime, Long registerId, String registerEmail, Long studyGroupId, String studyGroupTitle, Long roomId, String roomName) {
+    public ReservationDetails(String id, LocalDateTime startTime, LocalDateTime endTime, Long registerId, String registerEmail, Long studyGroupId, String studyGroupTitle, Long roomId, String roomName) {
         this.id = id;
         this.startTime = startTime;
         this.endTime = endTime;

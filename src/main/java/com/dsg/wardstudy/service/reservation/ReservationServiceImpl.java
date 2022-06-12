@@ -265,8 +265,8 @@ public class ReservationServiceImpl implements ReservationService{
     private ReservationDetails mapToDto(Reservation reservation) {
         return ReservationDetails.builder()
                 .id(reservation.getId())
-                .startTime(timeParsingUtils.formatterString(reservation.getStartTime()))
-                .endTime(timeParsingUtils.formatterString(reservation.getEndTime()))
+                .startTime(reservation.getStartTime())
+                .endTime(reservation.getEndTime())
                 .registerId(reservation.getUser().getId())
                 .registerEmail(reservation.getUser().getEmail())
                 .studyGroupId(reservation.getStudyGroup().getId())
