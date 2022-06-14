@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,7 +29,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ReservationRepositoryTest {
 
     @Autowired
@@ -142,7 +140,7 @@ class ReservationRepositoryTest {
         log.info("all.size(): {}", all.size());
         // then - verify the output
         assertThat(all.size()).isNotNull();
-//        assertThat(all.size()).isEqualTo(20);
+        assertThat(all.size()).isEqualTo(20);
 
     }
 
@@ -180,7 +178,7 @@ class ReservationRepositoryTest {
 
         // then - verify the output
         assertThat(reservationsByRoomIdAndTime).isNotNull();
-//        assertThat(reservationsByRoomIdAndTime.size()).isEqualTo(1);
+        assertThat(reservationsByRoomIdAndTime.size()).isEqualTo(1);
 
     }
 
@@ -203,7 +201,7 @@ class ReservationRepositoryTest {
 
         // then - verify the output
         assertThat(reservationsByRoomId).isNotNull();
-//        assertThat(reservationsByRoomId.size()).isEqualTo(1);
+        assertThat(reservationsByRoomId.size()).isEqualTo(1);
 
     }
 
@@ -216,7 +214,7 @@ class ReservationRepositoryTest {
 
         userGroup.setUser(savedUser);
 
-        IntStream.rangeClosed(1, 4).forEach(i -> {
+        IntStream.rangeClosed(1, 10).forEach(i -> {
             userGroup.setStudyGroup(savedStudyGroup);
             userGroupRepository.save(userGroup);
             Reservation reservation = Reservation.builder()
@@ -234,7 +232,7 @@ class ReservationRepositoryTest {
 
         // then - verify the output
         assertThat(reservationsBySGIds).isNotNull();
-//        assertThat(reservationsBySGIds.size()).isEqualTo(4);
+        assertThat(reservationsBySGIds.size()).isEqualTo(10);
 
     }
 
