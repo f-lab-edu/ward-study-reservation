@@ -4,13 +4,11 @@ import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
-import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
 import com.dsg.wardstudy.type.UserType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,8 +52,6 @@ class StudyGroupControllerIntegrationTest {
 
     @BeforeEach
     void setup() {
-        objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
-
         studyGroup = StudyGroup.builder()
                 .title("testSG")
                 .content("인원 4명의 스터디그룹을 모집합니다.")
@@ -81,7 +77,7 @@ class StudyGroupControllerIntegrationTest {
                 .build();
 
         // when - action or the behaviour that we are going test
-        ResultActions resultActions = mockMvc.perform(post("/study-group")
+        ResultActions resultActions = mockMvc.perform(post("/users/{userId}/study-group", user.getId())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(studyGroupRequest)));
 
@@ -180,7 +176,7 @@ class StudyGroupControllerIntegrationTest {
 
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(put("/study-group/{id}", savedStudyGroup.getId())
+        mockMvc.perform(put("/users/{userId}/study-group/{studyGroupId}",user.getId(), savedStudyGroup.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateStudyGroupRequest)))
                 .andDo(print())
@@ -195,7 +191,7 @@ class StudyGroupControllerIntegrationTest {
 
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(delete("/study-group/{id}", savedStudyGroup.getId()))
+        mockMvc.perform(delete("/users/{userId}/study-group/{studyGroupId}", user.getId(), savedStudyGroup.getId()))
                 .andDo(print())
                 .andExpect(status().isOk());
 

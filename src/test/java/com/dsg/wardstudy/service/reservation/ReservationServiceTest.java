@@ -264,8 +264,8 @@ class ReservationServiceTest {
         // then - verify the output
         assertThat(details).isNotNull();
         assertThat(details.getId()).isEqualTo(reservation.getId());
-//        assertThat(details.getStartTime()).isEqualTo(reservation.getStartTime());
-//        assertThat(details.getEndTime()).isEqualTo(reservation.getEndTime());
+        assertThat(details.getStartTime()).isEqualTo(reservation.getStartTime());
+        assertThat(details.getEndTime()).isEqualTo(reservation.getEndTime());
     }
 
     @Test
