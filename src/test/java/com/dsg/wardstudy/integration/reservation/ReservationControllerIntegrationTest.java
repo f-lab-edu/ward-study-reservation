@@ -99,11 +99,12 @@ class ReservationControllerIntegrationTest {
                 .endTime(eTime)
                 .build();
 
+        // TODO: NestedServletException: Request processing failed; nested exception is org.springframework.dao.IncorrectResultSizeDataAccessException: query did not return a unique result: 4;
         // when - action or the behaviour that we are going test
         // then - verify the output
         mockMvc.perform(post("/study-group/{studyGroupId}/room/{roomId}/reservation", studyGroup.getId(), room.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsBytes(createRequest)))
+                        .content(objectMapper.writeValueAsString(createRequest)))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.startTime", is(sTime)))
@@ -174,6 +175,7 @@ class ReservationControllerIntegrationTest {
             reservationRepository.save(reservation);
         });
 
+        // TODO: NestedServletException: Request processing failed; nested exception is java.lang.NullPointerException
         // when - action or the behaviour that we are going test
         // then - verify the output
         mockMvc.perform(get("/room/{roomId}/reservation", room.getId()))
@@ -211,6 +213,7 @@ class ReservationControllerIntegrationTest {
                     .build();
             reservationRepository.save(reservation);
         });
+        // TODO: NestedServletException: Request processing failed; nested exception is java.lang.NullPointerException
         // when - action or the behaviour that we are going test
         // then - verify the output
         mockMvc.perform(get("/users/{userId}/reservation", user.getId()))
@@ -234,6 +237,7 @@ class ReservationControllerIntegrationTest {
                 .startTime(updateSTime)
                 .endTime(updateETime)
                 .build();
+        // TODO: NestedServletException: Request processing failed; nested exception is org.springframework.dao.IncorrectResultSizeDataAccessException: query did not return a unique result: 4;
         // when - action or the behaviour that we are going test
         // then - verify the output
         mockMvc.perform(put("/room/{roomId}/reservation/{reservationId}", room.getId(), reservation.getId())
@@ -253,7 +257,7 @@ class ReservationControllerIntegrationTest {
 
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(delete("/reservation/{reservationId}", savedReservation.getId()))
+        mockMvc.perform(delete("/users/{userId}/reservation/{reservationId}", user.getId(), savedReservation.getId()))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
