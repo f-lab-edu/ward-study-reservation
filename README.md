@@ -47,7 +47,7 @@
 - SpringBoot2.6
 - Gradle7.4
 - Mysql8.0 / Redis
-- JPA
+- JPA / QueryDsl
 - JUnit5
 - Spring Batch
 - Docker 
