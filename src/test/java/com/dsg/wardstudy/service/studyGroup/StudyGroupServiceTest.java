@@ -16,6 +16,7 @@ import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
 import com.dsg.wardstudy.type.UserType;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -160,22 +162,13 @@ class StudyGroupServiceTest {
 
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
 
-        QStudyGroup qStudyGroup = QStudyGroup.studyGroup;
-
         String type = "t";
         String keyword = "test";
 
         // 검색조건 추가
-        BooleanBuilder conditionBuilder = new BooleanBuilder();
+        BooleanBuilder booleanBuilder = getSearch(type, keyword);
 
-        if(type.contains("t")) {
-            conditionBuilder.or(qStudyGroup.title.contains(keyword));
-        }
-        if(type.contains("c")) {
-            conditionBuilder.or(qStudyGroup.content.contains(keyword));
-        }
-
-        given(studyGroupRepository.findAll(conditionBuilder, pageable).getContent())
+        given(studyGroupRepository.findAll(booleanBuilder, pageable).getContent())
                 .willReturn(List.of(studyGroup, studyGroup1));
         // when - action or the behaviour that we are going test
 
@@ -188,24 +181,20 @@ class StudyGroupServiceTest {
 
     }
 
-    @Test
-    public void givenStudyGroupList_whenGetAll_Negative_thenReturnStudyGroupResponseList() {
-        // TODO : paging NPE 발생 issue#23
-        // given - precondition or setup
-        StudyGroup studyGroup1 = StudyGroup.builder()
-                .id(2L)
-                .title("testSG2")
-                .content("인원 6명의 스터디그룹을 모집합니다.")
-                .build();
-
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
+    private BooleanBuilder getSearch(String type, String keyword) {
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
 
         QStudyGroup qStudyGroup = QStudyGroup.studyGroup;
 
-        String type = "t";
-        String keyword = "test";
+        BooleanExpression booleanExpression = qStudyGroup.id.gt(0L);
 
-        // 검색조건 추가
+        booleanBuilder.and(booleanExpression);
+
+        // 검색 조건이 없는 경우
+        if (!StringUtils.hasText(type)) {
+            return booleanBuilder;
+        }
+
         BooleanBuilder conditionBuilder = new BooleanBuilder();
 
         if(type.contains("t")) {
@@ -215,14 +204,32 @@ class StudyGroupServiceTest {
             conditionBuilder.or(qStudyGroup.content.contains(keyword));
         }
 
-        given(studyGroupRepository.findAll(conditionBuilder, pageable).getContent())
+        // 모든 조건 통합
+        booleanBuilder.and(conditionBuilder);
+
+        return booleanBuilder;
+    }
+
+    @Test
+    public void givenStudyGroupList_whenGetAll_Negative_thenReturnStudyGroupResponseList() {
+        // TODO : paging NPE 발생 issue#23
+        // given - precondition or setup
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
+
+        String type = "t";
+        String keyword = "test";
+
+        // 검색조건 추가
+        BooleanBuilder booleanBuilder = getSearch(type, keyword);
+
+        given(studyGroupRepository.findAll(booleanBuilder, pageable).getContent())
                 .willReturn(Collections.emptyList());
         // when - action or the behaviour that we are going test
         PageResponse.StudyGroup studyGroupPageResponses = studyGroupService.getAll(pageable, type, keyword);
         log.info("studyGroupPageResponses: {}", studyGroupPageResponses);
         // then - verify the output
         assertThat(studyGroupPageResponses).isNull();
-        assertThat(studyGroupPageResponses.getTotalElements()).isEqualTo(0);
+        assertThat(studyGroupPageResponses.getContent().size()).isEqualTo(0);
 
     }
 

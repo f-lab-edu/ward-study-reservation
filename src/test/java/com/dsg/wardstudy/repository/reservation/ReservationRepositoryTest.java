@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.IntStream;
+import java.util.stream.LongStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,6 +53,7 @@ class ReservationRepositoryTest {
     @BeforeEach
     void setUp() {
         user = User.builder()
+                .id(1L)
                 .email("dsgfunk@gmail.com")
                 .build();
 
@@ -60,11 +62,13 @@ class ReservationRepositoryTest {
                 .build();
 
         studyGroup = StudyGroup.builder()
+                .id(1L)
                 .title("title_")
                 .content("study 번 방")
                 .build();
 
         room = Room.builder()
+                .id(1L)
                 .name("roomA")
                 .build();
 
@@ -98,6 +102,8 @@ class ReservationRepositoryTest {
         Reservation savedReservation = reservationRepository.save(reservation);
         log.info("savedReservation: {}", savedReservation);
 
+        Reservation reservation1 = reservationRepository.findById(savedReservation.getId()).get();
+        log.info("reservation1: {}", reservation1);
         // then - verify the output
         assertThat(savedReservation).isNotNull();
         assertThat(savedReservation.getId()).isEqualTo("3||2022-04-24 10:30:00");
@@ -105,6 +111,36 @@ class ReservationRepositoryTest {
         assertThat(savedReservation.getUser().getEmail()).isEqualTo(this.user.getEmail());
         assertThat(savedReservation.getStudyGroup().getTitle()).isEqualTo(this.studyGroup.getTitle());
         assertThat(savedReservation.getRoom().getName()).isEqualTo(this.room.getName());
+
+    }
+
+    @Test
+    public void given_whenFindAll_thenReservationList(){
+        // given - precondition or setup
+        String startTime = "2021-08-07 12:00:00";
+        String endTime = "2021-08-07 13:00:00";
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        LocalDateTime sTime = LocalDateTime.parse(startTime, formatter);
+        LocalDateTime eTime = LocalDateTime.parse(endTime, formatter);
+
+        LongStream.rangeClosed(1,20).forEach(i -> {
+            Reservation reservation = Reservation.builder()
+                    .id("i_"+i)
+                    .startTime(sTime)
+                    .endTime(eTime)
+                    .build();
+
+            reservationRepository.save(reservation);
+        });
+        // when - action or the behaviour that we are going test
+        List<Reservation> all = reservationRepository.findAll();
+        log.info("all: {}", all);
+        log.info("all.size(): {}", all.size());
+        // then - verify the output
+        assertThat(all.size()).isNotNull();
+        assertThat(all.size()).isEqualTo(20);
 
     }
 
@@ -117,7 +153,7 @@ class ReservationRepositoryTest {
         Room savedRoom = roomRepository.save(room);
 
         String startTime = "2021-08-07 12:00:00";
-        String endTime = "2021-08-07 13:00:00";
+        String endTime = "2022-08-07 13:00:00";
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -136,7 +172,8 @@ class ReservationRepositoryTest {
         reservationRepository.save(reservation);
 
         // when - action or the behaviour that we are going test
-        List<Reservation> reservationsByRoomIdAndTime = reservationRepository.findByRoomIdAndTimePeriod(savedRoom.getId(), sTime, eTime);
+        List<Reservation> reservationsByRoomIdAndTime =
+                reservationRepository.findByRoomIdAndTimePeriod(savedRoom.getId(), sTime, eTime);
         log.info("reservationsByRoomIdAndTime: {}", reservationsByRoomIdAndTime);
 
         // then - verify the output
@@ -177,7 +214,7 @@ class ReservationRepositoryTest {
 
         userGroup.setUser(savedUser);
 
-        IntStream.rangeClosed(1, 4).forEach(i -> {
+        IntStream.rangeClosed(1, 10).forEach(i -> {
             userGroup.setStudyGroup(savedStudyGroup);
             userGroupRepository.save(userGroup);
             Reservation reservation = Reservation.builder()
@@ -191,11 +228,11 @@ class ReservationRepositoryTest {
         List<Long> sgIds = userGroupRepository.findSgIdsByUserId(savedUser.getId());
         List<Reservation> reservationsBySGIds = reservationRepository.findByStudyGroupIds(sgIds);
 
-        log.info("reservationsByStudyGroupIdIn: {}", reservationsBySGIds);
+        log.info("reservationsBySGIds: {}", reservationsBySGIds);
 
         // then - verify the output
         assertThat(reservationsBySGIds).isNotNull();
-        assertThat(reservationsBySGIds.size()).isEqualTo(4);
+        assertThat(reservationsBySGIds.size()).isEqualTo(10);
 
     }
 
@@ -206,11 +243,12 @@ class ReservationRepositoryTest {
         Room savedRoom = roomRepository.save(room);
 
         Reservation reservation = Reservation.builder()
-                .id("3||2022-04-24 10:30:00")
+                .id("1||2022-11-03 06:30:00")
                 .room(savedRoom)
                 .build();
 
         Reservation savedReservation = reservationRepository.save(reservation);
+        log.info("savedReservation: {}", savedReservation);
 
         // when - action or the behaviour that we are going test
         Reservation findReservation = reservationRepository.findByRoomIdAndId(savedRoom.getId(), savedReservation.getId()).get();
@@ -229,13 +267,14 @@ class ReservationRepositoryTest {
         String startTime = "2021-08-07 12:00:00";
 
         Reservation reservation = Reservation.builder()
-                .id("3||2022-04-24 10:30:00")
+                .id("1||2022-11-03 06:30:00")
                 .build();
 
         Reservation savedReservation = reservationRepository.save(reservation);
 
         Reservation oldReservation = reservationRepository.findById(savedReservation.getId()).get();
         Room findRoom = roomRepository.findById(savedRoom.getId()).get();
+        log.info("oldReservation: {}, findRoom: {}", oldReservation, findRoom);
 
         Reservation newReservation = Reservation.builder()
                 .id(findRoom.getId() + "||" + startTime)
@@ -243,6 +282,7 @@ class ReservationRepositoryTest {
 
         // when - action or the behaviour that we are going test
         Reservation updatedReservation = reservationRepository.save(newReservation);
+        log.info("updatedReservation: {}", updatedReservation);
         reservationRepository.delete(oldReservation);
 
         // then - verify the output

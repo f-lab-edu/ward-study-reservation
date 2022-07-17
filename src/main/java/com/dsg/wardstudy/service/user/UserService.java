@@ -1,10 +1,10 @@
 package com.dsg.wardstudy.service.user;
 
 import com.dsg.wardstudy.dto.user.SignUpRequest;
-import com.dsg.wardstudy.dto.user.UserDto;
+import com.dsg.wardstudy.dto.user.LoginDto;
 
 public interface UserService {
-    UserDto signUp(SignUpRequest signUpDto);
+    LoginDto signUp(SignUpRequest signUpDto);
 
-    UserDto getByEmailAndPassword(String email, String password);
+    LoginDto getByEmailAndPassword(String email, String password);
 }

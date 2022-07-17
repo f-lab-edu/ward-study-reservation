@@ -1,7 +1,7 @@
 package com.dsg.wardstudy.controller.user;
 
 import com.dsg.wardstudy.dto.user.SignUpRequest;
-import com.dsg.wardstudy.dto.user.UserDto;
+import com.dsg.wardstudy.dto.user.LoginDto;
 import com.dsg.wardstudy.service.user.LoginService;
 import com.dsg.wardstudy.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
+
 @Slf4j
 @RestController
 @RequestMapping("/users")
@@ -23,16 +25,16 @@ public class UserController {
 
     // 회원가입(register)
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@RequestBody SignUpRequest signUpDto) {
+    public ResponseEntity<?> signup(@Valid @RequestBody SignUpRequest signUpDto) {
 
         log.info("users signup, signUpDto: {}", signUpDto);
-        UserDto userDto = userService.signUp(signUpDto);
-        return new ResponseEntity<>(userDto, HttpStatus.CREATED);
+        LoginDto loginDto = userService.signUp(signUpDto);
+        return new ResponseEntity<>(loginDto, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody UserDto userDto) {
-        UserDto findUserDto = userService.getByEmailAndPassword(userDto.getEmail(), userDto.getPassword());
+    public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
+        LoginDto findUserDto = userService.getByEmailAndPassword(loginDto.getEmail(), loginDto.getPassword());
 
         loginService.loginUser(findUserDto.getId());
 
