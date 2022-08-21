@@ -76,11 +76,13 @@
 ![image](https://user-images.githubusercontent.com/62453668/169458249-74e55a36-a631-4440-a52d-332fa78eb9f4.png)
 
 
-✅ `master` : 제품으로 출시될 수 있는 브랜치를 의미합니다.
+
+
+✅ `master` : 제품으로 출시될 수 있는 브랜치를 의미합니다. 
 
 ✅ `develop` : 다음 출시 버전을 개발하는 브랜치입니다. feature에서 리뷰완료한 브랜치를 Merge하고 있습니다.
 
-✅ `feature` : 기능을 개발하는 브랜치
+✅ `feature` : 기능을 개발하는 브랜치 
 
 ✅ `release` : 이번 출시 버전을 준비하는 브랜치
 
@@ -88,9 +90,10 @@
 
 <br>
 
-- 신규개발 건은 `develop` 을 base로 `feature/#이슈번호` 의 브랜치명으로 생성 후 작업한 다음 **PR**을 날립니다.
+- `master`를 항상 최신 상태로 만들며, stable 상태로 Product에 배포되는 브랜치 (master = main) 로 삼습니다.
+- 신규개발 건은 `develop` 을 base로 `feature/#이슈번호` or `feature/작업명` 의 브랜치명으로 생성 후 작업한 다음 `PR`을 날립니다.
 - 아직 개발 진행 중이라면 `In Progress` 라벨을 달고, 코드리뷰가 필요한 경우 `Asking for Review` 라벨을 답니다. 리뷰 후 리팩토링이 필요하다면 추가로 `refactoring` 라벨을 달아 진행합니다.
-- 모든 PR은 반드시 지정한 리뷰어에게 코드리뷰를 받아야만 합니다.
+- 모든 `PR`은 반드시 지정한 `리뷰어`에게 코드리뷰를 받아야만 합니다.
 - 코드리뷰어의` Approve` 를 받아야 `Merge pull request` 를 할 수 있습니다.
 
 <br>
