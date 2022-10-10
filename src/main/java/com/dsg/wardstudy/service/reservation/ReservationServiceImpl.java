@@ -79,7 +79,7 @@ public class ReservationServiceImpl implements ReservationService{
                 , validateFindByIdDto.getRoom()
         );
 
-        reservationRepository.findById(reservation.getId()).ifPresent( r -> {
+        reservationRepository.findByIdLock(reservation.getId()).ifPresent( r -> {
             log.error("Same reservationId is existing, can't make the reservation");
             throw new WSApiException(ErrorCode.DUPLICATED_ENTITY, "The same reservation exists.");
         });
