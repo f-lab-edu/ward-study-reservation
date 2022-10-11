@@ -173,7 +173,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     @Transactional
     @Override
     public void deleteById(Long userId, Long studyGroupId) {
-        // 외래키를 가진 reservation이 존재한다면 먼저 삭제되어야만 studyGroup도 지울 수 있음!
+        // 외래키를 가진 자식테이블 Reservation이 먼저 삭제되어야만 부모테이블인 StudyGroup도 지울 수 있음!
         reservationQueryRepository.findByUserIdAndStudyGroupId(userId, studyGroupId)
                 .ifPresent(reservation -> {
                     log.info("reservation: {}", reservation);

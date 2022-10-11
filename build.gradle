@@ -68,6 +68,11 @@ dependencies {
 // https://mvnrepository.com/artifact/com.fasterxml.jackson.datatype/jackson-datatype-hibernate5
     implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-hibernate5', version: '2.11.3'
 
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.5.2'
+
+    // Swagger
+    implementation 'io.springfox:springfox-boot-starter:3.0.0'
 
 }
 
