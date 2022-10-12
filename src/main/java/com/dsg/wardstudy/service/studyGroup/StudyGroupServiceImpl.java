@@ -55,7 +55,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                             " userId: " + userId);
                 });
 
-        StudyGroup studyGroup = mapToEntity(studyGroupRequest);
+        StudyGroup studyGroup = StudyGroupRequest.mapToEntity(studyGroupRequest);
         StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
 
         // studyGroup 등록시 UserType L(리더)로 등록
@@ -67,32 +67,8 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
         UserGroup savedUserGroup = userGroupRepository.save(userGroup);
 
-        return mapToResponse(savedUserGroup);
+        return StudyGroupResponse.mapToDto(savedUserGroup);
     }
-
-    private StudyGroupResponse mapToResponse(UserGroup savedUserGroup) {
-        return StudyGroupResponse.builder()
-                .studyGroupId(savedUserGroup.getStudyGroup().getId())
-                .title(savedUserGroup.getStudyGroup().getTitle())
-                .content(savedUserGroup.getStudyGroup().getContent())
-                .build();
-    }
-
-    private StudyGroup mapToEntity(StudyGroupRequest studyGroupRequest) {
-        return StudyGroup.builder()
-                .title(studyGroupRequest.getTitle())
-                .content(studyGroupRequest.getContent())
-                .build();
-    }
-
-    private StudyGroupResponse mapToDto(StudyGroup savedGroup) {
-        return StudyGroupResponse.builder()
-                .studyGroupId(savedGroup.getId())
-                .title(savedGroup.getTitle())
-                .content(savedGroup.getContent())
-                .build();
-    }
-
 
     @Transactional(readOnly = true)
     @Override
@@ -105,7 +81,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                             " studyGroupId: " + studyGroupId);
                 });
 
-        return mapToDto(studyGroup);
+        return StudyGroupResponse.mapToDto(studyGroup);
     }
 
     @Transactional(readOnly = true)
@@ -116,7 +92,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         log.info("booleanBuilder getSearch: {}", booleanBuilder);
 
         Page<StudyGroupResponse> studyGroupResponsePage = studyGroupRepository.findAll(booleanBuilder, pageable)
-                .map(this::mapToDto);
+                .map(StudyGroupResponse::mapToDto);
         return PageResponse.StudyGroup.builder()
                 .content(studyGroupResponsePage.getContent())
                 .pageNo(pageable.getPageNumber())
@@ -203,7 +179,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
         List<StudyGroup> studyGroups = studyGroupRepository.findByIdIn(studyGroupsIds);
         return studyGroups.stream()
-                .map(this::mapToDto)
+                .map(StudyGroupResponse::mapToDto)
                 .collect(Collectors.toList());
 
     }
