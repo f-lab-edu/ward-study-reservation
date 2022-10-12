@@ -5,6 +5,7 @@ import com.dsg.wardstudy.domain.reservation.Room;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
+import com.dsg.wardstudy.dto.reservation.ReservationCommand;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.type.UserType;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,8 +49,8 @@ class ReservationControllerIntegrationTest {
     private StudyGroup studyGroup;
     private Room room;
 
-    private ReservationCreateRequest createRequest;
-    private ReservationUpdateRequest updateRequest;
+    private ReservationCommand.RegisterReservation createRequest;
+    private ReservationCommand.UpdateReservation updateRequest;
 
     @BeforeEach
     void setUp() {
@@ -74,7 +75,7 @@ class ReservationControllerIntegrationTest {
                 .build();
 
         reservation = Reservation.builder()
-                .id("1||2019-11-03 06:30:00")
+//                .id("1||2019-11-03 06:30:00")
                 .user(user)
                 .studyGroup(studyGroup)
                 .room(room)
@@ -91,7 +92,7 @@ class ReservationControllerIntegrationTest {
         String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-        createRequest = ReservationCreateRequest.builder()
+        createRequest = ReservationCommand.RegisterReservation.builder()
                 .userId(user.getId())
                 .startTime(sTime)
                 .endTime(eTime)
@@ -136,7 +137,7 @@ class ReservationControllerIntegrationTest {
         // given - precondition or setup
         LongStream.rangeClosed(1, 5).forEach(i -> {
             Reservation reservation = Reservation.builder()
-                    .id(i + "||" + "2019-11-03 06:30:00")
+//                    .id(i + "||" + "2019-11-03 06:30:00")
                     .user(user)
                     .studyGroup(studyGroup)
                     .build();
@@ -164,7 +165,7 @@ class ReservationControllerIntegrationTest {
         // given - precondition or setup
         IntStream.rangeClosed(1, 5).forEach(i -> {
             Reservation reservation = Reservation.builder()
-                    .id(i + "||" + "2019-11-03 06:30:00")
+//                    .id(i + "||" + "2019-11-03 06:30:00")
                     .user(user)
                     .studyGroup(studyGroup)
                     .room(room)
@@ -202,7 +203,7 @@ class ReservationControllerIntegrationTest {
         // given - precondition or setup
         IntStream.rangeClosed(1, 5).forEach(i -> {
             Reservation reservation = Reservation.builder()
-                    .id(i + "||" + "2019-11-03 06:30:00")
+//                    .id(i + "||" + "2019-11-03 06:30:00")
                     .user(user)
                     .studyGroup(studyGroup)
                     .room(room)
@@ -226,7 +227,7 @@ class ReservationControllerIntegrationTest {
         String updateETime = LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30)
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-        updateRequest = ReservationUpdateRequest.builder()
+        updateRequest = ReservationCommand.UpdateReservation.builder()
                 .userId(user.getId())
                 .studyGroupId(studyGroup.getId())
                 .startTime(updateSTime)

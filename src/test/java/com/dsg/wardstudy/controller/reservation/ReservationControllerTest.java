@@ -291,7 +291,7 @@ class ReservationControllerTest {
         String updateETime = LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30)
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-        updateRequest = ReservationUpdateRequest.builder()
+        updateRequest = ReservationCommand.UpdateReservation.builder()
                 .userId(user.getId())
                 .studyGroupId(studyGroup.getId())
                 .startTime(updateSTime)
