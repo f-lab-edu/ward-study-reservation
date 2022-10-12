@@ -1,21 +1,21 @@
 package com.dsg.wardstudy.service.reservation;
 
+import com.dsg.wardstudy.common.utils.TimeParsingUtils;
 import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.reservation.Room;
+import com.dsg.wardstudy.domain.reservation.service.ReservationServiceImpl;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
-import com.dsg.wardstudy.dto.reservation.ReservationCreateRequest;
-import com.dsg.wardstudy.dto.reservation.ReservationDetails;
-import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
-import com.dsg.wardstudy.exception.WSApiException;
+import com.dsg.wardstudy.domain.reservation.dto.ReservationCommand;
+import com.dsg.wardstudy.domain.reservation.dto.ReservationDetails;
+import com.dsg.wardstudy.common.exception.WSApiException;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.reservation.RoomRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
 import com.dsg.wardstudy.type.UserType;
-import com.dsg.wardstudy.utils.TimeParsingUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -53,8 +53,6 @@ class ReservationServiceTest {
     @Mock
     private RoomRepository roomRepository;
 
-    @Mock
-    private TimeParsingUtils timeParsingUtils;
 
     @InjectMocks
     private ReservationServiceImpl reservationService;
@@ -65,8 +63,8 @@ class ReservationServiceTest {
     private StudyGroup studyGroup;
     private Room room;
 
-    private ReservationCreateRequest createRequest;
-    private ReservationUpdateRequest updateRequest;
+    private ReservationCommand.RegisterReservation createRequest;
+    private ReservationCommand.UpdateReservation updateRequest;
 
     @BeforeEach
     void setUp() {
@@ -79,7 +77,7 @@ class ReservationServiceTest {
         userGroup = UserGroup.builder()
                 .id(1L)
                 .user(user)
-                .userType(UserType.L)
+                .userType(UserType.LEADER)
                 .studyGroup(studyGroup)
                 .build();
 
@@ -92,7 +90,7 @@ class ReservationServiceTest {
                 .build();
 
         reservation = Reservation.builder()
-                .id("1||2019-11-03 06:30:00")
+//                .id("1||2019-11-03 06:30:00")
                 .user(user)
                 .studyGroup(studyGroup)
                 .room(room)
@@ -105,10 +103,10 @@ class ReservationServiceTest {
     void givenReservation_whenSave_thenReturnReservationDetails() {
         // given - precondition or setup
         // LocalDateTime -> String 으로 변환
-        String sTime = timeParsingUtils.formatterString(reservation.getStartTime());
-        String eTime = timeParsingUtils.formatterString(reservation.getEndTime());
+        String sTime = TimeParsingUtils.formatterString(reservation.getStartTime());
+        String eTime = TimeParsingUtils.formatterString(reservation.getEndTime());
 
-        createRequest = ReservationCreateRequest.builder()
+        createRequest = ReservationCommand.RegisterReservation.builder()
                 .userId(user.getId())
                 .startTime(sTime)
                 .endTime(eTime)
@@ -129,7 +127,7 @@ class ReservationServiceTest {
                 .willReturn(reservation);
 
         // when - action or the behaviour that we are going test
-        ReservationDetails details = reservationService.create(studyGroup.getId(), room.getId(), createRequest);
+        ReservationDetails details = reservationService.register(studyGroup.getId(), room.getId(), createRequest);
         log.info("details: {}", details);
 
         // then - verify the output
@@ -191,7 +189,7 @@ class ReservationServiceTest {
         LocalDateTime endTime = LocalDateTime.of(2019, Month.OCTOBER, 3, 9, 30);
 
         Reservation reservation1 = Reservation.builder()
-                .id("1||2019-10-03 08:30:00")
+//                .id("1||2019-10-03 08:30:00")
                 .room(room)
                 .user(user)
                 .startTime(LocalDateTime.of(2019, Month.OCTOBER, 3, 8, 30))
@@ -201,12 +199,12 @@ class ReservationServiceTest {
         given(roomRepository.findById(room.getId()))
                 .willReturn(Optional.of(room));
 
-        String sTime = timeParsingUtils.formatterString(startTime);
-        String eTime = timeParsingUtils.formatterString(endTime);
+        String sTime = TimeParsingUtils.formatterString(startTime);
+        String eTime = TimeParsingUtils.formatterString(endTime);
 
         // parsing 작업 추가 String -> LocalDateTime
-        LocalDateTime parsingSTime = timeParsingUtils.formatterLocalDateTime(sTime);
-        LocalDateTime parsingETime = timeParsingUtils.formatterLocalDateTime(eTime);
+        LocalDateTime parsingSTime = TimeParsingUtils.formatterLocalDateTime(sTime);
+        LocalDateTime parsingETime = TimeParsingUtils.formatterLocalDateTime(eTime);
 
         given(reservationRepository.findByRoomIdAndTimePeriod(room.getId(), parsingSTime, parsingETime))
                 .willReturn(List.of(reservation, reservation1));
@@ -224,7 +222,7 @@ class ReservationServiceTest {
         // getByRoomId
         // given - precondition or setup
         Reservation reservation1 = Reservation.builder()
-                .id("1||2019-10-03 06:30:00")
+//                .id("1||2019-10-03 06:30:00")
                 .room(room)
                 .user(user)
                 .startTime(LocalDateTime.of(2019, Month.OCTOBER, 3, 6, 30))
@@ -266,10 +264,10 @@ class ReservationServiceTest {
     @Test
     void givenReservationUpdateRequest_whenUpdate_thenReturnUpdatedReservationId() {
         // given - precondition or setup
-        String sTime = timeParsingUtils.formatterString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30));
-        String eTime = timeParsingUtils.formatterString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 7, 30));
+        String sTime = TimeParsingUtils.formatterString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30));
+        String eTime = TimeParsingUtils.formatterString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 7, 30));
         
-        updateRequest = ReservationUpdateRequest.builder()
+        updateRequest = ReservationCommand.UpdateReservation.builder()
                 .userId(user.getId())
                 .studyGroupId(studyGroup.getId())
                 .startTime(sTime)
@@ -280,7 +278,7 @@ class ReservationServiceTest {
         given(studyGroupRepository.findById(updateRequest.getStudyGroupId()))
                 .willReturn(Optional.of(studyGroup));
         given(userGroupRepository.findUserTypeByUserIdAndSGId(updateRequest.getUserId(), studyGroup.getId()))
-                .willReturn(Optional.of(UserType.L));
+                .willReturn(Optional.of(UserType.LEADER));
 
         // update 로직 변경 : find -> new save -> old(reservation) delete
         given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
@@ -288,7 +286,6 @@ class ReservationServiceTest {
         given(roomRepository.findById(room.getId())).willReturn(Optional.of(room));
 
         Reservation newReservation = Reservation.builder()
-                .id(room.getId() + "||" + updateRequest.getStartTime())
                 .startTime(LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30))
                 .endTime(LocalDateTime.of(2022, Month.NOVEMBER, 3, 7, 30))
                 .user(user)

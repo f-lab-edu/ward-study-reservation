@@ -1,15 +1,15 @@
 package com.dsg.wardstudy.config.batch;
 
 
-import com.dsg.wardstudy.adapter.MailMessageGenerator;
-import com.dsg.wardstudy.adapter.MailSendService;
+import com.dsg.wardstudy.common.adapter.MailMessageGenerator;
+import com.dsg.wardstudy.common.adapter.MailSendService;
 import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.user.User;
-import com.dsg.wardstudy.dto.NotificationAlarmDto;
+import com.dsg.wardstudy.domain.reservation.dto.NotificationAlarmDto;
 import com.dsg.wardstudy.repository.reservation.ReservationQueryRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
-import com.dsg.wardstudy.service.reservation.ReservationService;
+import com.dsg.wardstudy.domain.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;

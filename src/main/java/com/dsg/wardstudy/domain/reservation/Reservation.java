@@ -1,17 +1,18 @@
 package com.dsg.wardstudy.domain.reservation;
 
+import com.dsg.wardstudy.common.utils.TimeParsingUtils;
+import com.dsg.wardstudy.domain.BaseTimeEntity;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
-import com.dsg.wardstudy.dto.BaseTimeEntity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
 @ToString(of = {"id", "startTime", "endTime", "isEmailSent"})
 public class Reservation extends BaseTimeEntity {
 
@@ -40,8 +41,8 @@ public class Reservation extends BaseTimeEntity {
     private boolean isEmailSent;
 
     @Builder
-    public Reservation(String id, LocalDateTime startTime, LocalDateTime endTime, User user, StudyGroup studyGroup, Room room, boolean isEmailSent) {
-        this.id = id;
+    public Reservation(LocalDateTime startTime, LocalDateTime endTime, User user, StudyGroup studyGroup, Room room, boolean isEmailSent) {
+        this.id = room.getId() + "||" + TimeParsingUtils.formatterString(startTime);
         this.startTime = startTime;
         this.endTime = endTime;
         this.user = user;

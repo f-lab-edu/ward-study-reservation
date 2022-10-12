@@ -1,7 +1,7 @@
 package com.dsg.wardstudy.domain.studyGroup;
 
+import com.dsg.wardstudy.domain.BaseTimeEntity;
 import com.dsg.wardstudy.domain.user.UserGroup;
-import com.dsg.wardstudy.dto.BaseTimeEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
