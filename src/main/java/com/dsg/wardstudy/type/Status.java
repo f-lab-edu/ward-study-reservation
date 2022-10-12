@@ -1,13 +1,14 @@
 package com.dsg.wardstudy.type;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-@AllArgsConstructor
+import lombok.RequiredArgsConstructor;
+
 @Getter
+@RequiredArgsConstructor
 public enum Status {
 
-    ENABLED("reservation enabled"),
-    CANCELED("reservation canceled");
+    ENABLED("예약 가능"),
+    CANCELED("예약 취소");
 
     private final String description;
 }

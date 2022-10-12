@@ -2,14 +2,15 @@ package com.dsg.wardstudy.controller.studyGroup;
 
 import com.dsg.wardstudy.domain.studyGroup.QStudyGroup;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
+import com.dsg.wardstudy.domain.studyGroup.controller.StudyGroupController;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
-import com.dsg.wardstudy.dto.PageResponse;
-import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
-import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
-import com.dsg.wardstudy.exception.ErrorCode;
-import com.dsg.wardstudy.exception.WSApiException;
-import com.dsg.wardstudy.service.studyGroup.StudyGroupService;
+import com.dsg.wardstudy.domain.studyGroup.dto.PageResponse;
+import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupRequest;
+import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupResponse;
+import com.dsg.wardstudy.common.exception.ErrorCode;
+import com.dsg.wardstudy.common.exception.WSApiException;
+import com.dsg.wardstudy.domain.studyGroup.service.StudyGroupService;
 import com.dsg.wardstudy.type.UserType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.BooleanBuilder;
@@ -69,7 +70,7 @@ class StudyGroupControllerTest {
         userGroup = UserGroup.builder()
                 .user(user)
                 .studyGroup(studyGroup)
-                .userType(UserType.L)
+                .userType(UserType.LEADER)
                 .build();
 
 

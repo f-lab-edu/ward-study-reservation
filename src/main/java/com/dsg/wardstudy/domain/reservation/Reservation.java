@@ -1,9 +1,9 @@
 package com.dsg.wardstudy.domain.reservation;
 
+import com.dsg.wardstudy.common.utils.TimeParsingUtils;
+import com.dsg.wardstudy.domain.BaseTimeEntity;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
-import com.dsg.wardstudy.dto.BaseTimeEntity;
-import com.dsg.wardstudy.utils.TimeParsingUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 

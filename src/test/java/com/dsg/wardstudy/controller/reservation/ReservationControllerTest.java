@@ -2,14 +2,15 @@ package com.dsg.wardstudy.controller.reservation;
 
 import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.reservation.Room;
+import com.dsg.wardstudy.domain.reservation.controller.ReservationController;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
-import com.dsg.wardstudy.dto.reservation.ReservationCommand;
-import com.dsg.wardstudy.dto.reservation.ReservationDetails;
-import com.dsg.wardstudy.exception.ErrorCode;
-import com.dsg.wardstudy.exception.WSApiException;
-import com.dsg.wardstudy.service.reservation.ReservationService;
+import com.dsg.wardstudy.domain.reservation.dto.ReservationCommand;
+import com.dsg.wardstudy.domain.reservation.dto.ReservationDetails;
+import com.dsg.wardstudy.common.exception.ErrorCode;
+import com.dsg.wardstudy.common.exception.WSApiException;
+import com.dsg.wardstudy.domain.reservation.service.ReservationService;
 import com.dsg.wardstudy.type.UserType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,7 +67,7 @@ class ReservationControllerTest {
         userGroup = UserGroup.builder()
                 .id(1L)
                 .user(user)
-                .userType(UserType.L)
+                .userType(UserType.LEADER)
                 .studyGroup(studyGroup)
                 .build();
 

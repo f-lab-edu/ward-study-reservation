@@ -3,12 +3,13 @@ package com.dsg.wardstudy.service.studyGroup;
 import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.studyGroup.QStudyGroup;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
+import com.dsg.wardstudy.domain.studyGroup.service.StudyGroupServiceImpl;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
-import com.dsg.wardstudy.dto.PageResponse;
-import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
-import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
-import com.dsg.wardstudy.exception.WSApiException;
+import com.dsg.wardstudy.domain.studyGroup.dto.PageResponse;
+import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupRequest;
+import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupResponse;
+import com.dsg.wardstudy.common.exception.WSApiException;
 import com.dsg.wardstudy.repository.reservation.ReservationQueryRepository;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
@@ -81,7 +82,7 @@ class StudyGroupServiceTest {
         userGroup = UserGroup.builder()
                 .user(user)
                 .studyGroup(studyGroup)
-                .userType(UserType.L)
+                .userType(UserType.LEADER)
                 .build();
 
         reservation = Reservation.builder()
@@ -236,7 +237,7 @@ class StudyGroupServiceTest {
                 .willReturn(Optional.of(studyGroup));
 
         given(userGroupRepository.findUserTypeByUserIdAndSGId(anyLong(), anyLong()))
-                .willReturn(Optional.of(UserType.L));
+                .willReturn(Optional.of(UserType.LEADER));
 
         studyGroupRequest = StudyGroupRequest.builder()
                 .title("JumpToSpringboot_study")
@@ -268,7 +269,7 @@ class StudyGroupServiceTest {
                 .willReturn(Optional.of(user));
 
         given(userGroupRepository.findUserTypeByUserIdAndSGId(anyLong(), anyLong()))
-                .willReturn(Optional.of(UserType.L));
+                .willReturn(Optional.of(UserType.LEADER));
 
         given(studyGroupRepository.findById(anyLong()))
                 .willReturn(Optional.of(studyGroup));

@@ -1,20 +1,21 @@
 package com.dsg.wardstudy.service.reservation;
 
+import com.dsg.wardstudy.common.utils.TimeParsingUtils;
 import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.reservation.Room;
+import com.dsg.wardstudy.domain.reservation.service.ReservationServiceImpl;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
-import com.dsg.wardstudy.dto.reservation.ReservationCommand;
-import com.dsg.wardstudy.dto.reservation.ReservationDetails;
-import com.dsg.wardstudy.exception.WSApiException;
+import com.dsg.wardstudy.domain.reservation.dto.ReservationCommand;
+import com.dsg.wardstudy.domain.reservation.dto.ReservationDetails;
+import com.dsg.wardstudy.common.exception.WSApiException;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.reservation.RoomRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
 import com.dsg.wardstudy.type.UserType;
-import com.dsg.wardstudy.utils.TimeParsingUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -76,7 +77,7 @@ class ReservationServiceTest {
         userGroup = UserGroup.builder()
                 .id(1L)
                 .user(user)
-                .userType(UserType.L)
+                .userType(UserType.LEADER)
                 .studyGroup(studyGroup)
                 .build();
 
@@ -277,7 +278,7 @@ class ReservationServiceTest {
         given(studyGroupRepository.findById(updateRequest.getStudyGroupId()))
                 .willReturn(Optional.of(studyGroup));
         given(userGroupRepository.findUserTypeByUserIdAndSGId(updateRequest.getUserId(), studyGroup.getId()))
-                .willReturn(Optional.of(UserType.L));
+                .willReturn(Optional.of(UserType.LEADER));
 
         // update 로직 변경 : find -> new save -> old(reservation) delete
         given(userRepository.findById(user.getId())).willReturn(Optional.of(user));

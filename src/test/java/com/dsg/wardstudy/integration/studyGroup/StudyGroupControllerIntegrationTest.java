@@ -3,8 +3,7 @@ package com.dsg.wardstudy.integration.studyGroup;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
-import com.dsg.wardstudy.dto.studyGroup.StudyGroupRequest;
-import com.dsg.wardstudy.dto.studyGroup.StudyGroupResponse;
+import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupRequest;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
@@ -68,7 +67,7 @@ class StudyGroupControllerIntegrationTest {
         userGroup = UserGroup.builder()
                 .user(user)
                 .studyGroup(studyGroup)
-                .userType(UserType.L)
+                .userType(UserType.LEADER)
                 .build();
     }
 
