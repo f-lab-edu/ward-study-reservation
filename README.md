@@ -15,7 +15,7 @@
 
 **3. 사용자가 참가한 StudyGroup의 Reservation 조회**
 
-**4. 해당 Room의 Rservation 조회**
+**4. 해당 Room의 Reservation 조회**
 
 **5. Reservation의 해당 사용자들에게 Notification 이메일 알람**
 
