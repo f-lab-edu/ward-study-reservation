@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.dsg.wardstudy.config.redis.RedisCacheKey.RESERVATION_LIST;
@@ -43,8 +42,6 @@ public class ReservationServiceImpl implements ReservationService{
     private final ReservationRepository reservationRepository;
     private final RoomRepository roomRepository;
 
-    private final TimeParsingUtils timeParsingUtils;
-
     @CacheEvict(key = "#roomId", value = RESERVATION_LIST, cacheManager = "redisCacheManager")
     @Transactional
     @Override
@@ -52,7 +49,7 @@ public class ReservationServiceImpl implements ReservationService{
 
         Reservation reservation = validateCreateRequest(studyGroupId, roomId, reservationRequest);
         Reservation saveReservation = reservationRepository.save(reservation);
-        return mapToDto(saveReservation);
+        return ReservationDetails.mapToDto(saveReservation);
 
     }
 
@@ -71,14 +68,14 @@ public class ReservationServiceImpl implements ReservationService{
                         throw new WSApiException(ErrorCode.INVALID_REQUEST, "Reservation registration is possible only if the user is the leader.");
                     }
                 });
-        // 중복 reservation 체크
-        Reservation reservation = mapToEntity(
+        Reservation reservation = ReservationCreateRequest.mapToEntity(
                 reservationRequest
                 , validateFindByIdDto.getUser()
                 , validateFindByIdDto.getStudyGroup()
                 , validateFindByIdDto.getRoom()
         );
 
+        // 중복 reservation 체크
         reservationRepository.findByIdLock(reservation.getId()).ifPresent( r -> {
             log.error("Same reservationId is existing, can't make the reservation");
             throw new WSApiException(ErrorCode.DUPLICATED_ENTITY, "The same reservation exists.");
@@ -126,7 +123,7 @@ public class ReservationServiceImpl implements ReservationService{
         List<Long> sgIds = userGroupRepository.findSgIdsByUserId(user.getId());
 
         return reservationRepository.findByStudyGroupIds(sgIds).stream()
-                .map(this::mapToDto)
+                .map(ReservationDetails::mapToDto)
                 .collect(Collectors.toList());
 
     }
@@ -142,11 +139,11 @@ public class ReservationServiceImpl implements ReservationService{
                             " roomId: " + roomId);
                 });
 
-        LocalDateTime sTime = timeParsingUtils.formatterLocalDateTime(startTime);
-        LocalDateTime eTime = timeParsingUtils.formatterLocalDateTime(endTime);
+        LocalDateTime sTime = TimeParsingUtils.formatterLocalDateTime(startTime);
+        LocalDateTime eTime = TimeParsingUtils.formatterLocalDateTime(endTime);
 
         return reservationRepository.findByRoomIdAndTimePeriod(room.getId(), sTime, eTime).stream()
-                .map(this::mapToDto)
+                .map(ReservationDetails::mapToDto)
                 .collect(Collectors.toList());
 
     }
@@ -163,7 +160,7 @@ public class ReservationServiceImpl implements ReservationService{
                 });
 
         return reservationRepository.findByRoomId(room.getId()).stream()
-                .map(this::mapToDto)
+                .map(ReservationDetails::mapToDto)
                 .collect(Collectors.toList());
     }
 
@@ -177,7 +174,7 @@ public class ReservationServiceImpl implements ReservationService{
                             ErrorCode.NO_FOUND_ENTITY,  "can't find a reservation by " + "roomId: " +  roomId +
                             " and reservationId: " + reservationId);
                 });
-        return mapToDto(reservation);
+        return ReservationDetails.mapToDto(reservation);
     }
 
     @Transactional
@@ -198,9 +195,6 @@ public class ReservationServiceImpl implements ReservationService{
         return updatedReservation.getId();
     }
 
-    private String genReservationId(Room room, String startTime) {
-        return room.getId() + "||" + startTime;
-    }
 
     private Reservation validateUpdateRequest(Long roomId, ReservationUpdateRequest reservationRequest) {
 
@@ -218,9 +212,8 @@ public class ReservationServiceImpl implements ReservationService{
                 });
 
         Reservation newReservation = Reservation.builder()
-                .id(genReservationId(validateFindByIdDto.getRoom(), reservationRequest.getStartTime()))
-                .startTime(timeParsingUtils.formatterLocalDateTime(reservationRequest.getStartTime()))
-                .endTime(timeParsingUtils.formatterLocalDateTime(reservationRequest.getEndTime()))
+                .startTime(TimeParsingUtils.formatterLocalDateTime(reservationRequest.getStartTime()))
+                .endTime(TimeParsingUtils.formatterLocalDateTime(reservationRequest.getEndTime()))
                 .user(validateFindByIdDto.getUser())
                 .studyGroup(validateFindByIdDto.getStudyGroup())
                 .room(validateFindByIdDto.getRoom())
@@ -230,6 +223,8 @@ public class ReservationServiceImpl implements ReservationService{
             log.error("Same reservationId is existing, can't make the reservation");
             throw new WSApiException(ErrorCode.DUPLICATED_ENTITY, "The same reservation exists.");
         });
+        
+        log.info("newReservation: {}", newReservation);
 
         return newReservation;
     }
@@ -260,36 +255,6 @@ public class ReservationServiceImpl implements ReservationService{
     public void changeIsEmailSent(Reservation reservation) {
         reservation.changeIsEmailSent(true);
         log.info("reservation.changeIsEmailSent(true); 실행");
-    }
-
-    private ReservationDetails mapToDto(Reservation reservation) {
-        return ReservationDetails.builder()
-                .id(reservation.getId())
-                .startTime(timeParsingUtils.formatterString(reservation.getStartTime()))
-                .endTime(timeParsingUtils.formatterString(reservation.getEndTime()))
-                .registerId(reservation.getUser().getId())
-                .registerEmail(reservation.getUser().getEmail())
-                .studyGroupId(reservation.getStudyGroup().getId())
-                .studyGroupTitle(reservation.getStudyGroup().getTitle())
-                .roomId(reservation.getRoom().getId())
-                .roomName(reservation.getRoom().getName())
-                .build();
-    }
-
-    private Reservation mapToEntity(ReservationCreateRequest reservationRequest,
-                                    User user,
-                                    StudyGroup studyGroup,
-                                    Room room) {
-
-        return Reservation.builder()
-                .id(genReservationId(room, reservationRequest.getStartTime()))
-                .startTime(timeParsingUtils.formatterLocalDateTime(reservationRequest.getStartTime()))
-                .endTime(timeParsingUtils.formatterLocalDateTime(reservationRequest.getEndTime()))
-                .user(user)
-                .studyGroup(studyGroup)
-                .room(room)
-                .build();
-
     }
 
 }

@@ -1,5 +1,7 @@
 package com.dsg.wardstudy.dto.reservation;
 
+import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.utils.TimeParsingUtils;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
@@ -40,5 +42,19 @@ public class ReservationDetails {
         this.studyGroupTitle = studyGroupTitle;
         this.roomId = roomId;
         this.roomName = roomName;
+    }
+
+    public static ReservationDetails mapToDto(Reservation reservation) {
+        return ReservationDetails.builder()
+                .id(reservation.getId())
+                .startTime(TimeParsingUtils.formatterString(reservation.getStartTime()))
+                .endTime(TimeParsingUtils.formatterString(reservation.getEndTime()))
+                .registerId(reservation.getUser().getId())
+                .registerEmail(reservation.getUser().getEmail())
+                .studyGroupId(reservation.getStudyGroup().getId())
+                .studyGroupTitle(reservation.getStudyGroup().getTitle())
+                .roomId(reservation.getRoom().getId())
+                .roomName(reservation.getRoom().getName())
+                .build();
     }
 }
