@@ -2,15 +2,15 @@ package com.dsg.wardstudy.controller.reservation;
 
 import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.reservation.Room;
+import com.dsg.wardstudy.domain.reservation.controller.ReservationController;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
-import com.dsg.wardstudy.dto.reservation.ReservationCreateRequest;
-import com.dsg.wardstudy.dto.reservation.ReservationDetails;
-import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
-import com.dsg.wardstudy.exception.ErrorCode;
-import com.dsg.wardstudy.exception.WSApiException;
-import com.dsg.wardstudy.service.reservation.ReservationService;
+import com.dsg.wardstudy.domain.reservation.dto.ReservationCommand;
+import com.dsg.wardstudy.domain.reservation.dto.ReservationDetails;
+import com.dsg.wardstudy.common.exception.ErrorCode;
+import com.dsg.wardstudy.common.exception.WSApiException;
+import com.dsg.wardstudy.domain.reservation.service.ReservationService;
 import com.dsg.wardstudy.type.UserType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,8 +55,8 @@ class ReservationControllerTest {
     private StudyGroup studyGroup;
     private Room room;
 
-    private ReservationCreateRequest createRequest;
-    private ReservationUpdateRequest updateRequest;
+    private ReservationCommand.RegisterReservation createRequest;
+    private ReservationCommand.UpdateReservation updateRequest;
 
     @BeforeEach
     void setUp() {
@@ -67,7 +67,7 @@ class ReservationControllerTest {
         userGroup = UserGroup.builder()
                 .id(1L)
                 .user(user)
-                .userType(UserType.L)
+                .userType(UserType.LEADER)
                 .studyGroup(studyGroup)
                 .build();
 
@@ -80,7 +80,7 @@ class ReservationControllerTest {
                 .build();
 
         reservation = Reservation.builder()
-                .id("1||2019-11-03 06:30:00")
+//                .id("1||2019-11-03 06:30:00")
                 .user(user)
                 .studyGroup(studyGroup)
                 .room(room)
@@ -97,7 +97,7 @@ class ReservationControllerTest {
         String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-        createRequest = ReservationCreateRequest.builder()
+        createRequest = ReservationCommand.RegisterReservation.builder()
                 .userId(user.getId())
                 .startTime(sTime)
                 .endTime(eTime)
@@ -111,7 +111,7 @@ class ReservationControllerTest {
                 .roomId(room.getId())
                 .build();
 
-        given(reservationService.create(studyGroup.getId(), room.getId(), createRequest))
+        given(reservationService.register(studyGroup.getId(), room.getId(), createRequest))
                 .willReturn(reservationDetails);
 
         // when - action or the behaviour that we are going test
@@ -292,7 +292,7 @@ class ReservationControllerTest {
         String updateETime = LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30)
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-        updateRequest = ReservationUpdateRequest.builder()
+        updateRequest = ReservationCommand.UpdateReservation.builder()
                 .userId(user.getId())
                 .studyGroupId(studyGroup.getId())
                 .startTime(updateSTime)

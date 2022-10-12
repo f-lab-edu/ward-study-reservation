@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.domain.reservation;
 
-import com.dsg.wardstudy.dto.BaseTimeEntity;
+import com.dsg.wardstudy.domain.BaseTimeEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.Builder;
