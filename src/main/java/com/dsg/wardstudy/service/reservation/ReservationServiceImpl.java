@@ -77,7 +77,7 @@ public class ReservationServiceImpl implements ReservationService{
         // 중복 reservation 체크
         reservationRepository.findByIdLock(reservation.getId()).ifPresent( r -> {
             log.error("Same reservationId is existing, can't make the reservation");
-            throw new WSApiException(ErrorCode.DUPLICATED_ENTITY, "The same reservation exists.");
+            throw new WSApiException(ErrorCode.DUPLICATED_ENTITY);
         });
 
         return reservation;
@@ -87,20 +87,17 @@ public class ReservationServiceImpl implements ReservationService{
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.error("user 대상이 없습니다. userId: {}", userId);
-                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by " +
-                            " userId: " + userId);
+                    throw new WSApiException(ErrorCode.NOT_FOUND_USER);
                 });
         StudyGroup studyGroup = studyGroupRepository.findById(studyGroupId)
                 .orElseThrow(() -> {
                     log.error("studyGroup 대상이 없습니다. studyGroupId: {}", studyGroupId);
-                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a StudyGroup by " +
-                            " studyGroupId: " + studyGroupId);
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY);
                 });
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> {
                     log.error("room 대상이 없습니다. roomId: {}", roomId);
-                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a Room by " +
-                            " roomId: " + roomId);
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY);
                 });
 
         return ValidateFindByIdDto.builder()
@@ -116,8 +113,7 @@ public class ReservationServiceImpl implements ReservationService{
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.error("user 대상이 없습니다. userId: {}", userId);
-                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by " +
-                            " userId: " + userId);
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY);
                 });
         List<Long> sgIds = userGroupRepository.findSgIdsByUserId(user.getId());
 
@@ -134,8 +130,7 @@ public class ReservationServiceImpl implements ReservationService{
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> {
                     log.error("room 대상이 없습니다. roomId: {}", roomId);
-                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a Room by " +
-                            " roomId: " + roomId);
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY);
                 });
 
         LocalDateTime sTime = TimeParsingUtils.formatterLocalDateTime(startTime);
@@ -154,8 +149,7 @@ public class ReservationServiceImpl implements ReservationService{
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> {
                     log.error("room 대상이 없습니다. roomId: {}", roomId);
-                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a Room by " +
-                            " roomId: " + roomId);
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY);
                 });
 
         return reservationRepository.findByRoomId(room.getId()).stream()
@@ -169,9 +163,7 @@ public class ReservationServiceImpl implements ReservationService{
         Reservation reservation = reservationRepository.findByRoomIdAndId(roomId, reservationId)
                 .orElseThrow(() -> {
                     log.error("reservation 대상이 없습니다. roomId: {}, reservationId: {}", roomId, reservationId);
-                    throw new WSApiException(
-                            ErrorCode.NO_FOUND_ENTITY,  "can't find a reservation by " + "roomId: " +  roomId +
-                            " and reservationId: " + reservationId);
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY);
                 });
         return ReservationDetails.mapToDto(reservation);
     }
@@ -183,8 +175,7 @@ public class ReservationServiceImpl implements ReservationService{
         Reservation oldReservation = reservationRepository.findById(reservationId)
                 .orElseThrow(() -> {
                     log.error("reservation 대상이 없습니다. reservationId: {}", reservationId);
-                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a reservation by " +
-                            " reservation id: " + reservationId);
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY);
                 });
 
         Reservation newReservation = validateUpdateRequest(roomId, updateReservation);
@@ -206,7 +197,7 @@ public class ReservationServiceImpl implements ReservationService{
                     if (!userType.equals(UserType.L)) {
                         log.error("userType이 Leader가 아닙니다.");
                         throw new WSApiException(ErrorCode.INVALID_REQUEST,
-                                "Reservation modification is possible only if the user is the leader.");
+                                "Reservation registration is possible only if the user is the leader.");
                     }
                 });
 
@@ -214,7 +205,7 @@ public class ReservationServiceImpl implements ReservationService{
 
         reservationRepository.findById(newReservation.getId()).ifPresent( r -> {
             log.error("Same reservationId is existing, can't make the reservation");
-            throw new WSApiException(ErrorCode.DUPLICATED_ENTITY, "The same reservation exists.");
+            throw new WSApiException(ErrorCode.DUPLICATED_ENTITY);
         });
         
         log.info("updateReservation newReservation: {}", newReservation);
@@ -228,7 +219,7 @@ public class ReservationServiceImpl implements ReservationService{
         userRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.error("user 대상이 없습니다. userId: {}", userId);
-                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by userId: " + userId);
+                    throw new WSApiException(ErrorCode.NOT_FOUND_USER);
                 });
         // 해당 register 인지 validate
         reservationRepository.findById(reservationId)

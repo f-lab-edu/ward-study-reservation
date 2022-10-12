@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public LoginDto getByEmailAndPassword(String email, String password) {
         User user = userRepository.findByEmailAndPassword(email, password)
-                .orElseThrow(() -> new WSApiException(ErrorCode.USER_NOT_FOUND, "cant' not found User"));
+                .orElseThrow(() -> new WSApiException(ErrorCode.NOT_FOUND_USER, "cant' not found User"));
         log.info("getByEmailAndPassword user : {}", user);
 
         return LoginDto.mapToDto(user);
