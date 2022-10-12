@@ -19,9 +19,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public LoginDto signUp(SignUpRequest signUpDto) {
-        User user = mapToEntity(signUpDto);
+        User user = SignUpRequest.mapToEntity(signUpDto);
         log.info("signUp user : {}", user);
-        return mapToDto(userRepository.save(user));
+        return LoginDto.mapToDto(userRepository.save(user));
 
     }
 
@@ -31,24 +31,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new WSApiException(ErrorCode.USER_NOT_FOUND, "cant' not found User"));
         log.info("getByEmailAndPassword user : {}", user);
 
-        return mapToDto(user);
+        return LoginDto.mapToDto(user);
     }
 
-    private LoginDto mapToDto(User user) {
-        return LoginDto.builder()
-                .id(user.getId())
-                .email(user.getEmail())
-                .name(user.getName())
-                .password(user.getPassword())
-                .build();
-    }
-
-    private User mapToEntity(SignUpRequest signUpDto) {
-        return User.builder()
-                .name(signUpDto.getName())
-                .email(signUpDto.getEmail())
-                .nickname(signUpDto.getNickname())
-                .password(signUpDto.getPassword())
-                .build();
-    }
 }
