@@ -24,11 +24,11 @@ public class StudyGroupController {
 
     // 스터디그룹 등록(리더만)
     @PostMapping("/users/{userId}/study-group")
-    public ResponseEntity<StudyGroupResponse> create(
+    public ResponseEntity<StudyGroupResponse> register(
             @PathVariable("userId") Long userId,
             @RequestBody StudyGroupRequest studyGroupRequest) {
-        log.info("studyGroup create, userId: {}, studyGroupRequest: {}", userId, studyGroupRequest);
-        return new ResponseEntity<>(studyGroupService.create(userId, studyGroupRequest), HttpStatus.CREATED);
+        log.info("studyGroup register, userId: {}, studyGroupRequest: {}", userId, studyGroupRequest);
+        return new ResponseEntity<>(studyGroupService.register(userId, studyGroupRequest), HttpStatus.CREATED);
     }
 
     // 스터디그룹 상세보기

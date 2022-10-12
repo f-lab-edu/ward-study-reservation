@@ -85,7 +85,7 @@ class StudyGroupServiceTest {
                 .build();
 
         reservation = Reservation.builder()
-                .id("1||2019-11-03 06:30:00")
+//                .id("1||2019-11-03 06:30:00")
                 .user(user)
                 .studyGroup(studyGroup)
                 .build();
@@ -108,7 +108,7 @@ class StudyGroupServiceTest {
                 .content(studyGroup.getContent())
                 .build();
         // when - action or the behaviour that we are going test
-        StudyGroupResponse studyGroupResponse = studyGroupService.create(user.getId(), studyGroupRequest);
+        StudyGroupResponse studyGroupResponse = studyGroupService.register(user.getId(), studyGroupRequest);
         log.info("studyGroupResponse: {}", studyGroupResponse);
 
         // then - verify the output

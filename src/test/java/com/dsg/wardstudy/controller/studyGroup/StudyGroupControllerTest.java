@@ -88,7 +88,7 @@ class StudyGroupControllerTest {
                 .content(userGroup.getStudyGroup().getContent())
                 .build();
 
-        given(studyGroupService.create(anyLong(), any(StudyGroupRequest.class)))
+        given(studyGroupService.register(anyLong(), any(StudyGroupRequest.class)))
                 .willReturn(studyGroupResponse);
 
         // when - action or the behaviour that we are going test

@@ -1,8 +1,7 @@
 package com.dsg.wardstudy.controller.reservation;
 
-import com.dsg.wardstudy.dto.reservation.ReservationCreateRequest;
+import com.dsg.wardstudy.dto.reservation.ReservationCommand;
 import com.dsg.wardstudy.dto.reservation.ReservationDetails;
-import com.dsg.wardstudy.dto.reservation.ReservationUpdateRequest;
 import com.dsg.wardstudy.service.reservation.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,17 +21,17 @@ public class ReservationController {
     // 리더일때만 예약 등록, 수정 가능
     // 예약 등록
     @PostMapping("/study-group/{studyGroupId}/room/{roomId}/reservation")
-    public ResponseEntity<ReservationDetails> create(
+    public ResponseEntity<ReservationDetails> register(
             @PathVariable("studyGroupId") Long studyGroupId,
             @PathVariable("roomId") Long roomId,
-            @RequestBody ReservationCreateRequest reservationCreateRequest) throws Exception {
-        log.info("reservation create, studyGroupId: {}, roomId: {}, request: {}",
+            @RequestBody ReservationCommand.RegisterReservation registerReservation) throws Exception {
+        log.info("reservation register, studyGroupId: {}, roomId: {}, request: {}",
                 studyGroupId,
                 roomId,
-                reservationCreateRequest);
+                registerReservation);
 
-        return new ResponseEntity<>(reservationService.create(
-                studyGroupId, roomId, reservationCreateRequest), HttpStatus.CREATED);
+        return new ResponseEntity<>(reservationService.register(
+                studyGroupId, roomId, registerReservation), HttpStatus.CREATED);
     }
 
     // 등록한 예약 상세 보기
@@ -77,9 +76,9 @@ public class ReservationController {
     public String updateById(
             @PathVariable("roomId") Long roomId,
             @PathVariable("reservationId") String reservationId,
-            @RequestBody ReservationUpdateRequest reservationRequest) {
+            @RequestBody ReservationCommand.UpdateReservation updateReservation) {
         log.info("reservation updateById, roomId: {}, reservationId: {}", roomId, reservationId);
-        return reservationService.updateById(roomId, reservationId, reservationRequest);
+        return reservationService.updateById(roomId, reservationId, updateReservation);
     }
 
     // 예약 삭제

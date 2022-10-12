@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface StudyGroupService {
 
-    StudyGroupResponse create(Long userId, StudyGroupRequest studyGroupRequest);
+    StudyGroupResponse register(Long userId, StudyGroupRequest studyGroupRequest);
 
     StudyGroupResponse getById(Long studyGroupId);
 

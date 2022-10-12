@@ -46,7 +46,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     @Transactional
     @Override
-    public StudyGroupResponse create(Long userId, StudyGroupRequest studyGroupRequest) {
+    public StudyGroupResponse register(Long userId, StudyGroupRequest studyGroupRequest) {
 
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> {
