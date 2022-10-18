@@ -1,8 +1,8 @@
 package com.dsg.wardstudy.config.batch;
 
 
-import com.dsg.wardstudy.common.adapter.MailMessageGenerator;
-import com.dsg.wardstudy.common.adapter.MailSendService;
+import com.dsg.wardstudy.common.adapter.mail.MailMessageGenerator;
+import com.dsg.wardstudy.common.adapter.mail.MailSendService;
 import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.reservation.dto.NotificationAlarmDto;
