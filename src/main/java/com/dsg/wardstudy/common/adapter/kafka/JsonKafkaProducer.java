@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.common.adapter.kafka;
 
-import com.dsg.wardstudy.domain.reservation.dto.ReservationDetails;
+import com.dsg.wardstudy.domain.reservation.Reservation;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +20,13 @@ public class JsonKafkaProducer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonKafkaProducer.class);
 
-    private final KafkaTemplate<String, ReservationDetails> kafkaTemplate;
+    private final KafkaTemplate<String, Reservation> kafkaTemplate;
 
-    public void sendMessage(ReservationDetails data){
+    public void sendMessage(Reservation data){
 
         LOGGER.info(String.format("Message sent -> %s", data.toString()));
 
-        Message<ReservationDetails> message = MessageBuilder
+        Message<Reservation> message = MessageBuilder
                 .withPayload(data)
                 .setHeader(KafkaHeaders.TOPIC, topicJsonName)
                 .build();

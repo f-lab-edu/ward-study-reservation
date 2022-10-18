@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.common.adapter.kafka;
 
-import com.dsg.wardstudy.domain.reservation.dto.ReservationDetails;
+import com.dsg.wardstudy.domain.reservation.Reservation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,8 +16,9 @@ public class JsonMessageController {
     private final JsonKafkaProducer kafkaProducer;
 
     @PostMapping("/publish")
-    public ResponseEntity<String> publish(@RequestBody ReservationDetails details){
-        kafkaProducer.sendMessage(details);
+    public ResponseEntity<String> publish(@RequestBody Reservation reservation){
+
+        kafkaProducer.sendMessage(reservation);
         return ResponseEntity.ok("Json message sent to kafka topic");
     }
 }
