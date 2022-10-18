@@ -1,5 +1,6 @@
 package com.dsg.wardstudy.domain.reservation.service;
 
+import com.dsg.wardstudy.common.adapter.kafka.JsonKafkaProducer;
 import com.dsg.wardstudy.common.exception.ErrorCode;
 import com.dsg.wardstudy.common.exception.WSApiException;
 import com.dsg.wardstudy.common.utils.TimeParsingUtils;
@@ -40,6 +41,7 @@ public class ReservationServiceImpl implements ReservationService{
     private final UserGroupRepository userGroupRepository;
     private final ReservationRepository reservationRepository;
     private final RoomRepository roomRepository;
+    private final JsonKafkaProducer jsonKafkaProducer;
 
     @CacheEvict(key = "#roomId", value = RESERVATION_LIST, cacheManager = "redisCacheManager")
     @Transactional
@@ -49,7 +51,12 @@ public class ReservationServiceImpl implements ReservationService{
 
         Reservation reservation = validateCreateRequest(studyGroupId, roomId, registerReservation);
         Reservation saveReservation = reservationRepository.save(reservation);
-        return ReservationDetails.mapToDto(saveReservation);
+        ReservationDetails reservationDetails = ReservationDetails.mapToDto(saveReservation);
+
+        // kafka 메시징 publish
+        jsonKafkaProducer.sendMessage(saveReservation);
+
+        return reservationDetails;
 
     }
 
