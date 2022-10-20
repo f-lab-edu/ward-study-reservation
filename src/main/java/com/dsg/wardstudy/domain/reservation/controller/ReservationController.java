@@ -4,14 +4,14 @@ import com.dsg.wardstudy.domain.reservation.dto.ReservationCommand;
 import com.dsg.wardstudy.domain.reservation.dto.ReservationDetails;
 import com.dsg.wardstudy.domain.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
+@Log4j2
 @RestController
 @RequiredArgsConstructor
 public class ReservationController {

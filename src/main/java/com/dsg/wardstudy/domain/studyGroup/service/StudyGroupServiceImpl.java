@@ -1,14 +1,14 @@
 package com.dsg.wardstudy.domain.studyGroup.service;
 
+import com.dsg.wardstudy.common.exception.ErrorCode;
+import com.dsg.wardstudy.common.exception.WSApiException;
 import com.dsg.wardstudy.domain.studyGroup.QStudyGroup;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
-import com.dsg.wardstudy.domain.user.User;
-import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.domain.studyGroup.dto.PageResponse;
 import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupRequest;
 import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupResponse;
-import com.dsg.wardstudy.common.exception.ErrorCode;
-import com.dsg.wardstudy.common.exception.WSApiException;
+import com.dsg.wardstudy.domain.user.User;
+import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.repository.reservation.ReservationQueryRepository;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
@@ -18,7 +18,7 @@ import com.dsg.wardstudy.type.UserType;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 import static com.dsg.wardstudy.config.redis.RedisCacheKey.STUDY_GROUP_LIST;
 
-@Slf4j
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class StudyGroupServiceImpl implements StudyGroupService {

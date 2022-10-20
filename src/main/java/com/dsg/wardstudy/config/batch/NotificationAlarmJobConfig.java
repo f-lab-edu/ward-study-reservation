@@ -4,14 +4,14 @@ package com.dsg.wardstudy.config.batch;
 import com.dsg.wardstudy.common.adapter.mail.MailMessageGenerator;
 import com.dsg.wardstudy.common.adapter.mail.MailSendService;
 import com.dsg.wardstudy.domain.reservation.Reservation;
-import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.reservation.dto.NotificationAlarmDto;
+import com.dsg.wardstudy.domain.reservation.service.ReservationService;
+import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.repository.reservation.ReservationQueryRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
-import com.dsg.wardstudy.domain.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.*;
@@ -28,7 +28,7 @@ import org.springframework.data.domain.Sort;
 import java.util.Collections;
 import java.util.List;
 
-@Slf4j
+@Log4j2
 @Configuration
 @EnableBatchProcessing
 @RequiredArgsConstructor

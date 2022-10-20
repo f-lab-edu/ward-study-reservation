@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+
+    <!-- 해당 설정파일에서 사용하는 프로퍼티-->
+    <Properties>
+        <property name="LOGS_PATH">C:\\WebStudy\\f-lab\\ward-study-reservation\\log</property>
+    </Properties>
+
+    <Appenders>
+        <!-- 콘솔 -->
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss}:%-3relative] %-5level %logger{35} - %msg%n" />
+        </Console>
+
+        <!-- 파일 -->
+        <RollingFile name ="RollingFile">
+            <FileName>${LOGS_PATH}/log4j2_ward-study.log</FileName>
+            <FilePattern>${LOGS_PATH}/log4j2.%d{yyyy-MM-dd}.%i.log.gz</FilePattern>
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss} %5p [%c] %m%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <SizeBasedTriggeringPolicy size="100MB"/>
+                <TimeBasedTriggeringPolicy interval = "1" modulate = "true"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- Application Loggers -->
+        <!-- Root 보다 우선 순위가 높습니다. -->
+        <logger name="com.test.api.controller" level="INFO" additivity="false">
+            <AppenderRef ref="console" />
+            <AppenderRef ref="RollingFile" />
+        </logger>
+
+        <logger name="com.test.api.service" level="INFO" additivity="false">
+            <AppenderRef ref="console" />
+            <AppenderRef ref="RollingFile" />
+        </logger>
+
+        <!-- FATAL, ERROR, WARN, INFO, DEBUG, TRACE -->
+        <Root level="INFO">
+            <AppenderRef ref="console" />
+            <AppenderRef ref="RollingFile" />
+        </Root>
+    </Loggers>
+</Configuration>

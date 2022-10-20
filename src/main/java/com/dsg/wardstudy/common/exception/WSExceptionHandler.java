@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.common.exception;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,7 @@ import java.util.Optional;
 import static com.dsg.wardstudy.common.exception.ErrorHttpStatusMapper.mapToStatus;
 
 
-@Slf4j
+@Log4j2
 @ControllerAdvice
 public class WSExceptionHandler extends ResponseEntityExceptionHandler {
 
