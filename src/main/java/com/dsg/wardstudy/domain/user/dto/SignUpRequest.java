@@ -4,7 +4,7 @@ import com.dsg.wardstudy.domain.user.User;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.validator.constraints.Range;
+import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -14,13 +14,14 @@ import javax.validation.constraints.NotBlank;
 public class SignUpRequest {
 
     @NotBlank
-    @Range(min = 2, max = 12, message = "이름은 2글자 이상 12글자 이하여야 합니다.")
+    @Length(min = 2, max = 12, message = "이름은 2글자 이상 12글자 이하여야 합니다.")
     private String name;
+
     @Email
     private String email;
 
     @NotBlank
-    @Range(min = 2, max = 16, message = "이름은 2글자 이상 16글자 이하여야 합니다.")
+    @Length(min = 2, max = 16, message = "닉네임은 2글자 이상 16글자 이하여야 합니다.")
     private String nickname;
 
     @NotBlank
