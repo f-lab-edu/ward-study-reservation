@@ -22,6 +22,5 @@ public class LoginServiceImpl implements LoginService{
     @Override
     public void logoutUser() {
         session.removeAttribute(USER_ID);
-
     }
 }

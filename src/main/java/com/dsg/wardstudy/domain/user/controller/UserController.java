@@ -40,4 +40,11 @@ public class UserController {
 
         return ResponseEntity.ok("login success!");
     }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> login() {
+        loginService.logoutUser();
+
+        return ResponseEntity.ok("logout success!");
+    }
 }
