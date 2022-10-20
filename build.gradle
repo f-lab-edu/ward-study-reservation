@@ -21,6 +21,10 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    all {
+        // 기존 logback과 충돌 방지
+        exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+    }
 }
 
 repositories {
@@ -73,6 +77,16 @@ dependencies {
 
     // Swagger
     implementation 'io.springfox:springfox-boot-starter:3.0.0'
+
+    // log4j2
+//    implementation 'org.springframework.boot:spring-boot-starter-log4j2'
+    // 추가 - log4j2 취약 발견 업데이트
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-api', version: '2.15.0'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.15.0'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-jul', version: '2.15.0'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.15.0'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.32'
+    implementation group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.32'
 
 }
 

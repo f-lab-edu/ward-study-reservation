@@ -1,16 +1,16 @@
 package com.dsg.wardstudy.domain.user.service;
 
+import com.dsg.wardstudy.common.exception.ErrorCode;
+import com.dsg.wardstudy.common.exception.WSApiException;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.dto.LoginDto;
 import com.dsg.wardstudy.domain.user.dto.SignUpRequest;
-import com.dsg.wardstudy.common.exception.ErrorCode;
-import com.dsg.wardstudy.common.exception.WSApiException;
 import com.dsg.wardstudy.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-@Slf4j
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {

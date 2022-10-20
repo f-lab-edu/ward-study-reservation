@@ -1,7 +1,7 @@
 package com.dsg.wardstudy.common.adapter.mail;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import javax.mail.internet.MimeMessage;
 
-@Slf4j
+@Log4j2
 @Component
 @RequiredArgsConstructor
 public class MailSendService {
