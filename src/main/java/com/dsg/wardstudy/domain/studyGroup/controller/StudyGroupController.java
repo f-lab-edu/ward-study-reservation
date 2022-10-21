@@ -5,7 +5,7 @@ import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupRequest;
 import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupResponse;
 import com.dsg.wardstudy.domain.studyGroup.service.StudyGroupService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Slf4j
+@Log4j2
 @RestController
 @RequiredArgsConstructor
 public class StudyGroupController {
@@ -40,7 +40,7 @@ public class StudyGroupController {
 
     // 스터디그룹 전체조회
     @GetMapping("/study-group")
-    public ResponseEntity<PageResponse.StudyGroup> getAllPage(
+    public ResponseEntity<PageResponse.StudyGroupDetail> getAllPage(
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "keyword", required = false) String keyword

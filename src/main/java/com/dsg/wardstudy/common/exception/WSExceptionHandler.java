@@ -1,6 +1,7 @@
 package com.dsg.wardstudy.common.exception;
 
-import lombok.extern.slf4j.Slf4j;
+import com.dsg.wardstudy.common.utils.TimeParsingUtils;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,7 @@ import java.util.Optional;
 import static com.dsg.wardstudy.common.exception.ErrorHttpStatusMapper.mapToStatus;
 
 
-@Slf4j
+@Log4j2
 @ControllerAdvice
 public class WSExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -31,7 +32,7 @@ public class WSExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("WSApiException: ", exception);
 
         ErrorDetails errorDetails = ErrorDetails.builder()
-                .date(LocalDateTime.now())
+                .date(TimeParsingUtils.formatterString(LocalDateTime.now()))
                 .message(exception.getMessage())
                 .description(request.getDescription(false))
                 .errorCode(exception.getErrorCode())
@@ -50,7 +51,7 @@ public class WSExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("MethodArgumentNotValidException: ", ex);
 
         ErrorDetails errorDetails = ErrorDetails.builder()
-                .date(LocalDateTime.now())
+                .date(TimeParsingUtils.formatterString(LocalDateTime.now()))
                 .message(Optional.ofNullable(ex.getBindingResult()
                                 .getFieldError())
                         .map(DefaultMessageSourceResolvable::getDefaultMessage)
@@ -59,7 +60,7 @@ public class WSExceptionHandler extends ResponseEntityExceptionHandler {
                 .errorCode(ErrorCode.INVALID_REQUEST)
                 .build();
 
-        log.info("errorDetails: {}", errorDetails);
+        log.error("errorDetails: {}", errorDetails);
         return new ResponseEntity<>(errorDetails, mapToStatus(errorDetails.getErrorCode()));
 
     }

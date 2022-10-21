@@ -18,7 +18,7 @@ import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
 import com.dsg.wardstudy.type.UserType;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 import static com.dsg.wardstudy.config.redis.RedisCacheKey.RESERVATION_LIST;
 
 
-@Slf4j
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class ReservationServiceImpl implements ReservationService{

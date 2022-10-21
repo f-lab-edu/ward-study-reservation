@@ -1,14 +1,14 @@
 package com.dsg.wardstudy.domain.studyGroup.service;
 
+import com.dsg.wardstudy.common.exception.ErrorCode;
+import com.dsg.wardstudy.common.exception.WSApiException;
 import com.dsg.wardstudy.domain.studyGroup.QStudyGroup;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
-import com.dsg.wardstudy.domain.user.User;
-import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.domain.studyGroup.dto.PageResponse;
 import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupRequest;
 import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupResponse;
-import com.dsg.wardstudy.common.exception.ErrorCode;
-import com.dsg.wardstudy.common.exception.WSApiException;
+import com.dsg.wardstudy.domain.user.User;
+import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.repository.reservation.ReservationQueryRepository;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
@@ -18,7 +18,7 @@ import com.dsg.wardstudy.type.UserType;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 
 import static com.dsg.wardstudy.config.redis.RedisCacheKey.STUDY_GROUP_LIST;
 
-@Slf4j
+@Log4j2
 @Service
 @RequiredArgsConstructor
 public class StudyGroupServiceImpl implements StudyGroupService {
@@ -86,49 +86,35 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     @Transactional(readOnly = true)
     @Override
-    public PageResponse.StudyGroup getAll(Pageable pageable, String type, String keyword) {
+    public PageResponse.StudyGroupDetail getAll(Pageable pageable, String type, String keyword) {
         // 검색조건
         BooleanBuilder booleanBuilder = getSearch(type, keyword);
         log.info("booleanBuilder getSearch: {}", booleanBuilder);
 
         Page<StudyGroupResponse> studyGroupResponsePage = studyGroupRepository.findAll(booleanBuilder, pageable)
                 .map(StudyGroupResponse::mapToDto);
-        return PageResponse.StudyGroup.builder()
-                .content(studyGroupResponsePage.getContent())
-                .pageNo(pageable.getPageNumber())
-                .pageSize(pageable.getPageSize())
-                .totalElements(studyGroupResponsePage.getTotalElements())
-                .totalPages(studyGroupResponsePage.getTotalPages())
-                .last(studyGroupResponsePage.isLast())
-                .build();
+        return PageResponse.of(pageable, studyGroupResponsePage);
     }
 
     private BooleanBuilder getSearch(String type, String keyword) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-
         QStudyGroup qStudyGroup = QStudyGroup.studyGroup;
-
         BooleanExpression booleanExpression = qStudyGroup.id.gt(0L);
-
         booleanBuilder.and(booleanExpression);
 
         // 검색 조건이 없는 경우
         if (!StringUtils.hasText(type)) {
             return booleanBuilder;
         }
-
         BooleanBuilder conditionBuilder = new BooleanBuilder();
-
         if(type.contains("t")) {
             conditionBuilder.or(qStudyGroup.title.contains(keyword));
         }
         if(type.contains("c")) {
             conditionBuilder.or(qStudyGroup.content.contains(keyword));
         }
-
         // 모든 조건 통합
         booleanBuilder.and(conditionBuilder);
-
         return booleanBuilder;
     }
 
