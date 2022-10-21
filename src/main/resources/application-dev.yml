@@ -25,11 +25,12 @@ spring:
     store-type: redis
 
   redis:
-    host: localhost
-    session:
-      port: 6379  # port 바꿀 것 6378
     cache:
+      host: localhost
       port: 6379
+    session:
+      host: localhost
+      port: 6380
 
   kafka:
     topic:

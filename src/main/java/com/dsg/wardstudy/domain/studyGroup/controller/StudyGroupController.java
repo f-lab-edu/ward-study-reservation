@@ -40,7 +40,7 @@ public class StudyGroupController {
 
     // 스터디그룹 전체조회
     @GetMapping("/study-group")
-    public ResponseEntity<PageResponse.StudyGroup> getAllPage(
+    public ResponseEntity<PageResponse.StudyGroupDetail> getAllPage(
             @PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.DESC) Pageable pageable,
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "keyword", required = false) String keyword

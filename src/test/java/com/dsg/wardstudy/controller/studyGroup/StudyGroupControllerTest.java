@@ -138,7 +138,7 @@ class StudyGroupControllerTest {
         }
 
         given(studyGroupService.getAll(pageable, type, keyword))
-                .willReturn(PageResponse.StudyGroup.builder()
+                .willReturn(PageResponse.StudyGroupDetail.builder()
                         .content(studyGroupResponses)
                         .pageNo(pageable.getPageNumber())
                         .pageSize(pageable.getPageSize())
