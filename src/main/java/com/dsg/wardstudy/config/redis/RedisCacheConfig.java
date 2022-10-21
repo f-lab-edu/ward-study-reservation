@@ -1,5 +1,6 @@
 package com.dsg.wardstudy.config.redis;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -9,67 +10,41 @@ import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
-import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 
 import java.time.Duration;
 
 @Configuration
 @EnableCaching
-@EnableRedisHttpSession(maxInactiveIntervalInSeconds = 60) /* 세션 만료 시간 : 60초 */
-public class RedisConfig {
+public class RedisCacheConfig {
 
-    @Value("${spring.redis.host}")
-    private String redisHost;
-
-    @Value("${spring.redis.session.port}")
-    private int redisSessionPort;
+    @Value("${spring.redis.cache.host}")
+    private String redisCacheHost;
 
     @Value("${spring.redis.cache.port}")
     private int redisCachePort;
 
-    // Creating Connection with Redis session
-    @Bean({"redisConnectionFactory", "redisSessionConnectionFactory"})
-    public RedisConnectionFactory redisConnectionFactory() {
-        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-        redisStandaloneConfiguration.setHostName(redisHost);
-        redisStandaloneConfiguration.setPort(redisSessionPort);
-
-        return new LettuceConnectionFactory(redisStandaloneConfiguration);
-    }
 
     // Creating Connection with Redis cache
     @Bean(name = "redisCacheConnectionFactory")
-    public RedisConnectionFactory redisCacheConnectionFactory() {
+    public RedisConnectionFactory redisConnectionFactory() {
 
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-        redisStandaloneConfiguration.setHostName(redisHost);
+        redisStandaloneConfiguration.setHostName(redisCacheHost);
         redisStandaloneConfiguration.setPort(redisCachePort);
 
         return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 
-    // Creating RedisTemplate for Entity 'StudyGroup', 'Reservation'
-    // StringRedisSerializer: binary 데이터로 저장되기 때문에 이를 String 으로 변환시켜주며(반대로도 가능) UTF-8 인코딩 방식을 사용
-    // GenericJackson2JsonRedisSerializer: 객체를 json 타입으로 직렬화/역직렬화를 수행
-    @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
-        return redisTemplate;
-    }
 
     /**
      * Redis Cache 설정
      * cache expire : 하루 (StudyGroupList, ReservationList)
      */
     @Bean
-    public RedisCacheManager redisCacheManager() {
+    public RedisCacheManager redisCacheManager(@Qualifier("redisCacheConnectionFactory") RedisConnectionFactory redisConnectionFactory) {
 
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration
                 .defaultCacheConfig()
@@ -83,7 +58,7 @@ public class RedisConfig {
 
         return RedisCacheManager
                 .RedisCacheManagerBuilder
-                .fromConnectionFactory(redisCacheConnectionFactory())
+                .fromConnectionFactory(redisConnectionFactory)
                 .cacheDefaults(redisCacheConfiguration)
                 .build();
     }
