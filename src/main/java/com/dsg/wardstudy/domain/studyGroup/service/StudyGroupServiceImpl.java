@@ -86,49 +86,35 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     @Transactional(readOnly = true)
     @Override
-    public PageResponse.StudyGroup getAll(Pageable pageable, String type, String keyword) {
+    public PageResponse.StudyGroupDetail getAll(Pageable pageable, String type, String keyword) {
         // 검색조건
         BooleanBuilder booleanBuilder = getSearch(type, keyword);
         log.info("booleanBuilder getSearch: {}", booleanBuilder);
 
         Page<StudyGroupResponse> studyGroupResponsePage = studyGroupRepository.findAll(booleanBuilder, pageable)
                 .map(StudyGroupResponse::mapToDto);
-        return PageResponse.StudyGroup.builder()
-                .content(studyGroupResponsePage.getContent())
-                .pageNo(pageable.getPageNumber())
-                .pageSize(pageable.getPageSize())
-                .totalElements(studyGroupResponsePage.getTotalElements())
-                .totalPages(studyGroupResponsePage.getTotalPages())
-                .last(studyGroupResponsePage.isLast())
-                .build();
+        return PageResponse.of(pageable, studyGroupResponsePage);
     }
 
     private BooleanBuilder getSearch(String type, String keyword) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-
         QStudyGroup qStudyGroup = QStudyGroup.studyGroup;
-
         BooleanExpression booleanExpression = qStudyGroup.id.gt(0L);
-
         booleanBuilder.and(booleanExpression);
 
         // 검색 조건이 없는 경우
         if (!StringUtils.hasText(type)) {
             return booleanBuilder;
         }
-
         BooleanBuilder conditionBuilder = new BooleanBuilder();
-
         if(type.contains("t")) {
             conditionBuilder.or(qStudyGroup.title.contains(keyword));
         }
         if(type.contains("c")) {
             conditionBuilder.or(qStudyGroup.content.contains(keyword));
         }
-
         // 모든 조건 통합
         booleanBuilder.and(conditionBuilder);
-
         return booleanBuilder;
     }
 

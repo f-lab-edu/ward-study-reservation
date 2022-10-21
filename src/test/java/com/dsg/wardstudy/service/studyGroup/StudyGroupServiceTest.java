@@ -181,7 +181,7 @@ class StudyGroupServiceTest {
         // when - action or the behaviour that we are going test
 
 
-        PageResponse.StudyGroup studyGroupPageResponses = studyGroupService.getAll(pageable, type, keyword);
+        PageResponse.StudyGroupDetail studyGroupPageResponses = studyGroupService.getAll(pageable, type, keyword);
         log.info("studyGroupPageResponses: {}", studyGroupPageResponses);
         // then - verify the output
         assertThat(studyGroupPageResponses).isNotNull();
@@ -219,7 +219,7 @@ class StudyGroupServiceTest {
         given(studyGroupRepository.findAll(conditionBuilder, pageable).getContent())
                 .willReturn(Collections.emptyList());
         // when - action or the behaviour that we are going test
-        PageResponse.StudyGroup studyGroupPageResponses = studyGroupService.getAll(pageable, type, keyword);
+        PageResponse.StudyGroupDetail studyGroupPageResponses = studyGroupService.getAll(pageable, type, keyword);
         log.info("studyGroupPageResponses: {}", studyGroupPageResponses);
         // then - verify the output
         assertThat(studyGroupPageResponses).isNull();

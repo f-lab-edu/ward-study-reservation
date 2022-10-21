@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "user_group")
-@ToString(of = {"id", "userType"})
+@ToString(of = {"id", "userType", "study_group_id", "user_id"})
 public class UserGroup extends BaseTimeEntity {
 
     @Id
