@@ -12,7 +12,8 @@ import java.util.List;
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString(of = {"id", "name", "nickname", "email", "password"})
+@Table(name = "users")
+@ToString(of = {"id", "name", "nickname", "email"})
 public class User extends BaseTimeEntity {
 
     @Id

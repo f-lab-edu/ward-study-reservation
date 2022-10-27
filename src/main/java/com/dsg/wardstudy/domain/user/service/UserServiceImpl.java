@@ -54,13 +54,14 @@ public class UserServiceImpl implements UserService {
         log.info("participate findById user : {}", participateUser);
 
         StudyGroup participateStudyGroup = studyGroupRepository.findById(studyGroupId)
-                .orElseThrow(() -> new WSApiException(ErrorCode.NO_FOUND_ENTITY));
+                .orElseThrow(() -> new WSApiException(ErrorCode.NO_FOUND_ENTITY, "studyGroup", studyGroupId));
         log.info("participate studyGroup : {}", participateStudyGroup);
 
         // 중복 등록 방지
         userGroupRepository.findByUserIdAndSGId(participateUser.getId(), participateStudyGroup.getId())
                 .ifPresent(ug -> {
-                    throw new WSApiException(ErrorCode.DUPLICATED_ENTITY, "duplicate UserGroup");
+                    throw new WSApiException(ErrorCode.DUPLICATED_ENTITY, "UserGroup participateUserId: " +
+                            participateUser.getId() + ", studyGroupId: " + participateStudyGroup.getId());
                 });
 
         // studyGroup 등록시 UserType P(참여자)로 등록
