@@ -3,7 +3,7 @@
 
     <!-- 해당 설정파일에서 사용하는 프로퍼티-->
     <Properties>
-        <property name="LOGS_PATH">C:\\WebStudy\\f-lab\\ward-study-reservation\\log</property>
+        <property name="LOGS_PATH">C:\\test_logs</property>
     </Properties>
 
     <Appenders>
