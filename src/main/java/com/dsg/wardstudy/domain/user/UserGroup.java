@@ -29,6 +29,7 @@ public class UserGroup extends BaseTimeEntity {
 
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "user_type")
     private UserType userType;
 
     @Builder
