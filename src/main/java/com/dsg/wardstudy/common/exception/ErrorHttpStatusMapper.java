@@ -9,6 +9,7 @@ public abstract class ErrorHttpStatusMapper {
             case NO_FOUND_ENTITY:
                 return HttpStatus.NOT_FOUND;
             case DUPLICATED_ENTITY:
+                return HttpStatus.CONFLICT;
             case INVALID_REQUEST:
                 return HttpStatus.BAD_REQUEST;
             case NOT_FOUND_USER:

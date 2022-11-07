@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @ToString(of = {"id", "startTime", "endTime", "isEmailSent"})
+@Table(name = "reservation")
 public class Reservation extends BaseTimeEntity {
 
     @Id
@@ -21,9 +22,11 @@ public class Reservation extends BaseTimeEntity {
     private String id;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "start_time")
     private LocalDateTime startTime;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "end_time")
     private LocalDateTime endTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,6 +41,7 @@ public class Reservation extends BaseTimeEntity {
     @JoinColumn(name = "room_id")
     private Room room;
 
+    @Column(name = "is_email_sent")
     private boolean isEmailSent;
 
     @Builder

@@ -86,7 +86,7 @@ public class ReservationServiceImpl implements ReservationService{
         // 중복 reservation 체크
         reservationRepository.findByIdLock(reservation.getId()).ifPresent( r -> {
             log.error("Same reservationId is existing, can't make the reservation");
-            throw new WSApiException(ErrorCode.DUPLICATED_ENTITY);
+            throw new WSApiException(ErrorCode.DUPLICATED_ENTITY, "reservation", reservation.getId());
         });
 
         return reservation;
@@ -214,7 +214,7 @@ public class ReservationServiceImpl implements ReservationService{
 
         reservationRepository.findById(newReservation.getId()).ifPresent( r -> {
             log.error("Same reservationId is existing, can't make the reservation");
-            throw new WSApiException(ErrorCode.DUPLICATED_ENTITY);
+            throw new WSApiException(ErrorCode.DUPLICATED_ENTITY, "reservation", newReservation.getId());
         });
         
         log.info("updateReservation newReservation: {}", newReservation);
