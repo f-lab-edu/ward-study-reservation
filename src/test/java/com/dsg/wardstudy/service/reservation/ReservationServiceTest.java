@@ -90,7 +90,7 @@ class ReservationServiceTest {
                 .build();
 
         reservation = Reservation.builder()
-//                .id("1||2019-11-03 06:30:00")
+                .id(room.getId() +"||" + LocalDateTime.of(2019, Month.NOVEMBER, 3, 6, 30))
                 .user(user)
                 .studyGroup(studyGroup)
                 .room(room)
@@ -99,6 +99,7 @@ class ReservationServiceTest {
                 .build();
     }
 
+    // TODO: NPE
     @Test
     void givenReservation_whenSave_thenReturnReservationDetails() {
         // given - precondition or setup
@@ -132,8 +133,8 @@ class ReservationServiceTest {
 
         // then - verify the output
         assertThat(details).isNotNull();
-        assertThat(details.getStartTime()).isEqualTo(reservation.getStartTime());
-        assertThat(details.getEndTime()).isEqualTo(reservation.getEndTime());
+        assertThat(details.getStartTime()).isEqualTo(TimeParsingUtils.formatterString(reservation.getStartTime()));
+        assertThat(details.getEndTime()).isEqualTo(TimeParsingUtils.formatterString(reservation.getEndTime()));
     }
 
     @Test
@@ -158,7 +159,6 @@ class ReservationServiceTest {
 
     }
 
-    // 해당 유저
     @Test
     void givenUserId_whenGetAllById_thenReturnReservationDetailsList() {
         // getAllByUserId
@@ -181,53 +181,60 @@ class ReservationServiceTest {
 
     }
 
+    // TODO: NPE
     @Test
     void givenRoomIdAndTimePeriod_whenGetAllById_thenReturnReservationDetailsList() {
         // getByRoomIdAndTimePeriod
         // given - precondition or setup
-        LocalDateTime startTime = LocalDateTime.of(2019, Month.OCTOBER, 3, 5, 30);
-        LocalDateTime endTime = LocalDateTime.of(2019, Month.OCTOBER, 3, 9, 30);
+        LocalDateTime sTime = LocalDateTime.of(2019, Month.OCTOBER, 3, 5, 30);
+        LocalDateTime eTime = LocalDateTime.of(2019, Month.OCTOBER, 3, 9, 30);
 
         Reservation reservation1 = Reservation.builder()
-//                .id("1||2019-10-03 08:30:00")
+                .id(room.getId() + "||" + TimeParsingUtils.formatterString(sTime))
                 .room(room)
                 .user(user)
-                .startTime(LocalDateTime.of(2019, Month.OCTOBER, 3, 8, 30))
+                .startTime(LocalDateTime.of(2019, Month.OCTOBER, 3, 5, 30))
                 .endTime(LocalDateTime.of(2019, Month.OCTOBER, 3, 9, 30))
                 .build();
 
         given(roomRepository.findById(room.getId()))
                 .willReturn(Optional.of(room));
 
-        String sTime = TimeParsingUtils.formatterString(startTime);
-        String eTime = TimeParsingUtils.formatterString(endTime);
+        String startTime = TimeParsingUtils.formatterString(sTime);
+        String endTime = TimeParsingUtils.formatterString(eTime);
 
         // parsing 작업 추가 String -> LocalDateTime
-        LocalDateTime parsingSTime = TimeParsingUtils.formatterLocalDateTime(sTime);
-        LocalDateTime parsingETime = TimeParsingUtils.formatterLocalDateTime(eTime);
+        LocalDateTime parsingSTime = TimeParsingUtils.formatterLocalDateTime(startTime);
+        LocalDateTime parsingETime = TimeParsingUtils.formatterLocalDateTime(endTime);
 
         given(reservationRepository.findByRoomIdAndTimePeriod(room.getId(), parsingSTime, parsingETime))
                 .willReturn(List.of(reservation, reservation1));
         // when - action or the behaviour that we are going test
-        List<ReservationDetails> detailsList = reservationService.getByRoomIdAndTimePeriod(room.getId(), sTime, eTime);
+        List<ReservationDetails> detailsList = reservationService.getByRoomIdAndTimePeriod(room.getId(), startTime, endTime);
         log.info("detailsList: {}", detailsList);
 
         // then - verify the output
         assertThat(detailsList).isNotNull();
-        assertThat(detailsList.size()).isEqualTo(2);
+        assertThat(detailsList.size()).isEqualTo(1);
     }
 
+    // TODO: NPE
     @Test
     void givenRoomId_whenGetAllById_thenReturnReservationDetailsList() {
         // getByRoomId
         // given - precondition or setup
+
+        LocalDateTime sTime = LocalDateTime.of(2019, Month.OCTOBER, 3, 5, 30);
+        LocalDateTime eTime = LocalDateTime.of(2019, Month.OCTOBER, 3, 9, 30);
+
         Reservation reservation1 = Reservation.builder()
-//                .id("1||2019-10-03 06:30:00")
+                .id(room.getId() + "||" + TimeParsingUtils.formatterString(sTime))
                 .room(room)
                 .user(user)
-                .startTime(LocalDateTime.of(2019, Month.OCTOBER, 3, 6, 30))
-                .endTime(LocalDateTime.of(2019, Month.OCTOBER, 3, 7, 30))
+                .startTime(LocalDateTime.of(2019, Month.OCTOBER, 3, 5, 30))
+                .endTime(LocalDateTime.of(2019, Month.OCTOBER, 3, 9, 30))
                 .build();
+
         given(roomRepository.findById(room.getId()))
                 .willReturn(Optional.of(room));
         given(reservationRepository.findByRoomId(room.getId()))
@@ -257,8 +264,8 @@ class ReservationServiceTest {
         // then - verify the output
         assertThat(details).isNotNull();
         assertThat(details.getId()).isEqualTo(reservation.getId());
-        assertThat(details.getStartTime()).isEqualTo(reservation.getStartTime());
-        assertThat(details.getEndTime()).isEqualTo(reservation.getEndTime());
+        assertThat(details.getStartTime()).isEqualTo(TimeParsingUtils.formatterString(reservation.getStartTime()));
+        assertThat(details.getEndTime()).isEqualTo(TimeParsingUtils.formatterString(reservation.getEndTime()));
     }
 
     @Test

@@ -211,9 +211,7 @@ class ReservationRepositoryTest {
     @Test
     public void givenReservation_whenDelete_thenRemoveReservation() {
         // given - precondition or setup
-        Reservation reservation = getReservation();
-
-        Reservation savedReservation = reservationRepository.save(reservation);
+        Reservation savedReservation = getReservation();
 
         // when - action or the behaviour that we are going test
         Reservation findReservation = reservationRepository.findById(savedReservation.getId()).get();
