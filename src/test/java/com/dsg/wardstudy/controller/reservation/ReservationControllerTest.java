@@ -13,6 +13,7 @@ import com.dsg.wardstudy.common.exception.WSApiException;
 import com.dsg.wardstudy.domain.reservation.service.ReservationService;
 import com.dsg.wardstudy.type.UserType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@Slf4j
 @WebMvcTest(ReservationController.class)
 class ReservationControllerTest {
 
@@ -80,7 +82,7 @@ class ReservationControllerTest {
                 .build();
 
         reservation = Reservation.builder()
-//                .id("1||2019-11-03 06:30:00")
+                .id(room.getId() +"||" + LocalDateTime.of(2019, Month.NOVEMBER, 3, 6, 30))
                 .user(user)
                 .studyGroup(studyGroup)
                 .room(room)
@@ -89,6 +91,7 @@ class ReservationControllerTest {
                 .build();
     }
 
+    // TODO: No value at JSON path "$.startTime", $.endTime Response 값이 빈값
     @Test
     @DisplayName("예약 등록")
     void givenReservationCreateRequestAndSGIdAndRoomId_whenCreate_thenReturnReservationDetails() throws Exception {
@@ -96,6 +99,7 @@ class ReservationControllerTest {
         // LocalDateTime -> String 으로 변환
         String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         String eTime = reservation.getEndTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        log.info("sTime: {}, eTime: {}", sTime, eTime);
 
         createRequest = ReservationCommand.RegisterReservation.builder()
                 .userId(user.getId())
@@ -111,6 +115,8 @@ class ReservationControllerTest {
                 .roomId(room.getId())
                 .build();
 
+        log.info("reservationDetails: {}", reservationDetails);
+
         given(reservationService.register(studyGroup.getId(), room.getId(), createRequest))
                 .willReturn(reservationDetails);
 
@@ -122,7 +128,8 @@ class ReservationControllerTest {
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.startTime", is(sTime)))
-                .andExpect(jsonPath("$.endTime", is(eTime)));
+                .andExpect(jsonPath("$.endTime", is(eTime)))
+                .andReturn().getResponse().getContentAsString();
 
     }
 
@@ -143,6 +150,7 @@ class ReservationControllerTest {
                 .studyGroupId(studyGroup.getId())
                 .roomId(room.getId())
                 .build();
+
         given(reservationService.getByRoomIdAndReservationId(room.getId(), reservation.getId()))
                 .willReturn(reservationDetails);
 
@@ -289,7 +297,7 @@ class ReservationControllerTest {
         // given - precondition or setup
         String updateSTime = LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30)
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        String updateETime = LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30)
+        String updateETime = LocalDateTime.of(2022, Month.NOVEMBER, 3, 8, 30)
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         updateRequest = ReservationCommand.UpdateReservation.builder()
