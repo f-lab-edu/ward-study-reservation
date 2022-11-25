@@ -15,9 +15,18 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-  redis:
+
+  redis-cache:
+    image: redis:latest
+    container_name: redis-cache
+    #    hostname: redis-cache
+    command: redis-server --port 6379
+    ports:
+      - "6379:6379"
+  redis-session:
     image: redis:latest
     container_name: redis-session
-#    command: redis-server --port 6380
+    #    hostname: redis-session
+    command: redis-server --port 6380
     ports:
-      - "6380:6379"
+      - "6380:6380"
