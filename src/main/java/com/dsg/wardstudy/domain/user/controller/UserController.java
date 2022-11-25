@@ -1,8 +1,8 @@
 package com.dsg.wardstudy.domain.user.controller;
 
+import com.dsg.wardstudy.config.auth.AuthUser;
 import com.dsg.wardstudy.domain.user.UserGroup;
-import com.dsg.wardstudy.domain.user.dto.LoginDto;
-import com.dsg.wardstudy.domain.user.dto.SignUpRequest;
+import com.dsg.wardstudy.domain.user.dto.*;
 import com.dsg.wardstudy.domain.user.service.LoginService;
 import com.dsg.wardstudy.domain.user.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 @Log4j2
@@ -23,37 +24,41 @@ public class UserController {
 
     // 회원가입(register)
     @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody SignUpRequest signUpDto) {
-
+    public ResponseEntity<?> signup(
+            @Valid @RequestBody SignUpRequest signUpDto,
+            HttpSession session
+    ) {
         log.info("users signup, signUpDto: {}", signUpDto);
-        LoginDto loginDto = userService.signUp(signUpDto);
-        return new ResponseEntity<>(loginDto, HttpStatus.CREATED);
+        SignUpResponse signUpResponse = loginService.signUp(signUpDto, session);
+
+        return new ResponseEntity<>(signUpResponse, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginDto loginDto) {
-        LoginDto findUserDto = userService.getByEmailAndPassword(loginDto.getEmail(), loginDto.getPassword());
-
-        loginService.loginUser(findUserDto.getId());
+    public ResponseEntity<?> login(
+            @RequestBody LoginDto loginDto,
+            HttpSession session
+    ) {
+        loginService.loginUser(loginDto, session);
 
         return ResponseEntity.ok("login success!");
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> login() {
-        loginService.logoutUser();
-
+    public ResponseEntity<?> login(HttpSession session) {
+        loginService.logoutUser(session);
         return ResponseEntity.ok("logout success!");
     }
 
     // 일반유저가 스터디그룹에 참여
-    @PostMapping("/{userId}/studyGroup/{studyGroupId}")
+    @PostMapping("/studyGroup/{studyGroupId}")
     public ResponseEntity<?> participate(
-            @PathVariable("userId") Long userId,
-            @PathVariable("studyGroupId") Long studyGroupId
-    ) {
-        log.info("users participate studyGroup, studyGroupId: {}, userId: {}", studyGroupId, userId);
-        UserGroup participateUG = userService.participate(userId, studyGroupId);
+            @PathVariable("studyGroupId") Long studyGroupId,
+            @AuthUser UserInfo userInfo
+            ) {
+        log.info("users participate studyGroup, " +
+                "studyGroupId: {}, userInfo: {}", studyGroupId, userInfo);
+        UserGroup participateUG = userService.participate(studyGroupId, userInfo);
         log.info("participateUG: {}", participateUG);
 
         return ResponseEntity.ok(participateUG);
