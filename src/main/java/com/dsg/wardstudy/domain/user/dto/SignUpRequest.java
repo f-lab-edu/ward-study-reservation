@@ -1,6 +1,5 @@
 package com.dsg.wardstudy.domain.user.dto;
 
-import com.dsg.wardstudy.domain.user.User;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,12 +35,4 @@ public class SignUpRequest {
         this.password = password;
     }
 
-    public static User mapToEntity(SignUpRequest signUpDto) {
-        return User.builder()
-                .name(signUpDto.getName())
-                .email(signUpDto.getEmail())
-                .nickname(signUpDto.getNickname())
-                .password(signUpDto.getPassword())
-                .build();
-    }
 }

@@ -2,12 +2,16 @@ package com.dsg.wardstudy.domain.user;
 
 import com.dsg.wardstudy.domain.BaseTimeEntity;
 import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.user.dto.LoginDto;
+import com.dsg.wardstudy.domain.user.dto.SignUpRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.dsg.wardstudy.common.utils.Encryptor.*;
 
 @Getter
 @Entity
@@ -41,5 +45,23 @@ public class User extends BaseTimeEntity {
         this.nickname = nickname;
         this.email = email;
         this.password = password;
+    }
+
+    public static User of(LoginDto loginDto) {
+        return User.builder()
+                .id(loginDto.getId())
+                .email(loginDto.getEmail())
+                .name(loginDto.getName())
+                .password(loginDto.getPassword())
+                .build();
+    }
+
+    public static User of(SignUpRequest signUpRequest) {
+        return User.builder()
+                .email(signUpRequest.getEmail())
+                .name(signUpRequest.getName())
+                .nickname(signUpRequest.getNickname())
+                .password(encrypt(signUpRequest.getPassword()))
+                .build();
     }
 }
