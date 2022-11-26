@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpSession;
+import java.util.Optional;
 
 @Log4j2
 @Service
@@ -43,15 +44,14 @@ public class LoginServiceImpl implements LoginService{
     }
 
     @Override
-    @Transactional
     public void loginUser(LoginDto loginDto) {
-        // 세션 값이 있으면 리턴
-        // 없으면 비밀번호 체크 후 로그인
-        final Long userId = (Long) httpSession.getAttribute(USER_ID);
-        if (userId != null) {
+        // 세션 값(다른 사람의 세션, 원래 없어야 함!)체크, 있으면 리턴
+        if (this.isLoginUser()) {
             return;
         }
+        // 없으면 비밀번호 체크 후 로그인
         LoginDto findLoginDto = userService.getByEmailAndPassword(loginDto.getEmail(), loginDto.getPassword());
+        log.info("loginUser findLoginDto: {}", findLoginDto);
         if (findLoginDto != null) {
             httpSession.setAttribute(USER_ID, findLoginDto.getId());
         } else {
@@ -63,13 +63,26 @@ public class LoginServiceImpl implements LoginService{
     public void logoutUser() {
         // 세션 제거
         httpSession.removeAttribute(USER_ID);
+        log.info("session 제거");
+    }
+
+    /**
+     * 로그인 확인 여부
+     * @return 확인여부 boolean
+     */
+    @Override
+    public boolean isLoginUser() {
+        Long userId = (Long) httpSession.getAttribute(USER_ID);
+        log.info("isLoginUser, userId: {}", userId);
+        return userId != null;
     }
 
     @Override
-    public boolean isLoginUser() {
-
-        Long userId = (Long) httpSession.getAttribute(USER_ID);
-
-        return userId != null;
+    public Long getUserId() {
+        Long userId = Optional.ofNullable(httpSession.getAttribute(USER_ID))
+                .map(i -> (Long) i)
+                .orElseThrow(() -> new WSApiException(ErrorCode.NOT_FOUND_USER));
+        log.info("loginService getUserId userId: {}", userId);
+        return userId;
     }
 }

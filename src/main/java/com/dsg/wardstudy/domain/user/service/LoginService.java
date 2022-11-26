@@ -14,4 +14,6 @@ public interface LoginService {
 
     boolean isLoginUser();
 
+    Long getUserId();
+
 }
