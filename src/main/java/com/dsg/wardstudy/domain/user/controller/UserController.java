@@ -25,28 +25,26 @@ public class UserController {
     // 회원가입(register)
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
-            @Valid @RequestBody SignUpRequest signUpDto,
-            HttpSession session
+            @Valid @RequestBody SignUpRequest signUpDto
     ) {
         log.info("users signup, signUpDto: {}", signUpDto);
-        SignUpResponse signUpResponse = loginService.signUp(signUpDto, session);
+        SignUpResponse signUpResponse = loginService.signUp(signUpDto);
 
         return new ResponseEntity<>(signUpResponse, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(
-            @RequestBody LoginDto loginDto,
-            HttpSession session
+            @RequestBody LoginDto loginDto
     ) {
-        loginService.loginUser(loginDto, session);
+        loginService.loginUser(loginDto);
 
         return ResponseEntity.ok("login success!");
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> login(HttpSession session) {
-        loginService.logoutUser(session);
+    public ResponseEntity<?> login() {
+        loginService.logoutUser();
         return ResponseEntity.ok("logout success!");
     }
 

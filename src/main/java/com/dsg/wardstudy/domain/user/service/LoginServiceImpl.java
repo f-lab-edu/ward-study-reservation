@@ -20,12 +20,13 @@ import javax.servlet.http.HttpSession;
 public class LoginServiceImpl implements LoginService{
 
     private static final String USER_ID = "USER_ID";
+    public final HttpSession httpSession;
     private final UserRepository userRepository;
     private final UserService userService;
 
     @Override
     @Transactional
-    public SignUpResponse signUp(SignUpRequest signUpRequest, HttpSession session) {
+    public SignUpResponse signUp(SignUpRequest signUpRequest) {
 
         // user 중복 체크
         userRepository.findByEmail(signUpRequest.getEmail())
@@ -34,8 +35,8 @@ public class LoginServiceImpl implements LoginService{
                 });
         UserInfo userInfo = userService.create(signUpRequest);
         log.info("signUp userInfo : {}", userInfo);
-        // session에 담고 리턴
-        session.setAttribute(USER_ID, userInfo.getId());
+        // httpSession 에 담고 리턴
+        httpSession.setAttribute(USER_ID, userInfo.getId());
         // password 암호화하고 저장
         return SignUpResponse.mapToDto(userInfo);
 
@@ -43,24 +44,32 @@ public class LoginServiceImpl implements LoginService{
 
     @Override
     @Transactional
-    public void loginUser(LoginDto loginDto, HttpSession session) {
+    public void loginUser(LoginDto loginDto) {
         // 세션 값이 있으면 리턴
         // 없으면 비밀번호 체크 후 로그인
-        final Long userId = (Long) session.getAttribute(USER_ID);
+        final Long userId = (Long) httpSession.getAttribute(USER_ID);
         if (userId != null) {
             return;
         }
         LoginDto findLoginDto = userService.getByEmailAndPassword(loginDto.getEmail(), loginDto.getPassword());
         if (findLoginDto != null) {
-            session.setAttribute(USER_ID, findLoginDto.getId());
+            httpSession.setAttribute(USER_ID, findLoginDto.getId());
         } else {
             throw new WSApiException(ErrorCode.NOT_FOUND_USER);
         }
     }
 
     @Override
-    public void logoutUser(HttpSession session) {
+    public void logoutUser() {
         // 세션 제거
-        session.removeAttribute(USER_ID);
+        httpSession.removeAttribute(USER_ID);
+    }
+
+    @Override
+    public boolean isLoginUser() {
+
+        Long userId = (Long) httpSession.getAttribute(USER_ID);
+
+        return userId != null;
     }
 }
