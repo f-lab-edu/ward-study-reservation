@@ -13,11 +13,9 @@ import com.dsg.wardstudy.repository.user.UserRepository;
 import com.dsg.wardstudy.type.UserType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Log4j2
 @Service
 @RequiredArgsConstructor
@@ -38,13 +36,23 @@ public class UserServiceImpl implements UserService {
         return UserInfo.mapToDto(savedUser);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public UserInfo getUser(Long userId) {
+
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new WSApiException(ErrorCode.NOT_FOUND_USER));
+        log.info("getById findUser: {}", findUser);
+        return UserInfo.mapToDto(findUser);
+    }
+
 
     @Override
     @Transactional(readOnly = true)
     public LoginDto getByEmailAndPassword(String email, String password) {
-        // 파라미터 password가 hash값이다.
+        // 파라미터 password가 origin
         User user = userRepository.findByEmail(email)
-                .map(u -> Encryptor.isMatch(u.getPassword(), password) ? u : null)
+                .map(u -> Encryptor.isMatch(password, u.getPassword()) ? u : null)
                 .orElseThrow(() -> new WSApiException(ErrorCode.NOT_FOUND_USER));
         log.info("getByEmailAndPassword user : {}", user);
 
@@ -53,8 +61,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public UserGroup participate(Long studyGroupId, UserInfo userInfo) {
-        User participateUser = userRepository.findById(userInfo.getId())
+    public void withdrawUser(Long userId) {
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new WSApiException(ErrorCode.NOT_FOUND_USER));
+        log.info("withdrawUser, findUser: {}", findUser);
+        findUser.withdrawUser(true);
+    }
+
+    @Override
+    @Transactional
+    public UserGroup participate(Long studyGroupId, Long userId) {
+        User participateUser = userRepository.findById(userId)
                 .orElseThrow(() -> new WSApiException(ErrorCode.NOT_FOUND_USER));
         log.info("participate findById user : {}", participateUser);
 
