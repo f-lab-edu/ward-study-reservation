@@ -9,8 +9,11 @@ public interface UserService {
 
     UserInfo create(SignUpRequest signUpRequest);
 
+    UserInfo getUser(Long userId);
+
     LoginDto getByEmailAndPassword(String email, String password);
 
-    UserGroup participate(Long studyGroupId, UserInfo userInfo);
+    UserGroup participate(Long studyGroupId, Long userId);
 
+    void withdrawUser(Long userId);
 }

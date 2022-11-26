@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import static com.dsg.wardstudy.common.utils.Encryptor.*;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
-@ToString(of = {"id", "name", "nickname", "email"})
+@ToString(of = {"id", "name", "nickname", "email", "isDeleted"})
 public class User extends BaseTimeEntity {
 
     @Id
@@ -29,6 +30,11 @@ public class User extends BaseTimeEntity {
     private String nickname;
     private String email;
     private String password;
+
+    @Column(name = "deleted", columnDefinition="bit default 0")
+    private boolean isDeleted;
+    @Column(name = "delete_date")
+    private LocalDateTime deleteDate;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
@@ -63,5 +69,10 @@ public class User extends BaseTimeEntity {
                 .nickname(signUpRequest.getNickname())
                 .password(encrypt(signUpRequest.getPassword()))
                 .build();
+    }
+
+    public void withdrawUser(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+        this.deleteDate = LocalDateTime.now();
     }
 }
