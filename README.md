@@ -71,7 +71,7 @@
 [Wiki Issues & Trouble shooting](https://github.com/f-lab-edu/ward-study-reservation/wiki/4.-Issues-&-Trouble-shooting)에서 확인할 수 있습니다!
 
 - [예약 시스템에서 동시성 제어와 더블부킹(중복요청)은 어떻게 막을까?](https://velog.io/@mooh2jj/예약-시스템에서-동시성-제어와-더블부킹중복요청은-어떻게-막을까)
-- [Cursor 기반 vs Paging 기반 ItemReader 정하기](https://velog.io/@mooh2jj/Cursor-기반-vs-Paging-기반-ItemReader-정하기)
+- [배치 시스템 Cursor 기반 vs Paging 기반 ItemReader 정하기](https://velog.io/@mooh2jj/Cursor-기반-vs-Paging-기반-ItemReader-정하기)
 - [Redis 캐싱적용해서 read 작업 성능 개선하기](https://velog.io/@mooh2jj/Redis-캐싱적용해서-read-작업-성능-개선하기)
 - [서버 분산 처리 환경에서 데이터의 불일치 문제- Redis에 session 저장하기](https://velog.io/@mooh2jj/서버-분산-처리-환경에서-데이터의-불일치-Redis에-session-저장하기)
 - [Spring ArgumentResolver 로 인증처리하기](https://velog.io/@mooh2jj/Spring-ArgumentResolver-로-인증처리하기)
