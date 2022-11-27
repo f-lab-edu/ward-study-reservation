@@ -75,6 +75,15 @@ public class ReservationServiceImpl implements ReservationService{
 
         ValidateFindByIdDto validateFindByIdDto = validateFindById(registerReservation.getUserId(), studyGroupId, roomId);
 
+        LocalDateTime startTime = TimeParsingUtils.formatterLocalDateTime(registerReservation.getStartTime());
+        LocalDateTime endTime = TimeParsingUtils.formatterLocalDateTime(registerReservation.getEndTime());
+
+        // 예약 중복되었는지 체크
+        List<Reservation> findReservations = reservationRepository.findByRoomIdAndTime(roomId, startTime, endTime);
+        if (findReservations != null) {
+            throw new WSApiException(ErrorCode.DUPLICATED_ENTITY, "이미 예약한 사람이 있습니다. 다시 예약을 해주세요.");
+        }
+
         UserType findUserType = userGroupRepository.findUserTypeByUserIdAndSGId(registerReservation.getUserId(), studyGroupId)
                 .orElseThrow(() -> new WSApiException(ErrorCode.NOT_FOUND_USER, "studyGroup 등록자가 아닙니다."));
 
