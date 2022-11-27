@@ -47,7 +47,7 @@
 - Java11
 - SpringBoot2.6
 - Gradle7.4
-- Mysql8.0 / Redis
+- MySQL8.0 / Redis
 - JPA / QueryDsl
 - JUnit5
 - Spring Batch
@@ -62,8 +62,7 @@
 
 
 ## 🎡 서버 구조도
-- 업데이트예정
-![image](https://user-images.githubusercontent.com/62453668/170675065-eb83f7d8-5759-49c4-89fe-ba315283c003.png)
+![image](https://user-images.githubusercontent.com/62453668/204127443-2711dec2-7fd4-495d-9649-1d48fad6bc2b.png)
 
 <br>
 
