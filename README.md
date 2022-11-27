@@ -111,8 +111,7 @@
 <br>
 
 ## 🎨 클라이언트 화면
-- 업데이트예정
-![image](https://user-images.githubusercontent.com/62453668/169858412-601105f0-edd9-4966-b751-e95851d4a926.png)
+![image](https://user-images.githubusercontent.com/62453668/204130495-55216181-3106-4f9f-9af1-65c4a7ba8403.png)
 
 
 
