@@ -151,7 +151,6 @@ class ReservationRepositoryIntegrationTest {
             userGroup.setStudyGroup(savedStudyGroup);
             userGroupRepository.save(userGroup);
             Reservation reservation = Reservation.builder()
-                    .id(room.getId() + "||" + TimeParsingUtils.formatterString(sTime))
                     .user(savedUser)
                     .startTime(sTime)
                     .endTime(eTime)
@@ -174,12 +173,12 @@ class ReservationRepositoryIntegrationTest {
     }
 
     @Test
-    public void givenRoomIdAndReservationId_whenFindById_thenReturnReservation() {
+    public void givenRoomIdAndReservationToken_whenFindById_thenReturnReservation() {
         // given - precondition or setup
         Reservation savedReservation = getReservation();
 
         // when - action or the behaviour that we are going test
-        Reservation findReservation = reservationRepository.findByRoomIdAndId(this.room.getId(), savedReservation.getId()).get();
+        Reservation findReservation = reservationRepository.findByRoomIdAndToken(this.room.getId(), savedReservation.getReservationToken()).get();
         log.info("findReservation: {}", findReservation);
 
         // then - verify the output
@@ -188,7 +187,7 @@ class ReservationRepositoryIntegrationTest {
     }
 
     @Test
-    public void givenReservation_whenUpdate_thenReturnUpdatedReservationId() {
+    public void givenReservation_whenUpdate_thenReturnUpdatedReservationToken() {
         // given - precondition or setup
         Reservation savedReservation = getReservation();
         Reservation oldReservation = reservationRepository.findById(savedReservation.getId()).get();
@@ -231,7 +230,6 @@ class ReservationRepositoryIntegrationTest {
         LocalDateTime eTime = LocalDateTime.parse(endTime, formatter);
 
         Reservation reservation = Reservation.builder()
-                .id(room.getId() + "||" + TimeParsingUtils.formatterString(sTime))
                 .user(savedUser)
                 .startTime(sTime)
                 .endTime(eTime)
@@ -263,7 +261,6 @@ class ReservationRepositoryIntegrationTest {
             userGroup.setStudyGroup(savedStudyGroup);
             userGroupRepository.save(userGroup);
             Reservation reservation = Reservation.builder()
-                    .id(room.getId() + "||" + TimeParsingUtils.formatterString(sTime))
                     .user(savedUser)
                     .startTime(sTime)
                     .endTime(eTime)

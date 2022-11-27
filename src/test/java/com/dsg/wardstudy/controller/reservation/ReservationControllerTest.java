@@ -1,5 +1,6 @@
 package com.dsg.wardstudy.controller.reservation;
 
+import com.dsg.wardstudy.common.auth.AuthUserResolver;
 import com.dsg.wardstudy.domain.reservation.Reservation;
 import com.dsg.wardstudy.domain.reservation.Room;
 import com.dsg.wardstudy.domain.reservation.controller.ReservationController;
@@ -20,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -39,6 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Slf4j
+@Import(AuthUserResolver.class)
 @WebMvcTest(ReservationController.class)
 class ReservationControllerTest {
 
@@ -82,7 +85,6 @@ class ReservationControllerTest {
                 .build();
 
         reservation = Reservation.builder()
-                .id(room.getId() +"||" + LocalDateTime.of(2019, Month.NOVEMBER, 3, 6, 30))
                 .user(user)
                 .studyGroup(studyGroup)
                 .room(room)
@@ -136,7 +138,7 @@ class ReservationControllerTest {
 
     @Test
     @DisplayName("등록한 예약 상세 보기")
-    void givenRoomIdAndReservationId_whenGet_thenReturnReservationDetails() throws Exception {
+    void givenRoomIdAndReservationToken_whenGet_thenReturnReservationDetails() throws Exception {
         // getByIds
         // given - precondition or setup
         // LocalDateTime -> String 으로 변환
@@ -151,12 +153,12 @@ class ReservationControllerTest {
                 .roomId(room.getId())
                 .build();
 
-        given(reservationService.getByRoomIdAndReservationId(room.getId(), reservation.getId()))
+        given(reservationService.getByRoomIdAndReservationToken(room.getId(), reservation.getReservationToken()))
                 .willReturn(reservationDetails);
 
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(get("/room/{roomId}/reservation/{reservationId}", room.getId(), reservation.getId()))
+        mockMvc.perform(get("/room/{roomId}/reservation/{reservationToken}", room.getId(), reservation.getReservationToken()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.startTime", is(sTime)))
@@ -293,7 +295,7 @@ class ReservationControllerTest {
 
     @Test
     @DisplayName("예약 수정")
-    void givenReservationUpdateRequest_whenUpdate_thenReturnUpdatedReservationId() throws Exception {
+    void givenReservationUpdateRequest_whenUpdate_thenReturnUpdatedReservationToken() throws Exception {
         // given - precondition or setup
         String updateSTime = LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30)
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -307,12 +309,12 @@ class ReservationControllerTest {
                 .endTime(updateETime)
                 .build();
 
-        given(reservationService.updateById(room.getId(), reservation.getId(), updateRequest))
-                .willReturn(reservation.getId());
+        given(reservationService.updateByToken(room.getId(), reservation.getReservationToken(), updateRequest))
+                .willReturn(reservation.getReservationToken());
 
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(put("/room/{roomId}/reservation/{reservationId}", room.getId(), reservation.getId())
+        mockMvc.perform(put("/room/{roomId}/reservation/{reservationToken}", room.getId(), reservation.getReservationToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andDo(print())
@@ -323,13 +325,13 @@ class ReservationControllerTest {
 
     @Test
     @DisplayName("예약 삭제")
-    void givenReservationId_whenDelete_thenReturn200() throws Exception {
+    void givenReservationToken_whenDelete_thenReturn200() throws Exception {
         // given - precondition or setup
-        willDoNothing().given(reservationService).deleteById(user.getId(), reservation.getId());
+        willDoNothing().given(reservationService).deleteByToken(user.getId(), reservation.getReservationToken());
 
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(delete("/users/{userId}/reservation/{reservationId}",user.getId(), reservation.getId()))
+        mockMvc.perform(delete("/reservation/{reservationToken}",user.getId(), reservation.getReservationToken()))
                 .andDo(print())
                 .andExpect(status().isOk());
     }

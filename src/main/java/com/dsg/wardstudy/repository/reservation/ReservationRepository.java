@@ -13,11 +13,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface ReservationRepository extends JpaRepository<Reservation, String> {
+public interface ReservationRepository extends JpaRepository<Reservation, Long> {
+
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query("select r from Reservation r where r.id = :reservationId")
-    Optional<Reservation> findByIdLock(@Param("reservationId") String reservationId);
+    @Query("select r from Reservation r where r.reservationToken = :reservationToken")
+    Optional<Reservation> findByTokenLock(@Param("reservationToken") String reservationToken);
 
     Page<Reservation> findBy(Pageable pageable);
 
@@ -31,8 +32,8 @@ public interface ReservationRepository extends JpaRepository<Reservation, String
                                                 @Param("eTime") LocalDateTime eTime);
 
     @Query("select r from Reservation r left join fetch r.room where r.room.id = :roomId " +
-            "and r.id = :reservationId")
-    Optional<Reservation> findByRoomIdAndId(@Param("roomId") Long roomId, @Param("reservationId") String reservationId);
+            "and r.reservationToken = :reservationToken")
+    Optional<Reservation> findByRoomIdAndToken(@Param("roomId") Long roomId, @Param("reservationToken") String reservationToken);
 
     @Query("select r from Reservation r left join fetch r.studyGroup where r.studyGroup.id in :sgIds")
     List<Reservation> findByStudyGroupIds(@Param("sgIds") List<Long> sgIds);
