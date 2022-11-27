@@ -94,9 +94,9 @@ public class ReservationServiceImpl implements ReservationService{
         log.info("registerReservation: {}", reservation);
 
         // 중복 reservation 체크
-        reservationRepository.findByIdLock(reservation.getId()).ifPresent( r -> {
-            log.error("Same reservationId is existing, can't make the reservation");
-            throw new WSApiException(ErrorCode.DUPLICATED_ENTITY, "reservation", reservation.getId());
+        reservationRepository.findByTokenLock(reservation.getReservationToken()).ifPresent( r -> {
+            log.error("Same reservationToken is existing, can't make the reservation");
+            throw new WSApiException(ErrorCode.DUPLICATED_ENTITY, "reservationToken", reservation.getReservationToken());
         });
 
         return reservation;
@@ -197,10 +197,10 @@ public class ReservationServiceImpl implements ReservationService{
 
     @Transactional(readOnly = true)
     @Override
-    public ReservationDetails getByRoomIdAndReservationId(Long roomId, String reservationId) {
-        Reservation reservation = reservationRepository.findByRoomIdAndId(roomId, reservationId)
+    public ReservationDetails getByRoomIdAndReservationToken(Long roomId, String reservationToken) {
+        Reservation reservation = reservationRepository.findByRoomIdAndToken(roomId, reservationToken)
                 .orElseThrow(() -> {
-                    log.error("reservation 대상이 없습니다. roomId: {}, reservationId: {}", roomId, reservationId);
+                    log.error("reservation 대상이 없습니다. roomId: {}, reservationToken: {}", roomId, reservationToken);
                     throw new WSApiException(ErrorCode.NO_FOUND_ENTITY);
                 });
         return ReservationDetails.mapToDto(reservation);
@@ -208,30 +208,29 @@ public class ReservationServiceImpl implements ReservationService{
 
     @Transactional
     @Override
-    public String updateById(Long roomId, String reservationId, ReservationCommand.UpdateReservation updateReservation) {
+    public String updateByToken(Long roomId, String reservationToken, ReservationCommand.UpdateReservation updateReservation) {
         // update 로직 변경 : find old -> save new -> delete old
-        Reservation oldReservation = reservationRepository.findById(reservationId)
+        // ReservationToken 으로 식별한 이후로 update 로직 다시 setter 로직으로 변경
+        Reservation findReservation = reservationRepository.findByTokenLock(reservationToken)
                 .orElseThrow(() -> {
-                    log.error("reservation 대상이 없습니다. reservationId: {}", reservationId);
+                    log.error("reservation 대상이 없습니다. reservationToken: {}", reservationToken);
                     throw new WSApiException(ErrorCode.NO_FOUND_ENTITY);
                 });
 
-        Reservation newReservation = validateUpdateRequest(roomId, updateReservation);
-        Reservation updatedReservation = reservationRepository.save(newReservation);
-        reservationRepository.delete(oldReservation);
-
-        return updatedReservation.getId();
+        validateUpdateRequest(roomId, updateReservation);
+        findReservation.update(updateReservation);
+        String updatedReservationToken = findReservation.getReservationToken();
+        log.info("updatedReservationToken: {}", updatedReservationToken);
+        return updatedReservationToken;
     }
 
 
-    private Reservation validateUpdateRequest(Long roomId, ReservationCommand.UpdateReservation updateReservation) {
+    private void validateUpdateRequest(Long roomId, ReservationCommand.UpdateReservation updateReservation) {
 
         validateDiffTime(updateReservation.getStartTime(), updateReservation.getEndTime());
-
-        ValidateFindByIdDto validateFindByIdDto = validateFindById(updateReservation.getUserId(),
+        validateFindById(updateReservation.getUserId(),
                 updateReservation.getStudyGroupId(),
                 roomId);
-
         UserType findUserType = userGroupRepository.findUserTypeByUserIdAndSGId(updateReservation.getUserId(), updateReservation.getStudyGroupId())
                 .orElseThrow(() -> new WSApiException(ErrorCode.NOT_FOUND_USER, "studyGroup 등록자가 아닙니다."));
 
@@ -242,29 +241,18 @@ public class ReservationServiceImpl implements ReservationService{
                         "Reservation update is possible only if the user is the leader.");
             }
         });
-
-        Reservation newReservation = updateReservation.mapToEntity(validateFindByIdDto);
-
-        reservationRepository.findById(newReservation.getId()).ifPresent( r -> {
-            log.error("Same reservationId is existing, can't make the reservation");
-            throw new WSApiException(ErrorCode.DUPLICATED_ENTITY, "reservation", newReservation.getId());
-        });
-        
-        log.info("updateReservation newReservation: {}", newReservation);
-
-        return newReservation;
     }
 
     @Transactional
     @Override
-    public void deleteById(Long userId, String reservationId) {
+    public void deleteByToken(Long userId, String reservationToken) {
         userRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.error("user 대상이 없습니다. userId: {}", userId);
                     throw new WSApiException(ErrorCode.NOT_FOUND_USER);
                 });
         // 해당 register 인지 validate
-        reservationRepository.findById(reservationId)
+        reservationRepository.findByTokenLock(reservationToken)
                 .ifPresent(reservation -> {
                     log.info("해당 reservation register: {}", reservation.getUser().getId());
 
@@ -277,7 +265,7 @@ public class ReservationServiceImpl implements ReservationService{
                             throw new WSApiException(ErrorCode.INVALID_REQUEST,
                                     "Reservation update is possible only if the user is the leader.");
                         }
-                        reservationRepository.deleteById(reservationId);
+                        reservationRepository.deleteById(reservation.getId());
                     });
                 });
     }
