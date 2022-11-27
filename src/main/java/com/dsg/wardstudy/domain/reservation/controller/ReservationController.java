@@ -1,5 +1,6 @@
 package com.dsg.wardstudy.domain.reservation.controller;
 
+import com.dsg.wardstudy.config.auth.AuthUser;
 import com.dsg.wardstudy.domain.reservation.dto.ReservationCommand;
 import com.dsg.wardstudy.domain.reservation.dto.ReservationDetails;
 import com.dsg.wardstudy.domain.reservation.service.ReservationService;
@@ -24,11 +25,15 @@ public class ReservationController {
     public ResponseEntity<ReservationDetails> register(
             @PathVariable("studyGroupId") Long studyGroupId,
             @PathVariable("roomId") Long roomId,
-            @RequestBody ReservationCommand.RegisterReservation registerReservation) throws Exception {
+            @RequestBody ReservationCommand.RegisterReservation registerReservation,
+            @AuthUser Long userId
+    ) throws Exception {
         log.info("reservation register, studyGroupId: {}, roomId: {}, request: {}",
                 studyGroupId,
                 roomId,
                 registerReservation);
+        log.info("reservation register, userId: {}", userId);
+        registerReservation.setUserId(userId);
 
         return new ResponseEntity<>(reservationService.register(
                 studyGroupId, roomId, registerReservation), HttpStatus.CREATED);

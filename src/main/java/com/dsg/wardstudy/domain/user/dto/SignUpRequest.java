@@ -25,6 +25,8 @@ public class SignUpRequest {
     private String nickname;
 
     @NotBlank
+    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{4,15}$",
+            message= "비밀번호는 4글자 이상, 16글자 미만 그리고 영문/숫자/특수문자 포함이어야 합니다.")
     private String password;
 
     @Builder

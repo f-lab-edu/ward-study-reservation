@@ -28,7 +28,9 @@ public class User extends BaseTimeEntity {
 
     private String name;
     private String nickname;
+    @Column(length = 100, nullable = false, unique = true)
     private String email;
+    @Column(length = 200, nullable = false)
     private String password;
 
     @Column(name = "deleted", columnDefinition="bit default 0")

@@ -10,6 +10,7 @@ import lombok.*;
 public class ReservationCommand {
 
     @Getter
+    @Setter
     @ToString
     @NoArgsConstructor
     public static class RegisterReservation {
