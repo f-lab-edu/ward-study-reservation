@@ -66,7 +66,6 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 .build();
 
         UserGroup savedUserGroup = userGroupRepository.save(userGroup);
-
         return StudyGroupResponse.mapToDto(savedUserGroup);
     }
 

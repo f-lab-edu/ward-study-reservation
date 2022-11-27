@@ -1,5 +1,6 @@
 package com.dsg.wardstudy.domain.studyGroup.controller;
 
+import com.dsg.wardstudy.config.auth.AuthUser;
 import com.dsg.wardstudy.domain.studyGroup.dto.PageResponse;
 import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupRequest;
 import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupResponse;
@@ -22,12 +23,14 @@ public class StudyGroupController {
 
     private final StudyGroupService studyGroupService;
 
-    // 스터디그룹 등록(리더만)
-    @PostMapping("/users/{userId}/study-group")
+    // 스터디그룹 등록(등록한 유저는 자동 리더가 됨)
+    @PostMapping("/study-group")
     public ResponseEntity<StudyGroupResponse> register(
-            @PathVariable("userId") Long userId,
-            @RequestBody StudyGroupRequest studyGroupRequest) {
-        log.info("studyGroup register, userId: {}, studyGroupRequest: {}", userId, studyGroupRequest);
+            @RequestBody StudyGroupRequest studyGroupRequest,
+            @AuthUser Long userId
+    ) {
+        log.info("studyGroup register, studyGroupRequest: {}", studyGroupRequest);
+        log.info("studyGroup register, userId: {}", userId);
         return new ResponseEntity<>(studyGroupService.register(userId, studyGroupRequest), HttpStatus.CREATED);
     }
 
