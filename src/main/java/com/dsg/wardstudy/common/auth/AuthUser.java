@@ -1,4 +1,4 @@
-package com.dsg.wardstudy.config.auth;
+package com.dsg.wardstudy.common.auth;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
