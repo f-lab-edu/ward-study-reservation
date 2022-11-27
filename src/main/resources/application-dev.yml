@@ -89,3 +89,7 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug
+
+app:
+  firebase-configuration-file: ./file-storage-68596-firebase-adminsdk-5bv5f-260ab6cc65.json
+  firebase-bucket: file-storage-68596.appspot.com
