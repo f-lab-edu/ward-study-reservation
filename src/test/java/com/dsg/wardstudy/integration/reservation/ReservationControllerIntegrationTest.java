@@ -114,7 +114,7 @@ class ReservationControllerIntegrationTest {
 
     @Test
     @DisplayName("등록한 예약 상세 보기")
-    void givenRoomIdAndReservationId_whenGet_thenReturnReservationDetails() throws Exception {
+    void givenRoomIdAndReservationToken_whenGet_thenReturnReservationDetails() throws Exception {
         // given - precondition or setup
         // LocalDateTime -> String 으로 변환
         String sTime = reservation.getStartTime().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -124,7 +124,7 @@ class ReservationControllerIntegrationTest {
 
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(get("/room/{roomId}/reservation/{reservationId}", room.getId(), savedReservation.getId()))
+        mockMvc.perform(get("/room/{roomId}/reservation/{reservationToken}", room.getId(), savedReservation.getReservationToken()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.startTime", is(sTime)))
@@ -221,7 +221,7 @@ class ReservationControllerIntegrationTest {
 
     @Test
     @DisplayName("예약 수정")
-    void givenReservationUpdateRequest_whenUpdate_thenReturnUpdatedReservationId() throws Exception {
+    void givenReservationUpdateRequest_whenUpdate_thenReturnUpdatedReservationToken() throws Exception {
         // given - precondition or setup
         String updateSTime = LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30)
                 .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -236,7 +236,7 @@ class ReservationControllerIntegrationTest {
                 .build();
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(put("/room/{roomId}/reservation/{reservationId}", room.getId(), reservation.getId())
+        mockMvc.perform(put("/room/{roomId}/reservation/{reservationToken}", room.getId(), reservation.getReservationToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andDo(print())
@@ -247,13 +247,13 @@ class ReservationControllerIntegrationTest {
 
     @Test
     @DisplayName("예약 삭제")
-    void givenReservationId_whenDelete_thenReturn200() throws Exception {
+    void givenReservationToken_whenDelete_thenReturn200() throws Exception {
         // given - precondition or setup
         Reservation savedReservation = reservationRepository.save(reservation);
 
         // when - action or the behaviour that we are going test
         // then - verify the output
-        mockMvc.perform(delete("/reservation/{reservationId}", savedReservation.getId()))
+        mockMvc.perform(delete("/reservation/{reservationToken}", savedReservation.getReservationToken()))
                 .andDo(print())
                 .andExpect(status().isOk());
     }
