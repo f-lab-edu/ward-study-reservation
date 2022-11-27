@@ -1,4 +1,4 @@
-package com.dsg.wardstudy.config.auth;
+package com.dsg.wardstudy.common.auth;
 
 import com.dsg.wardstudy.domain.user.service.LoginService;
 import lombok.RequiredArgsConstructor;

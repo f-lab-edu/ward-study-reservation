@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.domain.user.controller;
 
-import com.dsg.wardstudy.config.auth.AuthUser;
+import com.dsg.wardstudy.common.auth.AuthUser;
 import com.dsg.wardstudy.domain.user.UserGroup;
 import com.dsg.wardstudy.domain.user.dto.LoginDto;
 import com.dsg.wardstudy.domain.user.dto.SignUpRequest;
