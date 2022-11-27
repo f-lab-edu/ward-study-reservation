@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.domain.reservation.controller;
 
-import com.dsg.wardstudy.config.auth.AuthUser;
+import com.dsg.wardstudy.common.auth.AuthUser;
 import com.dsg.wardstudy.domain.reservation.dto.ReservationCommand;
 import com.dsg.wardstudy.domain.reservation.dto.ReservationDetails;
 import com.dsg.wardstudy.domain.reservation.service.ReservationService;

@@ -2,6 +2,7 @@ package com.dsg.wardstudy.domain.studyGroup.service;
 
 import com.dsg.wardstudy.common.exception.ErrorCode;
 import com.dsg.wardstudy.common.exception.WSApiException;
+import com.dsg.wardstudy.domain.attach.Attach;
 import com.dsg.wardstudy.domain.studyGroup.QStudyGroup;
 import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
 import com.dsg.wardstudy.domain.studyGroup.dto.PageResponse;
@@ -9,6 +10,7 @@ import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupRequest;
 import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupResponse;
 import com.dsg.wardstudy.domain.user.User;
 import com.dsg.wardstudy.domain.user.UserGroup;
+import com.dsg.wardstudy.repository.attach.AttachRepository;
 import com.dsg.wardstudy.repository.reservation.ReservationQueryRepository;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
@@ -44,6 +46,8 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     private final ReservationRepository reservationRepository;
     private final ReservationQueryRepository reservationQueryRepository;
 
+    private final AttachRepository attachRepository;
+
     @Transactional
     @Override
     public StudyGroupResponse register(Long userId, StudyGroupRequest studyGroupRequest) {
@@ -64,8 +68,15 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 .user(findUser)
                 .userType(UserType.LEADER)
                 .build();
-
         UserGroup savedUserGroup = userGroupRepository.save(userGroup);
+
+        // 파일 첨부 있을시
+        if (studyGroupRequest.getAttachDTOS() != null && studyGroupRequest.getAttachDTOS().size() != 0) {
+            studyGroupRequest.getAttachDTOS().forEach(attachDTO -> {
+                attachRepository.save(Attach.of(attachDTO, savedStudyGroup));
+            });
+        }
+
         return StudyGroupResponse.mapToDto(savedUserGroup);
     }
 
@@ -124,8 +135,18 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
         StudyGroup studyGroup = validateStudyGroup(userId, studyGroupId);
 
+        // 파일첨부시
+        attachRepository.deleteAllByStudyGroupId(studyGroup.getId());
+
         studyGroup.update(studyGroupRequest.getTitle(), studyGroupRequest.getContent());
         log.info("studyGroup: {}", studyGroup);
+
+        // 게시판 수정 후 attach insert 가능하게 처리
+        if (studyGroupRequest.getAttachDTOS() != null && studyGroupRequest.getAttachDTOS().size() != 0) {
+            studyGroupRequest.getAttachDTOS().forEach(attachDTO -> {
+                attachRepository.save(Attach.of(attachDTO, studyGroup));
+            });
+        }
 
         return studyGroup.getId();
 

@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.config.web;
 
-import com.dsg.wardstudy.config.auth.AuthUserResolver;
+import com.dsg.wardstudy.common.auth.AuthUserResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

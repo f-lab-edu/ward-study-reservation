@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.domain.studyGroup.controller;
 
-import com.dsg.wardstudy.config.auth.AuthUser;
+import com.dsg.wardstudy.common.auth.AuthUser;
 import com.dsg.wardstudy.domain.studyGroup.dto.PageResponse;
 import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupRequest;
 import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupResponse;
