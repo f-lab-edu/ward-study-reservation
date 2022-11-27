@@ -47,7 +47,7 @@
 - Java11
 - SpringBoot2.6
 - Gradle7.4
-- Mysql8.0 / Redis
+- MySQL8.0 / Redis
 - JPA / QueryDsl
 - JUnit5
 - Spring Batch
@@ -60,15 +60,23 @@
 ## 🔗 CI/CD 구조도
 ![image](https://user-images.githubusercontent.com/62453668/164407464-9df1d184-da84-4e4f-b533-2aad2a5b3757.png)
 
+<br>
 
 ## 🎡 서버 구조도
-- 업데이트예정
-![image](https://user-images.githubusercontent.com/62453668/170675065-eb83f7d8-5759-49c4-89fe-ba315283c003.png)
+![image](https://user-images.githubusercontent.com/62453668/204127443-2711dec2-7fd4-495d-9649-1d48fad6bc2b.png)
 
 <br>
 
 ## 👁‍🗨 이슈 정리
 [Wiki Issues & Trouble shooting](https://github.com/f-lab-edu/ward-study-reservation/wiki/4.-Issues-&-Trouble-shooting)에서 확인할 수 있습니다!
+
+- [예약 시스템에서 동시성 제어와 더블부킹(중복요청)은 어떻게 막을까?](https://velog.io/@mooh2jj/예약-시스템에서-동시성-제어와-더블부킹중복요청은-어떻게-막을까)
+- [배치 시스템 Cursor 기반 vs Paging 기반 ItemReader 정하기](https://velog.io/@mooh2jj/Cursor-기반-vs-Paging-기반-ItemReader-정하기)
+- [Redis 캐싱적용해서 read 작업 성능 개선하기](https://velog.io/@mooh2jj/Redis-캐싱적용해서-read-작업-성능-개선하기)
+- [서버 분산 처리 환경에서 데이터의 불일치 문제- Redis에 session 저장하기](https://velog.io/@mooh2jj/서버-분산-처리-환경에서-데이터의-불일치-Redis에-session-저장하기)
+- [Spring ArgumentResolver 로 인증처리하기](https://velog.io/@mooh2jj/Spring-ArgumentResolver-로-인증처리하기)
+
+등등 ...
 
 <br>
 
@@ -107,13 +115,12 @@
 <br>
 
 ## 🎞 ER 다이어그램
-![image](https://user-images.githubusercontent.com/62453668/171175253-e60b8fe9-fd80-409a-8469-7028ee14b7ec.png)
+![image](https://user-images.githubusercontent.com/62453668/204138573-da57c4a1-c66f-4826-bc01-a39610c6c2da.png)
 
 <br>
 
 ## 🎨 클라이언트 화면
-- 업데이트예정
-![image](https://user-images.githubusercontent.com/62453668/169858412-601105f0-edd9-4966-b751-e95851d4a926.png)
+![image](https://user-images.githubusercontent.com/62453668/204130495-55216181-3106-4f9f-9af1-65c4a7ba8403.png)
 
 
 

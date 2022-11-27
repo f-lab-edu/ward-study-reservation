@@ -1,23 +1,32 @@
 version: '2'
 services:
-  zookeeper:
-    image: wurstmeister/zookeeper
-    container_name: zookeeper
+#  zookeeper:
+#    image: wurstmeister/zookeeper
+#    container_name: zookeeper
+#    ports:
+#      - "2181:2181"
+#  kafka:
+#    image: wurstmeister/kafka:2.12-2.5.0
+#    container_name: kafka
+#    ports:
+#      - "9092:9092"
+#    environment:
+#      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
+
+  redis-cache:
+    image: redis:latest
+    container_name: redis-cache
+    #    hostname: redis-cache
+    command: redis-server --port 6379
     ports:
-      - "2181:2181"
-  kafka:
-    image: wurstmeister/kafka:2.12-2.5.0
-    container_name: kafka
-    ports:
-      - "9092:9092"
-    environment:
-      KAFKA_ADVERTISED_HOST_NAME: 127.0.0.1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-  redis:
+      - "6379:6379"
+  redis-session:
     image: redis:latest
     container_name: redis-session
-#    command: redis-server --port 6380
+    #    hostname: redis-session
+    command: redis-server --port 6380
     ports:
-      - "6380:6379"
+      - "6380:6380"

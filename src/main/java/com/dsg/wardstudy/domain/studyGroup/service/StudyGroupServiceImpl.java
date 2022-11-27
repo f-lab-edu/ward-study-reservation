@@ -66,7 +66,6 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 .build();
 
         UserGroup savedUserGroup = userGroupRepository.save(userGroup);
-
         return StudyGroupResponse.mapToDto(savedUserGroup);
     }
 
@@ -160,7 +159,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         List<UserGroup> userGroups = userGroupRepository.findByUserId(findUser.getId());
 
         List<Long> studyGroupsIds = userGroups.stream()
-                .map(d -> d.getStudyGroup().getId())
+                .map(ug -> ug.getStudyGroup().getId())
                 .collect(Collectors.toList());
 
         List<StudyGroup> studyGroups = studyGroupRepository.findByIdIn(studyGroupsIds);
@@ -177,13 +176,17 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                     throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by userId: " + userId);
                 });
 
-        userGroupRepository.findUserTypeByUserIdAndSGId(userId, studyGroupId)
-                .ifPresent(userType -> {
-                    if (!userType.equals(UserType.LEADER)) {
-                        log.error("userType이 Leader가 아닙니다.");
-                        throw new WSApiException(ErrorCode.INVALID_REQUEST, "StudyGroup modification is possible only if the user is the leader.");
-                    }
-                });
+        UserType findUserType = userGroupRepository.findUserTypeByUserIdAndSGId(findUser.getId(), studyGroupId)
+                .orElseThrow(() -> new WSApiException(ErrorCode.NOT_FOUND_USER, "studyGroup 등록자가 아닙니다."));
+
+        Optional.of(findUserType).ifPresent(userType -> {
+            if (!userType.equals(UserType.LEADER)) {
+                log.error("userType이 Leader가 아닙니다.");
+                throw new WSApiException(ErrorCode.INVALID_REQUEST,
+                        "StudyGroup modification is possible only if the user is the leader."
+                );
+            }
+        });
         return studyGroupRepository.findById(studyGroupId);
     }
 
@@ -201,13 +204,16 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                             " studyGroupId: " + studyGroupId);
                 });
 
-        userGroupRepository.findUserTypeByUserIdAndSGId(userId, studyGroupId)
-                .ifPresent(userType -> {
-                    if (!userType.equals(UserType.LEADER)) {
-                        log.error("userType이 Leader가 아닙니다.");
-                        throw new WSApiException(ErrorCode.INVALID_REQUEST, "StudyGroup modification is possible only if the user is the leader.");
-                    }
-                });
+        UserType findUserType = userGroupRepository.findUserTypeByUserIdAndSGId(findUser.getId(), findStudyGroup.getId())
+                .orElseThrow(() -> new WSApiException(ErrorCode.NOT_FOUND_USER, "studyGroup 등록자가 아닙니다."));
+
+        Optional.of(findUserType).ifPresent(userType -> {
+            if (!userType.equals(UserType.LEADER)) {
+                log.error("userType이 Leader가 아닙니다.");
+                throw new WSApiException(ErrorCode.INVALID_REQUEST,
+                        "StudyGroup modification is possible only if the user is the leader.");
+            }
+        });
         return findStudyGroup;
     }
 }

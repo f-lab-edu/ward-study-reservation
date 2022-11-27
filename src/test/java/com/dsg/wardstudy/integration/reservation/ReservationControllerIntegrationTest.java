@@ -84,6 +84,7 @@ class ReservationControllerIntegrationTest {
                 .build();
     }
 
+    // TODO: IntegrationControllerTest부터는 Config 파일과 직접적으로 연관되어 어플리케이션 로딩 실패
     @Test
     @DisplayName("예약 등록")
     void givenReservationCreateRequestAndSGIdAndRoomId_whenCreate_thenReturnReservationDetails() throws Exception {

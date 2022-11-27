@@ -1,6 +1,5 @@
 package com.dsg.wardstudy.domain.user.dto;
 
-import com.dsg.wardstudy.domain.user.User;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,6 +25,8 @@ public class SignUpRequest {
     private String nickname;
 
     @NotBlank
+    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*[!@#$%^*+=-])(?=.*[0-9]).{4,15}$",
+            message= "비밀번호는 4글자 이상, 16글자 미만 그리고 영문/숫자/특수문자 포함이어야 합니다.")
     private String password;
 
     @Builder
@@ -36,12 +37,4 @@ public class SignUpRequest {
         this.password = password;
     }
 
-    public static User mapToEntity(SignUpRequest signUpDto) {
-        return User.builder()
-                .name(signUpDto.getName())
-                .email(signUpDto.getEmail())
-                .nickname(signUpDto.getNickname())
-                .password(signUpDto.getPassword())
-                .build();
-    }
 }

@@ -6,13 +6,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 @Data
 @NoArgsConstructor
 public class StudyGroupRequest {
 
+    @NotBlank
+    @Size(min = 4, max = 99, message = "제목은 4글자 이상, 100글자 미만이어야 합니다.")
     private String title;
-    private String content;
 
+    @NotBlank
+    @Size(min = 4, max = 1999, message = "내용은 4글자 이상, 2000글자 미만이어야 합니다.")
+    private String content;
     private MultipartFile file;
 
     @Builder
