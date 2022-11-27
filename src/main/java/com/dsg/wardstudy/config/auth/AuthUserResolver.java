@@ -30,6 +30,7 @@ public class AuthUserResolver implements HandlerMethodArgumentResolver {
             NativeWebRequest webRequest,
             WebDataBinderFactory binderFactory) throws Exception {
 
+        log.info("AuthUserResolver resolveArgument run.............");
         return loginService.getUserId();
     }
 }

@@ -1,5 +1,6 @@
 package com.dsg.wardstudy.domain.reservation.controller;
 
+import com.dsg.wardstudy.config.auth.AuthUser;
 import com.dsg.wardstudy.domain.reservation.dto.ReservationCommand;
 import com.dsg.wardstudy.domain.reservation.dto.ReservationDetails;
 import com.dsg.wardstudy.domain.reservation.service.ReservationService;
@@ -24,11 +25,15 @@ public class ReservationController {
     public ResponseEntity<ReservationDetails> register(
             @PathVariable("studyGroupId") Long studyGroupId,
             @PathVariable("roomId") Long roomId,
-            @RequestBody ReservationCommand.RegisterReservation registerReservation) throws Exception {
+            @RequestBody ReservationCommand.RegisterReservation registerReservation,
+            @AuthUser Long userId
+    ) throws Exception {
         log.info("reservation register, studyGroupId: {}, roomId: {}, request: {}",
                 studyGroupId,
                 roomId,
                 registerReservation);
+        log.info("reservation register, userId: {}", userId);
+        registerReservation.setUserId(userId);
 
         return new ResponseEntity<>(reservationService.register(
                 studyGroupId, roomId, registerReservation), HttpStatus.CREATED);
@@ -38,9 +43,11 @@ public class ReservationController {
     @GetMapping("/room/{roomId}/reservation/{reservationId}")
     public ResponseEntity<ReservationDetails> getByIds(
             @PathVariable("roomId") Long roomId,
-            @PathVariable("reservationId") String reservationId
+            @PathVariable("reservationId") String reservationId,
+            @AuthUser Long userId
     ) {
         log.info("reservation getById, roomId: {}, reservationId: {}", roomId, reservationId);
+        log.info("reservation getByIds, userId: {}", userId);
         return ResponseEntity.ok(reservationService.getByRoomIdAndReservationId(roomId, reservationId));
     }
 
@@ -49,24 +56,32 @@ public class ReservationController {
     public ResponseEntity<List<ReservationDetails>> getByRoomIdAndTimePeriod(
             @PathVariable("roomId") Long roomId,
             @RequestParam(value = "startTime") String startTime,
-            @RequestParam(value = "endTime") String endTime
+            @RequestParam(value = "endTime") String endTime,
+            @AuthUser Long userId
     ) {
         log.info("reservation getByRoomIdAndTime, roomId: {}, startTime: {}, endTime: {}", roomId, startTime, endTime);
+        log.info("reservation getByRoomIdAndTimePeriod, userId: {}", userId);
         return ResponseEntity.ok(reservationService.getByRoomIdAndTimePeriod(roomId, startTime, endTime));
     }
 
     // 해당 룸 예약 조회 startTime & endTime x
     @GetMapping("/room/{roomId}/reservation")
-    public ResponseEntity<List<ReservationDetails>> getByRoomId(@PathVariable("roomId") Long roomId) {
+    public ResponseEntity<List<ReservationDetails>> getByRoomId(
+            @PathVariable("roomId") Long roomId,
+            @AuthUser Long userId
 
+    ) {
         log.info("reservation getByRoomId, roomId: {}", roomId);
+        log.info("reservation getByRoomId, userId: {}", userId);
         return ResponseEntity.ok(reservationService.getByRoomId(roomId));
     }
 
 
-    // 해당 유저 예약  조회
-    @GetMapping("/users/{userId}/reservation")
-    public ResponseEntity<List<ReservationDetails>> getAllByUserId(@PathVariable("userId") Long userId) {
+    // 해당 유저 예약 조회
+    @GetMapping("/reservation")
+    public ResponseEntity<List<ReservationDetails>> getAllByUserId(
+            @AuthUser Long userId
+    ) {
         log.info("reservation getAllByUserId, userId: {}", userId);
         return ResponseEntity.ok(reservationService.getAllByUserId(userId));
     }
@@ -76,17 +91,24 @@ public class ReservationController {
     public String updateById(
             @PathVariable("roomId") Long roomId,
             @PathVariable("reservationId") String reservationId,
-            @RequestBody ReservationCommand.UpdateReservation updateReservation) {
+            @RequestBody ReservationCommand.UpdateReservation updateReservation,
+            @AuthUser Long userId
+
+    ) {
         log.info("reservation updateById, roomId: {}, reservationId: {}", roomId, reservationId);
+        log.info("reservation updateById, userId: {}", userId);
+        updateReservation.setUserId(userId);
         return reservationService.updateById(roomId, reservationId, updateReservation);
     }
 
     // 예약 삭제
-    @DeleteMapping("/users/{userId}/reservation/{reservationId}")
+    @DeleteMapping("/reservation/{reservationId}")
     public ResponseEntity<String> deleteById(
-            @PathVariable("userId") Long userId,
-            @PathVariable("reservationId") String reservationId) {
-        log.info("reservation deleteById, userId: {}, reservationId: {}" ,userId, reservationId);
+            @PathVariable("reservationId") String reservationId,
+            @AuthUser Long userId
+    ) {
+        log.info("reservation deleteById, reservationId: {}" ,reservationId);
+        log.info("reservation deleteById, userId: {}", userId);
         reservationService.deleteById(userId, reservationId);
         return new ResponseEntity<>("a reservation successfully deleted!", HttpStatus.OK);
     }
