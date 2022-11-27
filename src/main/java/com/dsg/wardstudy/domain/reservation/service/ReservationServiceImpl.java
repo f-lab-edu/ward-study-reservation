@@ -46,7 +46,7 @@ public class ReservationServiceImpl implements ReservationService{
     private final UserGroupRepository userGroupRepository;
     private final ReservationRepository reservationRepository;
     private final RoomRepository roomRepository;
-    private final JsonKafkaProducer jsonKafkaProducer;
+//    private final JsonKafkaProducer jsonKafkaProducer;
 
     @CacheEvict(key = "#roomId", value = RESERVATION_LIST, cacheManager = "redisCacheManager")
     @Transactional
@@ -71,7 +71,7 @@ public class ReservationServiceImpl implements ReservationService{
             ReservationCommand.RegisterReservation registerReservation) {
 
         // 시간 간격 차이 최소 1시간
-        validateDiffTime(registerReservation);
+        validateDiffTime(registerReservation.getStartTime(), registerReservation.getEndTime());
 
         ValidateFindByIdDto validateFindByIdDto = validateFindById(registerReservation.getUserId(), studyGroupId, roomId);
 
@@ -102,13 +102,13 @@ public class ReservationServiceImpl implements ReservationService{
         return reservation;
     }
 
-    private void validateDiffTime(ReservationCommand.RegisterReservation registerReservation) {
+    private void validateDiffTime(String stateTime, String endTime) {
         SimpleDateFormat sft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
         Date stateDate = null;
         Date endDate = null;
         try {
-            stateDate = sft.parse(registerReservation.getStartTime());
-            endDate = sft.parse(registerReservation.getEndTime());
+            stateDate = sft.parse(stateTime);
+            endDate = sft.parse(endTime);
         } catch (ParseException e) {
             throw new RuntimeException(e);
         }
@@ -162,6 +162,8 @@ public class ReservationServiceImpl implements ReservationService{
     @Transactional(readOnly = true)
     @Override
     public List<ReservationDetails> getByRoomIdAndTimePeriod(Long roomId, String startTime, String endTime) {
+
+        validateDiffTime(startTime, endTime);
 
         Room room = roomRepository.findById(roomId)
                 .orElseThrow(() -> {
@@ -224,18 +226,22 @@ public class ReservationServiceImpl implements ReservationService{
 
     private Reservation validateUpdateRequest(Long roomId, ReservationCommand.UpdateReservation updateReservation) {
 
+        validateDiffTime(updateReservation.getStartTime(), updateReservation.getEndTime());
+
         ValidateFindByIdDto validateFindByIdDto = validateFindById(updateReservation.getUserId(),
                 updateReservation.getStudyGroupId(),
                 roomId);
 
-        userGroupRepository.findUserTypeByUserIdAndSGId(updateReservation.getUserId(), updateReservation.getStudyGroupId())
-                .ifPresent(userType -> {
-                    if (!userType.equals(UserType.LEADER)) {
-                        log.error("userType이 Leader가 아닙니다.");
-                        throw new WSApiException(ErrorCode.INVALID_REQUEST,
-                                "Reservation registration is possible only if the user is the leader.");
-                    }
-                });
+        UserType findUserType = userGroupRepository.findUserTypeByUserIdAndSGId(updateReservation.getUserId(), updateReservation.getStudyGroupId())
+                .orElseThrow(() -> new WSApiException(ErrorCode.NOT_FOUND_USER, "studyGroup 등록자가 아닙니다."));
+
+        Optional.of(findUserType).ifPresent(userType -> {
+            if (!userType.equals(UserType.LEADER)) {
+                log.error("userType이 Leader가 아닙니다.");
+                throw new WSApiException(ErrorCode.INVALID_REQUEST,
+                        "Reservation update is possible only if the user is the leader.");
+            }
+        });
 
         Reservation newReservation = updateReservation.mapToEntity(validateFindByIdDto);
 
@@ -261,13 +267,18 @@ public class ReservationServiceImpl implements ReservationService{
         reservationRepository.findById(reservationId)
                 .ifPresent(reservation -> {
                     log.info("해당 reservation register: {}", reservation.getUser().getId());
-                    if (reservation.getUser().getId().equals(userId)) {
-                        reservationRepository.delete(reservation);
-                    } else {
-                        log.error("해당 reservation register가 아닙니다.");
-                        throw new WSApiException(ErrorCode.INVALID_REQUEST,
-                                "Reservation modification is possible only if the user is the register.");
-                    }
+
+                    UserType findUserType = userGroupRepository.findUserTypeByUserIdAndSGId(reservation.getUser().getId(), reservation.getStudyGroup().getId())
+                            .orElseThrow(() -> new WSApiException(ErrorCode.NOT_FOUND_USER, "studyGroup 등록자가 아닙니다."));
+
+                    Optional.of(findUserType).ifPresent(userType -> {
+                        if (!userType.equals(UserType.LEADER)) {
+                            log.error("userType이 Leader가 아닙니다.");
+                            throw new WSApiException(ErrorCode.INVALID_REQUEST,
+                                    "Reservation update is possible only if the user is the leader.");
+                        }
+                        reservationRepository.deleteById(reservationId);
+                    });
                 });
     }
 
