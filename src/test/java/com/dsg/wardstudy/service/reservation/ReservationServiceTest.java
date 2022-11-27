@@ -90,7 +90,7 @@ class ReservationServiceTest {
                 .build();
 
         reservation = Reservation.builder()
-                .id(room.getId() +"||" + LocalDateTime.of(2019, Month.NOVEMBER, 3, 6, 30))
+//                .id(room.getId() +"||" + LocalDateTime.of(2019, Month.NOVEMBER, 3, 6, 30))
                 .user(user)
                 .studyGroup(studyGroup)
                 .room(room)
@@ -138,24 +138,24 @@ class ReservationServiceTest {
     }
 
     @Test
-    public void givenRoomIdAndReservationId_whenGetById_thenReturnThrowException() {
+    public void givenRoomIdAndReservationToken_whenGetById_thenReturnThrowException() {
         // getById_ThrowsException
         // given - precondition or setup
         String reservationId = "1||2020-11-03 06:30:00";
 
         Mockito.lenient().when(reservationRepository.findByRoomId(room.getId()))
                 .thenReturn(List.of(reservation));
-        Mockito.lenient().when(reservationRepository.findById(anyString()))
+        Mockito.lenient().when(reservationRepository.findByTokenLock(anyString()))
                 .thenReturn(Optional.empty());
 
         // when - action or the behaviour that we are going test
         assertThatThrownBy(() -> {
-            reservationService.getByRoomIdAndReservationId(room.getId(), reservationId);
+            reservationService.getByRoomIdAndReservationToken(room.getId(), reservationId);
         }).isInstanceOf(WSApiException.class);
 
         // then - verify the output
         verify(reservationRepository, never()).findByRoomId(anyLong());
-        verify(reservationRepository, never()).findById(anyString());
+        verify(reservationRepository, never()).findByTokenLock(anyString());
 
     }
 
@@ -190,7 +190,7 @@ class ReservationServiceTest {
         LocalDateTime eTime = LocalDateTime.of(2019, Month.OCTOBER, 3, 9, 30);
 
         Reservation reservation1 = Reservation.builder()
-                .id(room.getId() + "||" + TimeParsingUtils.formatterString(sTime))
+//                .id(room.getId() + "||" + TimeParsingUtils.formatterString(sTime))
                 .room(room)
                 .user(user)
                 .startTime(LocalDateTime.of(2019, Month.OCTOBER, 3, 5, 30))
@@ -228,7 +228,7 @@ class ReservationServiceTest {
         LocalDateTime eTime = LocalDateTime.of(2019, Month.OCTOBER, 3, 9, 30);
 
         Reservation reservation1 = Reservation.builder()
-                .id(room.getId() + "||" + TimeParsingUtils.formatterString(sTime))
+//                .id(room.getId() + "||" + TimeParsingUtils.formatterString(sTime))
                 .room(room)
                 .user(user)
                 .startTime(LocalDateTime.of(2019, Month.OCTOBER, 3, 5, 30))
@@ -251,25 +251,25 @@ class ReservationServiceTest {
     }
 
     @Test
-    void givenRoomIdAndReservationId_whenGetAllById_thenReturnReservationDetails() {
-        // getByRoomIdAndReservationId
+    void givenRoomIdAndReservationToken_whenGetAllById_thenReturnReservationDetails() {
+        // getByRoomIdAndReservationToken
         // given - precondition or setup
-        when(reservationRepository.findByRoomIdAndId(room.getId(), reservation.getId()))
+        when(reservationRepository.findByRoomIdAndToken(room.getId(), reservation.getReservationToken()))
                 .thenReturn(Optional.of(reservation));
 
         // when - action or the behaviour that we are going test
-        ReservationDetails details = reservationService.getByRoomIdAndReservationId(room.getId(), reservation.getId());
+        ReservationDetails details = reservationService.getByRoomIdAndReservationToken(room.getId(), reservation.getReservationToken());
         log.info("details: {}", details);
 
         // then - verify the output
         assertThat(details).isNotNull();
-        assertThat(details.getId()).isEqualTo(reservation.getId());
+        assertThat(details.getReservationToken()).isEqualTo(reservation.getReservationToken());
         assertThat(details.getStartTime()).isEqualTo(TimeParsingUtils.formatterString(reservation.getStartTime()));
         assertThat(details.getEndTime()).isEqualTo(TimeParsingUtils.formatterString(reservation.getEndTime()));
     }
 
     @Test
-    void givenReservationUpdateRequest_whenUpdate_thenReturnUpdatedReservationId() {
+    void givenReservationUpdateRequest_whenUpdate_thenReturnUpdatedReservationToken() {
         // given - precondition or setup
         String sTime = TimeParsingUtils.formatterString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 6, 30));
         String eTime = TimeParsingUtils.formatterString(LocalDateTime.of(2022, Month.NOVEMBER, 3, 7, 30));
@@ -306,7 +306,7 @@ class ReservationServiceTest {
         willDoNothing().given(reservationRepository).delete(reservation);
 
         // when - action or the behaviour that we are going test
-        String updateById = reservationService.updateById(room.getId(), reservation.getId(), updateRequest);
+        String updateById = reservationService.updateByToken(room.getId(), reservation.getReservationToken(), updateRequest);
         log.info("updateById: {}", updateById);
 
         // then - verify the output
@@ -315,7 +315,7 @@ class ReservationServiceTest {
     }
 
     @Test
-    void givenReservationId_whenDelete_thenNothing() {
+    void givenReservationToken_whenDelete_thenNothing() {
         // given - precondition or setup
         given(userRepository.findById(user.getId()))
                 .willReturn(Optional.of(user));
@@ -323,7 +323,7 @@ class ReservationServiceTest {
                 .willReturn(Optional.of(reservation));
 
         // when - action or the behaviour that we are going test
-        reservationService.deleteById(user.getId(), reservation.getId());
+        reservationService.deleteByToken(user.getId(), reservation.getReservationToken());
 
         // then - verify the output
         verify(reservationRepository).delete(reservation);

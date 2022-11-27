@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ReservationDetails {
 
-    private String id;
+    private String reservationToken;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private String startTime;
@@ -33,8 +33,8 @@ public class ReservationDetails {
     private String roomName;
 
     @Builder
-    public ReservationDetails(String id, String startTime, String endTime, Long registerId, String registerEmail, Long studyGroupId, String studyGroupTitle, Long roomId, String roomName) {
-        this.id = id;
+    public ReservationDetails(String reservationToken, String startTime, String endTime, Long registerId, String registerEmail, Long studyGroupId, String studyGroupTitle, Long roomId, String roomName) {
+        this.reservationToken = reservationToken;
         this.startTime = startTime;
         this.endTime = endTime;
         this.registerId = registerId;
@@ -47,7 +47,7 @@ public class ReservationDetails {
 
     public static ReservationDetails mapToDto(Reservation reservation) {
         return ReservationDetails.builder()
-                .id(reservation.getId())
+                .reservationToken(reservation.getReservationToken())
                 .startTime(TimeParsingUtils.formatterString(reservation.getStartTime()))
                 .endTime(TimeParsingUtils.formatterString(reservation.getEndTime()))
                 .registerId(reservation.getUser().getId())

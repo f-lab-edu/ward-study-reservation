@@ -16,11 +16,11 @@ public interface ReservationService {
 
     List<ReservationDetails> getByRoomId(Long roomId);
 
-    ReservationDetails getByRoomIdAndReservationId(Long roomId, String reservationId);
+    ReservationDetails getByRoomIdAndReservationToken(Long roomId, String reservationToken);
 
-    String updateById(Long roomId, String reservationId, ReservationCommand.UpdateReservation updateReservation);
+    String updateByToken(Long roomId, String reservationToken, ReservationCommand.UpdateReservation updateReservation);
 
-    void deleteById(Long userId, String reservationId);
+    void deleteByToken(Long userId, String reservationToken);
 
     void changeIsEmailSent(Reservation reservation);
 
