@@ -45,7 +45,7 @@ public class Reservation extends BaseTimeEntity {
     private boolean isEmailSent;
 
     @Builder
-    public Reservation(LocalDateTime startTime, LocalDateTime endTime, User user, StudyGroup studyGroup, Room room, boolean isEmailSent) {
+    public Reservation(String id, LocalDateTime startTime, LocalDateTime endTime, User user, StudyGroup studyGroup, Room room, boolean isEmailSent) {
         this.id = room.getId() + "||" + TimeParsingUtils.formatterString(startTime);
         this.startTime = startTime;
         this.endTime = endTime;

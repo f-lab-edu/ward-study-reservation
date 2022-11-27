@@ -11,7 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
 @DataJpaTest
-@ActiveProfiles("test")
 class StudyGroupRepositoryTest {
 
     @Autowired
@@ -130,6 +128,7 @@ class StudyGroupRepositoryTest {
 
     }
 
+    // TODO : save가 하나만 되는 현상
     @Test
     @DisplayName("스터디그룹들 studyGroupIdList로 가져오기")
     public void givenSGIdList_whenFindBySGIdIn_thenStudyGroupList(){
@@ -143,11 +142,11 @@ class StudyGroupRepositoryTest {
             studyGroupRepository.save(studyGroup);
         });
 
-        List<Long> studyGroupsIds = List.of(1L, 2L, 3L);
+        List<Long> studyGroupsIds = List.of(2L, 3L);
 
         // when - action or the behaviour that we are going test
         List<StudyGroup> studyGroups = studyGroupRepository.findByIdIn(studyGroupsIds);
-
+        log.info("studyGroups: {}", studyGroups);
         // then - verify the output
         assertThat(studyGroups).isNotNull();
         log.info("studyGroups.size(): " + studyGroups.size());
@@ -159,15 +158,16 @@ class StudyGroupRepositoryTest {
     @DisplayName("스터디그룹 수정")
     public void givenStudyGroup_whenUpdateStudyGroup_thenReturnUpdatedStudyGroup() {
         // given - precondition or setup
-        studyGroupRepository.save(studyGroup);
-
         // when - action or the behaviour that we are going test
-        StudyGroup savedStudyGroup = studyGroupRepository.findById(this.studyGroup.getId()).get();
+        StudyGroup savedStudyGroup = studyGroupRepository.save(this.studyGroup);
+
+        log.info("savedStudyGroup: {}", savedStudyGroup);
         savedStudyGroup.update("new_title", "new_content");
 
         // then - verify the output
-        assertThat(studyGroup.getTitle()).isEqualTo("new_title");
-        assertThat(studyGroup.getContent()).isEqualTo("new_content");
+        assertThat(savedStudyGroup).isNotNull();
+        assertThat(savedStudyGroup.getTitle()).isEqualTo("new_title");
+        assertThat(savedStudyGroup.getContent()).isEqualTo("new_content");
 
     }
 
