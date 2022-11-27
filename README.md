@@ -63,7 +63,7 @@
 <br>
 
 ## 🎡 서버 구조도
-![image](https://user-images.githubusercontent.com/62453668/204127443-2711dec2-7fd4-495d-9649-1d48fad6bc2b.png)
+![image](https://user-images.githubusercontent.com/62453668/204154448-c269d0bc-588c-4c4a-a646-88c9d54d9ba2.png)
 
 <br>
 
@@ -115,7 +115,7 @@
 <br>
 
 ## 🎞 ER 다이어그램
-![image](https://user-images.githubusercontent.com/62453668/204138573-da57c4a1-c66f-4826-bc01-a39610c6c2da.png)
+![image](https://user-images.githubusercontent.com/62453668/204154659-5b6e6bbb-34ec-4ca0-bb78-11efed63635e.png)
 
 <br>
 
