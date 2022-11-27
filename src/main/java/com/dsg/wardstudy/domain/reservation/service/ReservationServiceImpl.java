@@ -24,8 +24,13 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.dsg.wardstudy.config.redis.RedisCacheKey.RESERVATION_LIST;
@@ -52,9 +57,9 @@ public class ReservationServiceImpl implements ReservationService{
         Reservation reservation = validateCreateRequest(studyGroupId, roomId, registerReservation);
         Reservation saveReservation = reservationRepository.save(reservation);
         ReservationDetails reservationDetails = ReservationDetails.mapToDto(saveReservation);
-
+        log.info("register reservationDetails: {}", reservationDetails);
         // kafka 메시징 publish
-        jsonKafkaProducer.sendMessage(saveReservation);
+//        jsonKafkaProducer.sendMessage(saveReservation);
 
         return reservationDetails;
 
@@ -65,16 +70,21 @@ public class ReservationServiceImpl implements ReservationService{
             Long roomId,
             ReservationCommand.RegisterReservation registerReservation) {
 
+        // 시간 간격 차이 최소 1시간
+        validateDiffTime(registerReservation);
+
         ValidateFindByIdDto validateFindByIdDto = validateFindById(registerReservation.getUserId(), studyGroupId, roomId);
 
-        userGroupRepository.findUserTypeByUserIdAndSGId(registerReservation.getUserId(), studyGroupId)
-                .ifPresent(userType -> {
-                    if (!userType.equals(UserType.LEADER)) {
-                        log.error("userType이 Leader가 아닙니다.");
-                        throw new WSApiException(ErrorCode.INVALID_REQUEST,
-                                "Reservation registration is possible only if the user is the leader.");
-                    }
-                });
+        UserType findUserType = userGroupRepository.findUserTypeByUserIdAndSGId(registerReservation.getUserId(), studyGroupId)
+                .orElseThrow(() -> new WSApiException(ErrorCode.NOT_FOUND_USER, "studyGroup 등록자가 아닙니다."));
+
+        Optional.of(findUserType).ifPresent(userType -> {
+            if (!userType.equals(UserType.LEADER)) {
+                log.error("userType이 Leader가 아닙니다.");
+                throw new WSApiException(ErrorCode.INVALID_REQUEST,
+                        "Reservation registration is possible only if the user is the leader.");
+            }
+        });
         Reservation reservation = registerReservation.mapToEntity(
                   validateFindByIdDto.getUser()
                 , validateFindByIdDto.getStudyGroup()
@@ -90,6 +100,23 @@ public class ReservationServiceImpl implements ReservationService{
         });
 
         return reservation;
+    }
+
+    private void validateDiffTime(ReservationCommand.RegisterReservation registerReservation) {
+        SimpleDateFormat sft = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.KOREA);
+        Date stateDate = null;
+        Date endDate = null;
+        try {
+            stateDate = sft.parse(registerReservation.getStartTime());
+            endDate = sft.parse(registerReservation.getEndTime());
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        long diffTime = (endDate.getTime() - stateDate.getTime())/3600000;
+        log.info("diffTime: {}", diffTime);
+        if (diffTime < 1 || diffTime > 4) {
+            throw new WSApiException(ErrorCode.INVALID_REQUEST, "예약시간은 최소 1시간이상이어야 하고 최대 4시간을 넘길 수 없습니다.");
+        }
     }
 
     private ValidateFindByIdDto validateFindById(Long userId, Long studyGroupId, Long roomId) {
