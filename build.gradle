@@ -37,7 +37,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'mysql:mysql-connector-java'
-    runtimeOnly 'com.h2database:h2'
+//    runtimeOnly 'com.h2database:h2'
     annotationProcessor 'org.projectlombok:lombok'
     // test에서 lombok 사용
     testCompileOnly 'org.projectlombok:lombok'
@@ -95,6 +95,12 @@ dependencies {
     implementation group: 'org.mindrot', name: 'jbcrypt', version: '0.3m'
     // fire-base
     implementation group: 'com.google.firebase', name: 'firebase-admin', version: '8.1.0'
+
+    // https://mvnrepository.com/artifact/com.namics.oss/java-random
+    implementation group: 'com.namics.oss', name: 'java-random', version: '1.2.2'
+
+
+
 }
 
 jar {
