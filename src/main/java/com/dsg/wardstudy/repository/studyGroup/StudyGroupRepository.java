@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.repository.studyGroup;
 
-import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
+import com.dsg.wardstudy.domain.studyGroup.entity.StudyGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 

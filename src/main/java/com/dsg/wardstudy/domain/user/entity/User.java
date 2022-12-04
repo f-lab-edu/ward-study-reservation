@@ -1,7 +1,7 @@
-package com.dsg.wardstudy.domain.user;
+package com.dsg.wardstudy.domain.user.entity;
 
 import com.dsg.wardstudy.domain.BaseTimeEntity;
-import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.reservation.entity.Reservation;
 import com.dsg.wardstudy.domain.user.dto.LoginDto;
 import com.dsg.wardstudy.domain.user.dto.SignUpRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;

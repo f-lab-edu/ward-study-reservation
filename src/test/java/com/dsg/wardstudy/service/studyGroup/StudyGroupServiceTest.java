@@ -1,11 +1,11 @@
 package com.dsg.wardstudy.service.studyGroup;
 
-import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.reservation.entity.Reservation;
 import com.dsg.wardstudy.domain.studyGroup.QStudyGroup;
-import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
+import com.dsg.wardstudy.domain.studyGroup.entity.StudyGroup;
 import com.dsg.wardstudy.domain.studyGroup.service.StudyGroupServiceImpl;
-import com.dsg.wardstudy.domain.user.User;
-import com.dsg.wardstudy.domain.user.UserGroup;
+import com.dsg.wardstudy.domain.user.entity.User;
+import com.dsg.wardstudy.domain.user.entity.UserGroup;
 import com.dsg.wardstudy.domain.studyGroup.dto.PageResponse;
 import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupRequest;
 import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupResponse;
@@ -15,7 +15,7 @@ import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
-import com.dsg.wardstudy.type.UserType;
+import com.dsg.wardstudy.domain.user.constant.UserType;
 import com.querydsl.core.BooleanBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;

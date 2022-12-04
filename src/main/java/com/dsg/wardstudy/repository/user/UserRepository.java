@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.repository.user;
 
-import com.dsg.wardstudy.domain.user.User;
+import com.dsg.wardstudy.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -3,10 +3,10 @@ package com.dsg.wardstudy.config.batch;
 
 import com.dsg.wardstudy.common.adapter.mail.MailMessageGenerator;
 import com.dsg.wardstudy.common.adapter.mail.MailSendService;
-import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.reservation.entity.Reservation;
 import com.dsg.wardstudy.domain.reservation.dto.NotificationAlarmDto;
 import com.dsg.wardstudy.domain.reservation.service.ReservationService;
-import com.dsg.wardstudy.domain.user.User;
+import com.dsg.wardstudy.domain.user.entity.User;
 import com.dsg.wardstudy.repository.reservation.ReservationQueryRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;

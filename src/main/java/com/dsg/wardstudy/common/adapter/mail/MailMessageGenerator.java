@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.common.adapter.mail;
 
-import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.reservation.entity.Reservation;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

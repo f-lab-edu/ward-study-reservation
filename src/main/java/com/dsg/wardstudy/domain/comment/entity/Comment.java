@@ -1,8 +1,8 @@
-package com.dsg.wardstudy.domain.comment;
+package com.dsg.wardstudy.domain.comment.entity;
 
 import com.dsg.wardstudy.domain.BaseTimeEntity;
 import com.dsg.wardstudy.domain.comment.dto.CommentDto;
-import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
+import com.dsg.wardstudy.domain.studyGroup.entity.StudyGroup;
 import lombok.*;
 
 import javax.persistence.*;
@@ -44,5 +44,11 @@ public class Comment extends BaseTimeEntity {
                 .email(commentDto.getEmail())
                 .body(commentDto.getBody())
                 .build();
+    }
+
+    public void updateComment(CommentDto commentDto) {
+        this.name = commentDto.getName();
+        this.email = commentDto.getEmail();
+        this.body = commentDto.getBody();
     }
 }

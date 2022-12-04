@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.domain.comment.dto;
 
-import com.dsg.wardstudy.domain.comment.Comment;
+import com.dsg.wardstudy.domain.comment.entity.Comment;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

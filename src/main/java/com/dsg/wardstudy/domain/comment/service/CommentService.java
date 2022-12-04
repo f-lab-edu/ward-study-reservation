@@ -11,4 +11,8 @@ public interface CommentService {
     List<CommentDto> getCommentsByStudyGroupId(Long studyGroupId);
 
     CommentDto getCommentById(Long studyGroupId, Long commentId);
+
+    CommentDto updateComment(Long studyGroupId, Long commentId, CommentDto commentDto);
+
+    void deleteComment(Long studyGroupId, Long commentId);
 }

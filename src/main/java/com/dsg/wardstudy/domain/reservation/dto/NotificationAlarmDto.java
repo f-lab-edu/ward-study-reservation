@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.domain.reservation.dto;
 
-import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.reservation.entity.Reservation;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

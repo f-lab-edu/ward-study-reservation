@@ -1,11 +1,11 @@
-package com.dsg.wardstudy.domain.reservation;
+package com.dsg.wardstudy.domain.reservation.entity;
 
 import com.dsg.wardstudy.common.utils.TimeParsingUtils;
 import com.dsg.wardstudy.common.utils.TokenGenerator;
 import com.dsg.wardstudy.domain.BaseTimeEntity;
 import com.dsg.wardstudy.domain.reservation.dto.ReservationCommand;
-import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
-import com.dsg.wardstudy.domain.user.User;
+import com.dsg.wardstudy.domain.studyGroup.entity.StudyGroup;
+import com.dsg.wardstudy.domain.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 

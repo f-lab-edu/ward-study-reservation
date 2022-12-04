@@ -1,4 +1,4 @@
-package com.dsg.wardstudy.type;
+package com.dsg.wardstudy.domain.user.constant;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

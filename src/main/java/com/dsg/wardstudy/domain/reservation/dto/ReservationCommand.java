@@ -1,10 +1,10 @@
 package com.dsg.wardstudy.domain.reservation.dto;
 
 import com.dsg.wardstudy.common.utils.TimeParsingUtils;
-import com.dsg.wardstudy.domain.reservation.Reservation;
-import com.dsg.wardstudy.domain.reservation.Room;
-import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
-import com.dsg.wardstudy.domain.user.User;
+import com.dsg.wardstudy.domain.reservation.entity.Reservation;
+import com.dsg.wardstudy.domain.reservation.entity.Room;
+import com.dsg.wardstudy.domain.studyGroup.entity.StudyGroup;
+import com.dsg.wardstudy.domain.user.entity.User;
 import lombok.*;
 
 public class ReservationCommand {

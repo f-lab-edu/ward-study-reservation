@@ -1,7 +1,7 @@
 package com.dsg.wardstudy;
 
 import com.dsg.wardstudy.config.jpa.JpaAuditingConfig;
-import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.reservation.entity.Reservation;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.namics.commons.random.RandomData;
 import lombok.extern.slf4j.Slf4j;
