@@ -1,6 +1,7 @@
 package com.dsg.wardstudy.domain.comment.dto;
 
 import com.dsg.wardstudy.domain.comment.entity.Comment;
+import com.dsg.wardstudy.domain.user.entity.User;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,9 +29,14 @@ public class CommentDto {
     public static CommentDto mapToDto(Comment savedComment) {
         return CommentDto.builder()
                 .id(savedComment.getId())
-                .name(savedComment.getName())
-                .email(savedComment.getEmail())
+                .name(savedComment.getUser().getName())
+                .email(savedComment.getUser().getEmail())
                 .body(savedComment.getBody())
                 .build();
+    }
+
+    public void crateUserInfo(User user) {
+        this.name = user.getName();
+        this.email = user.getEmail();
     }
 }

@@ -6,13 +6,13 @@ import java.util.List;
 
 public interface CommentService {
 
-    CommentDto createComment(Long studyGroupId, CommentDto commentDto);
+    CommentDto createComment(Long studyGroupId, Long userId, CommentDto commentDto);
 
     List<CommentDto> getCommentsByStudyGroupId(Long studyGroupId);
 
-    CommentDto getCommentById(Long studyGroupId, Long commentId);
+    CommentDto getCommentById(Long studyGroupId, Long userId, Long commentId);
 
-    CommentDto updateComment(Long studyGroupId, Long commentId, CommentDto commentDto);
+    CommentDto updateComment(Long studyGroupId, Long userId, Long commentId, CommentDto commentDto);
 
-    void deleteComment(Long studyGroupId, Long commentId);
+    void deleteComment(Long studyGroupId, Long userId, Long commentId);
 }
