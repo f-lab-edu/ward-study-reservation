@@ -39,6 +39,9 @@ public class StudyGroup extends BaseTimeEntity {
     @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "studyGroup", cascade = CascadeType.ALL)
+    private List<Like> likes = new ArrayList<>();
+
     @Builder
     public StudyGroup(Long id, String title, String content) {
         this.id = id;

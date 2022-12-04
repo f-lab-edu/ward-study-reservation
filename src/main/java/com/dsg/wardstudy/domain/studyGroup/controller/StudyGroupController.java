@@ -5,6 +5,7 @@ import com.dsg.wardstudy.domain.studyGroup.dto.PageResponse;
 import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupRequest;
 import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupResponse;
 import com.dsg.wardstudy.domain.studyGroup.service.StudyGroupService;
+import com.dsg.wardstudy.domain.user.entity.UserGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Pageable;
@@ -86,4 +87,40 @@ public class StudyGroupController {
         studyGroupService.deleteById(userId, studyGroupId);
         return new ResponseEntity<>("a study-group successfully deleted!", HttpStatus.OK);
     }
+
+    // 스터디그룹 참여(일반유저)
+    @PostMapping("/studyGroup/{studyGroupId}")
+    public ResponseEntity<?> participate(
+            @PathVariable Long studyGroupId,
+            @AuthUser Long userId
+    ) {
+        log.info("studyGroup participate, " +
+                "studyGroupId: {}, userInfo: {}", studyGroupId, userId);
+        UserGroup participateUG = studyGroupService.participate(userId, studyGroupId);
+
+        return ResponseEntity.ok(participateUG);
+    }
+
+    // 스터디그룹 좋아요 push
+    @PostMapping("/studyGroup/{studyGroupId}/likes")
+    public ResponseEntity<String> like(
+            @PathVariable Long studyGroupId,
+            @AuthUser Long userId
+    ) {
+        log.info("studyGroup like studyGroupId: {}", studyGroupId);
+        log.info("studyGroup like userId: {}", userId);
+        studyGroupService.like(userId, studyGroupId);
+
+        return ResponseEntity.ok("like push success");
+    }
+
+    // 스터디그룹 좋아요 카운트 가져오기
+    @GetMapping("/studyGroup/{studyGroupId}/likes")
+    public ResponseEntity<Integer> likeCount(
+            @PathVariable Long studyGroupId
+    ) {
+        log.info("studyGroup likeCount studyGroupId: {}", studyGroupId);
+        return ResponseEntity.ok(studyGroupService.likeCount(studyGroupId));
+    }
+
 }

@@ -1,7 +1,7 @@
 package com.dsg.wardstudy.service.studyGroup;
 
 import com.dsg.wardstudy.domain.reservation.entity.Reservation;
-import com.dsg.wardstudy.domain.studyGroup.QStudyGroup;
+import com.dsg.wardstudy.domain.studyGroup.entity.QStudyGroup;
 import com.dsg.wardstudy.domain.studyGroup.entity.StudyGroup;
 import com.dsg.wardstudy.domain.studyGroup.service.StudyGroupServiceImpl;
 import com.dsg.wardstudy.domain.user.entity.User;

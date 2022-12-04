@@ -26,7 +26,7 @@ public class UserController {
 
     /**
      * 회원가입(register)
-      */
+     */
     @PostMapping("/signup")
     public ResponseEntity<?> signup(
             @Valid @RequestBody SignUpRequest signUpDto
@@ -53,6 +53,7 @@ public class UserController {
 
     /**
      * 사용자 회원정보 조회
+     *
      * @return
      */
     @GetMapping("/{userId}")
@@ -65,6 +66,7 @@ public class UserController {
 
     /**
      * 사용자 서비스 탈퇴
+     *
      * @param userId
      * @return
      */
@@ -74,18 +76,4 @@ public class UserController {
         return ResponseEntity.ok("userWithdraw success");
     }
 
-
-    // 일반유저가 스터디그룹에 참여
-    @PostMapping("/studyGroup/{studyGroupId}")
-    public ResponseEntity<?> participate(
-            @PathVariable("studyGroupId") Long studyGroupId,
-            @AuthUser Long userId
-            ) {
-        log.info("users participate studyGroup, " +
-                "studyGroupId: {}, userInfo: {}", studyGroupId, userId);
-        UserGroup participateUG = userService.participate(studyGroupId, userId);
-        log.info("participateUG: {}", participateUG);
-
-        return ResponseEntity.ok(participateUG);
-    }
 }

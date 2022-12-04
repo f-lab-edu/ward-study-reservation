@@ -3,6 +3,7 @@ package com.dsg.wardstudy.domain.studyGroup.service;
 import com.dsg.wardstudy.common.exception.ErrorCode;
 import com.dsg.wardstudy.common.exception.WSApiException;
 import com.dsg.wardstudy.domain.attach.entity.Attach;
+import com.dsg.wardstudy.domain.studyGroup.entity.Like;
 import com.dsg.wardstudy.domain.studyGroup.entity.QStudyGroup;
 import com.dsg.wardstudy.domain.studyGroup.entity.StudyGroup;
 import com.dsg.wardstudy.domain.studyGroup.dto.PageResponse;
@@ -11,6 +12,7 @@ import com.dsg.wardstudy.domain.studyGroup.dto.StudyGroupResponse;
 import com.dsg.wardstudy.domain.user.entity.User;
 import com.dsg.wardstudy.domain.user.entity.UserGroup;
 import com.dsg.wardstudy.repository.attach.AttachRepository;
+import com.dsg.wardstudy.repository.like.LikeRepository;
 import com.dsg.wardstudy.repository.reservation.ReservationQueryRepository;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
@@ -45,6 +47,8 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     private final UserRepository userRepository;
     private final ReservationRepository reservationRepository;
     private final ReservationQueryRepository reservationQueryRepository;
+
+    private final LikeRepository likeRepository;
 
     private final AttachRepository attachRepository;
 
@@ -188,6 +192,65 @@ public class StudyGroupServiceImpl implements StudyGroupService {
                 .map(StudyGroupResponse::mapToDto)
                 .collect(Collectors.toList());
 
+    }
+
+    @Transactional
+    @Override
+    public UserGroup participate(Long userId, Long studyGroupId) {
+        User participateUser = userRepository.findById(userId)
+                .orElseThrow(() -> new WSApiException(ErrorCode.NOT_FOUND_USER));
+        log.info("participate findById user : {}", participateUser);
+
+        StudyGroup participateStudyGroup = studyGroupRepository.findById(studyGroupId)
+                .orElseThrow(() -> new WSApiException(ErrorCode.NO_FOUND_ENTITY, "studyGroup", studyGroupId));
+        log.info("participate studyGroup : {}", participateStudyGroup);
+
+        // 중복 등록 방지
+        userGroupRepository.findByUserIdAndSGId(participateUser.getId(), participateStudyGroup.getId())
+                .ifPresent(ug -> {
+                    throw new WSApiException(ErrorCode.DUPLICATED_ENTITY, "UserGroup participateUserId: " +
+                            participateUser.getId() + ", studyGroupId: " + participateStudyGroup.getId());
+                });
+
+        // studyGroup 등록시 UserType P(참여자)로 등록
+        UserGroup userGroup = UserGroup.builder()
+                .studyGroup(participateStudyGroup)
+                .user(participateUser)
+                .userType(UserType.PARTICIPANT)
+                .build();
+
+        return userGroupRepository.save(userGroup);
+
+    }
+
+    @Transactional
+    @Override
+    public void like(Long userId, Long studyGroupId) {
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> {
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a User by userId: " + userId);
+                });
+
+        StudyGroup findStudyGroup = studyGroupRepository.findById(studyGroupId)
+                .orElseThrow(() -> {
+                    throw new WSApiException(ErrorCode.NO_FOUND_ENTITY, "can't find a StudyGroup by " +
+                            " studyGroupId: " + studyGroupId);
+                });
+        // check liked -> throw
+        likeRepository.findByUserId(findUser.getId()).ifPresent(it -> {
+            throw new WSApiException(ErrorCode.DUPLICATED_ENTITY,
+                    String.format("userId %d already like studygroup %d", userId, studyGroupId));
+        });
+        likeRepository.save(Like.of(findUser, findStudyGroup));
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public int likeCount(Long studyGroupId) {
+        studyGroupRepository.findById(studyGroupId)
+                .orElseThrow(() -> new WSApiException(ErrorCode.NO_FOUND_ENTITY, "no studyGroup"));
+
+        return likeRepository.countByStudyGroupId(studyGroupId);
     }
 
     private Optional<StudyGroup> validateDeleteStudyGroup(Long userId, Long studyGroupId) {
