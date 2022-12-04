@@ -1,7 +1,8 @@
-package com.dsg.wardstudy.domain.user;
+package com.dsg.wardstudy.domain.user.entity;
 
 import com.dsg.wardstudy.domain.BaseTimeEntity;
-import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.comment.entity.Comment;
+import com.dsg.wardstudy.domain.reservation.entity.Reservation;
 import com.dsg.wardstudy.domain.user.dto.LoginDto;
 import com.dsg.wardstudy.domain.user.dto.SignUpRequest;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -45,6 +46,10 @@ public class User extends BaseTimeEntity {
     @JsonIgnore
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Reservation> reservations = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
 
     @Builder
     public User(Long id, String name, String nickname, String email, String password) {

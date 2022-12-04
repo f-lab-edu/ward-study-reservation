@@ -1,18 +1,18 @@
 package com.dsg.wardstudy.controller.reservation;
 
 import com.dsg.wardstudy.common.auth.AuthUserResolver;
-import com.dsg.wardstudy.domain.reservation.Reservation;
-import com.dsg.wardstudy.domain.reservation.Room;
+import com.dsg.wardstudy.domain.reservation.entity.Reservation;
+import com.dsg.wardstudy.domain.reservation.entity.Room;
 import com.dsg.wardstudy.domain.reservation.controller.ReservationController;
-import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
-import com.dsg.wardstudy.domain.user.User;
-import com.dsg.wardstudy.domain.user.UserGroup;
+import com.dsg.wardstudy.domain.studyGroup.entity.StudyGroup;
+import com.dsg.wardstudy.domain.user.entity.User;
+import com.dsg.wardstudy.domain.user.entity.UserGroup;
 import com.dsg.wardstudy.domain.reservation.dto.ReservationCommand;
 import com.dsg.wardstudy.domain.reservation.dto.ReservationDetails;
 import com.dsg.wardstudy.common.exception.ErrorCode;
 import com.dsg.wardstudy.common.exception.WSApiException;
 import com.dsg.wardstudy.domain.reservation.service.ReservationService;
-import com.dsg.wardstudy.type.UserType;
+import com.dsg.wardstudy.domain.user.constant.UserType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;

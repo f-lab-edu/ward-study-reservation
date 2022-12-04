@@ -1,8 +1,8 @@
 package com.dsg.wardstudy.repository.user;
 
-import com.dsg.wardstudy.domain.user.User;
-import com.dsg.wardstudy.domain.user.UserGroup;
-import com.dsg.wardstudy.type.UserType;
+import com.dsg.wardstudy.domain.user.entity.User;
+import com.dsg.wardstudy.domain.user.entity.UserGroup;
+import com.dsg.wardstudy.domain.user.constant.UserType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

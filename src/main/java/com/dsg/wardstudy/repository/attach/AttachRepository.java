@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.repository.attach;
 
-import com.dsg.wardstudy.domain.attach.Attach;
+import com.dsg.wardstudy.domain.attach.entity.Attach;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

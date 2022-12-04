@@ -1,7 +1,7 @@
 package com.dsg.wardstudy.domain.studyGroup.dto;
 
 import com.dsg.wardstudy.domain.attach.dto.AttachDTO;
-import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
+import com.dsg.wardstudy.domain.studyGroup.entity.StudyGroup;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -1,16 +1,15 @@
 package com.dsg.wardstudy.repository.user;
 
-import com.dsg.wardstudy.domain.reservation.Room;
-import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
-import com.dsg.wardstudy.domain.user.User;
-import com.dsg.wardstudy.domain.user.UserGroup;
+import com.dsg.wardstudy.domain.reservation.entity.Room;
+import com.dsg.wardstudy.domain.studyGroup.entity.StudyGroup;
+import com.dsg.wardstudy.domain.user.entity.User;
+import com.dsg.wardstudy.domain.user.entity.UserGroup;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
-import com.dsg.wardstudy.type.UserType;
+import com.dsg.wardstudy.domain.user.constant.UserType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;

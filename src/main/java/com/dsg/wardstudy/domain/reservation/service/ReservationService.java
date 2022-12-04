@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.domain.reservation.service;
 
-import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.reservation.entity.Reservation;
 import com.dsg.wardstudy.domain.reservation.dto.ReservationCommand;
 import com.dsg.wardstudy.domain.reservation.dto.ReservationDetails;
 

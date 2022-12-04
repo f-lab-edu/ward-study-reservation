@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.domain.attach.dto;
 
-import com.dsg.wardstudy.domain.attach.Attach;
+import com.dsg.wardstudy.domain.attach.entity.Attach;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

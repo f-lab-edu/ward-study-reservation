@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.domain.user.dto;
 
-import com.dsg.wardstudy.domain.user.User;
+import com.dsg.wardstudy.domain.user.entity.User;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;

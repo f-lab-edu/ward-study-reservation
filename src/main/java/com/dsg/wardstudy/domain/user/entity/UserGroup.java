@@ -1,8 +1,8 @@
-package com.dsg.wardstudy.domain.user;
+package com.dsg.wardstudy.domain.user.entity;
 
 import com.dsg.wardstudy.domain.BaseTimeEntity;
-import com.dsg.wardstudy.domain.studyGroup.StudyGroup;
-import com.dsg.wardstudy.type.UserType;
+import com.dsg.wardstudy.domain.studyGroup.entity.StudyGroup;
+import com.dsg.wardstudy.domain.user.constant.UserType;
 import lombok.*;
 
 import javax.persistence.*;

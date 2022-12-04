@@ -1,4 +1,4 @@
-package com.dsg.wardstudy.domain.reservation;
+package com.dsg.wardstudy.domain.reservation.entity;
 
 import com.dsg.wardstudy.domain.BaseTimeEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;

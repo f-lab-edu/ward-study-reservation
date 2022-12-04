@@ -1,6 +1,6 @@
 package com.dsg.wardstudy.repository.reservation;
 
-import com.dsg.wardstudy.domain.reservation.Reservation;
+import com.dsg.wardstudy.domain.reservation.entity.Reservation;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static com.dsg.wardstudy.domain.reservation.QReservation.reservation;
+import static com.dsg.wardstudy.domain.reservation.entity.QReservation.reservation;
+
 
 @Repository
 public class ReservationQueryRepository {
