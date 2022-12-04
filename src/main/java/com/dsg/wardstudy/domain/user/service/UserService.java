@@ -13,7 +13,5 @@ public interface UserService {
 
     LoginDto getByEmailAndPassword(String email, String password);
 
-    UserGroup participate(Long studyGroupId, Long userId);
-
     void withdrawUser(Long userId);
 }

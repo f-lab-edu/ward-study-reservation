@@ -21,9 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-    private final StudyGroupRepository studyGroupRepository;
     private final UserRepository userRepository;
-    private final UserGroupRepository userGroupRepository;
 
 
     @Override
@@ -66,35 +64,6 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new WSApiException(ErrorCode.NOT_FOUND_USER));
         log.info("withdrawUser, findUser: {}", findUser);
         findUser.withdrawUser(true);
-    }
-
-    @Override
-    @Transactional
-    public UserGroup participate(Long studyGroupId, Long userId) {
-        User participateUser = userRepository.findById(userId)
-                .orElseThrow(() -> new WSApiException(ErrorCode.NOT_FOUND_USER));
-        log.info("participate findById user : {}", participateUser);
-
-        StudyGroup participateStudyGroup = studyGroupRepository.findById(studyGroupId)
-                .orElseThrow(() -> new WSApiException(ErrorCode.NO_FOUND_ENTITY, "studyGroup", studyGroupId));
-        log.info("participate studyGroup : {}", participateStudyGroup);
-
-        // 중복 등록 방지
-        userGroupRepository.findByUserIdAndSGId(participateUser.getId(), participateStudyGroup.getId())
-                .ifPresent(ug -> {
-                    throw new WSApiException(ErrorCode.DUPLICATED_ENTITY, "UserGroup participateUserId: " +
-                            participateUser.getId() + ", studyGroupId: " + participateStudyGroup.getId());
-                });
-
-        // studyGroup 등록시 UserType P(참여자)로 등록
-        UserGroup userGroup = UserGroup.builder()
-                .studyGroup(participateStudyGroup)
-                .user(participateUser)
-                .userType(UserType.PARTICIPANT)
-                .build();
-
-        return userGroupRepository.save(userGroup);
-
     }
 
 }
