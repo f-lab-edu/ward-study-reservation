@@ -198,9 +198,13 @@ public class ReservationServiceImpl implements ReservationService{
                     throw new WSApiException(ErrorCode.NO_FOUND_ENTITY);
                 });
 
-        return reservationRepository.findByRoomId(room.getId()).stream()
+        List<ReservationDetails> collect = reservationRepository.findByRoomId(room.getId()).stream()
                 .map(ReservationDetails::mapToDto)
                 .collect(Collectors.toList());
+
+        log.info("collect: {}", collect);
+
+        return collect;
     }
 
     @Transactional(readOnly = true)
