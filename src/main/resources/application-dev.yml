@@ -26,10 +26,10 @@ spring:
 
   redis:
     cache:
-      host: localhost
+      host: redis-cache
       port: 6379
     session:
-      host: localhost
+      host: redis-session
       port: 6380
 
   datasource:
