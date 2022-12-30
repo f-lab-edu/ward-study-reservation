@@ -41,7 +41,7 @@ spring:
   jpa:
     open-in-view: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: update  # prod 배포시 validate
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
       use-new-id-generator-mappings: false
@@ -53,7 +53,7 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ehtjd33@gmail.com
+    username: ${SPRING_MAIL_ID}
     password: ${SPRING_MAIL_PASSWORD}
     properties:
       mail:
