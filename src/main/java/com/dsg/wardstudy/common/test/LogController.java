@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LogController {
 
     @GetMapping(value = "/log")
-    public void log() throws Exception {
+    public String log() throws Exception {
 
         //FATAL, ERROR, WARN, INFO, DEBUG, TRACE
         log.fatal("FATAL");
@@ -18,6 +18,8 @@ public class LogController {
         log.info("INFO");
         log.debug("DEBUG");
         log.trace("TRACE");
+
+        return "log";
     }
 
 }

@@ -21,7 +21,6 @@ services:
   redis-cache:
     image: redis:latest
     container_name: redis-cache
-    #    hostname: redis-cache
     command: redis-server --port 6379
     ports:
       - "6379:6379"
@@ -30,7 +29,6 @@ services:
   redis-session:
     image: redis:latest
     container_name: redis-session
-    #    hostname: redis-session
     command: redis-server --port 6380
     ports:
       - "6380:6380"
@@ -47,17 +45,10 @@ services:
       - "8081:8081"
     env_file:
       - .env
-#    environment:
-#      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-#      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
     depends_on:
       - database
       - redis-cache
       - redis-session
-#    links:     # 권장사항 x
-#      - database
-#      - redis-cache
-#      - redis-session
     networks:
       - test_network
 
@@ -71,17 +62,10 @@ services:
       - "8082:8081"
     env_file:
       - .env
-    #    environment:
-    #      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-    #      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
     depends_on:
       - database
       - redis-cache
       - redis-session
-#    links:
-#      - database
-#      - redis-cache
-#      - redis-session
     networks:
       - test_network
 
@@ -95,17 +79,10 @@ services:
       - "8083:8081"
     env_file:
       - .env
-    #    environment:
-    #      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-    #      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
     depends_on:
       - database
       - redis-cache
       - redis-session
-#    links:
-#      - database
-#      - redis-cache
-#      - redis-session
     networks:
       - test_network
 
