@@ -3,19 +3,19 @@ package com.dsg.wardstudy.domain.reservation.service;
 import com.dsg.wardstudy.common.exception.ErrorCode;
 import com.dsg.wardstudy.common.exception.WSApiException;
 import com.dsg.wardstudy.common.utils.TimeParsingUtils;
-import com.dsg.wardstudy.domain.reservation.entity.Reservation;
-import com.dsg.wardstudy.domain.reservation.entity.Room;
 import com.dsg.wardstudy.domain.reservation.dto.ReservationCommand;
 import com.dsg.wardstudy.domain.reservation.dto.ReservationDetails;
 import com.dsg.wardstudy.domain.reservation.dto.ValidateFindByIdDto;
+import com.dsg.wardstudy.domain.reservation.entity.Reservation;
+import com.dsg.wardstudy.domain.reservation.entity.Room;
 import com.dsg.wardstudy.domain.studyGroup.entity.StudyGroup;
+import com.dsg.wardstudy.domain.user.constant.UserType;
 import com.dsg.wardstudy.domain.user.entity.User;
 import com.dsg.wardstudy.repository.reservation.ReservationRepository;
 import com.dsg.wardstudy.repository.reservation.RoomRepository;
 import com.dsg.wardstudy.repository.studyGroup.StudyGroupRepository;
 import com.dsg.wardstudy.repository.user.UserGroupRepository;
 import com.dsg.wardstudy.repository.user.UserRepository;
-import com.dsg.wardstudy.domain.user.constant.UserType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.cache.annotation.CacheEvict;
@@ -45,7 +45,6 @@ public class ReservationServiceImpl implements ReservationService{
     private final UserGroupRepository userGroupRepository;
     private final ReservationRepository reservationRepository;
     private final RoomRepository roomRepository;
-//    private final JsonKafkaProducer jsonKafkaProducer;
 
     @CacheEvict(key = "#roomId", value = RESERVATION_LIST, cacheManager = "redisCacheManager")
     @Transactional
@@ -57,8 +56,7 @@ public class ReservationServiceImpl implements ReservationService{
         Reservation saveReservation = reservationRepository.save(reservation);
         ReservationDetails reservationDetails = ReservationDetails.mapToDto(saveReservation);
         log.info("register reservationDetails: {}", reservationDetails);
-        // kafka 메시징 publish
-//        jsonKafkaProducer.sendMessage(saveReservation);
+
 
         return reservationDetails;
 
@@ -198,9 +196,13 @@ public class ReservationServiceImpl implements ReservationService{
                     throw new WSApiException(ErrorCode.NO_FOUND_ENTITY);
                 });
 
-        return reservationRepository.findByRoomId(room.getId()).stream()
+        List<ReservationDetails> collect = reservationRepository.findByRoomId(room.getId()).stream()
                 .map(ReservationDetails::mapToDto)
                 .collect(Collectors.toList());
+
+        log.info("collect: {}", collect);
+
+        return collect;
     }
 
     @Transactional(readOnly = true)
