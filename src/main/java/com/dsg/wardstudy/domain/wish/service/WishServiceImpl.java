@@ -30,7 +30,8 @@ public class WishServiceImpl implements WishService {
     @Transactional
     @Override
     public WishDto search(String query) {
-
+        // 지역 검색 -> 이미지 검색 -> 결과 리턴 순
+        // 지역 검색
         SearchLocalReq searchLocalReq = new SearchLocalReq();
         searchLocalReq.setQuery(query);
         SearchLocalRes searchLocalRes = naverClient.searchLocal(searchLocalReq);
@@ -38,7 +39,7 @@ public class WishServiceImpl implements WishService {
         if (searchLocalRes.getTotal() > 0) {
             SearchLocalRes.SearchLocalItem localItem = searchLocalRes.getItems().stream().findFirst().get();
 
-            String imageQuery = localItem.getTitle().replaceAll("<[^>]*>", "");
+            String imageQuery = localItem.getTitle().replaceAll("<[^>]*>", ""); // 괄호 다 삭제
 
             SearchImageReq searchImageReq = new SearchImageReq();
             searchImageReq.setQuery(imageQuery);
