@@ -1,6 +1,6 @@
 
 server:
-  port: 8081
+  port: 8083
 
 spring:
 
@@ -26,15 +26,15 @@ spring:
 
   redis:
     cache:
-      host: redis-cache
+      host: localhost
       port: 6379
     session:
-      host: redis-session
+      host: localhost
       port: 6380
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://mysql_db:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/${MYSQL_DATABASE}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
 
@@ -76,5 +76,5 @@ naver:
       local: https://openapi.naver.com/v1/search/local.json
       image: https://openapi.naver.com/v1/search/image
   client:
-    id: Zi3o1uQftp59zuIqEAz4
-    secret: iy6YKSWpLM
+    id: 6PagL7E4PzGch6__yf0F
+    secret: DGgEjvKNfh
