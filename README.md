@@ -67,6 +67,11 @@
 
 <br>
 
+## 🗃 API 명세서
+✳ https://documenter.getpostman.com/view/14757100/2s8YzMY5fG
+
+<br>
+
 ## 👁‍🗨 이슈 정리
 [Wiki Issues & Trouble shooting](https://github.com/f-lab-edu/ward-study-reservation/wiki/4.-Issues-&-Trouble-shooting)에서 확인할 수 있습니다!
 
@@ -84,9 +89,11 @@
 
 ## 🔖 Git-Flow 브랜치 및 PR 전략 
 
+✳ 참고문헌 :
+우아한 형제들 기술블로그 [우린 Git-flow를 사용하고 있어요](https://woowabros.github.io/experience/2017/10/30/baemin-mobile-git-branch-strategy.html)
+
+
 ![image](https://user-images.githubusercontent.com/62453668/169458249-74e55a36-a631-4440-a52d-332fa78eb9f4.png)
-
-
 
 
 ✅ `master` : 제품으로 출시될 수 있는 브랜치를 의미합니다. 
@@ -99,7 +106,7 @@
 
 ✅ `hotfix` : 출시 버전에서 발생한 버그를 수정하는 브랜치
 
-<br>
+
 
 - `master`를 항상 최신 상태로 만들며, stable 상태로 Product에 배포되는 브랜치 (master = main) 로 삼습니다.
 - 신규개발 건은 `develop` 을 base로 `feature/#이슈번호` or `feature/작업명` 의 브랜치명으로 생성 후 작업한 다음 `PR`을 날립니다.
@@ -107,17 +114,12 @@
 - 모든 `PR`은 반드시 지정한 `리뷰어`에게 코드리뷰를 받아야만 합니다.
 - 코드리뷰어의` Approve` 를 받아야 `Merge pull request` 를 할 수 있습니다.
 
-<br>
-
-✳ 참고문헌 : 
-우아한 형제들 기술블로그 [우린 Git-flow를 사용하고 있어요](https://woowabros.github.io/experience/2017/10/30/baemin-mobile-git-branch-strategy.html)
-
 
 
 <br>
 
 ## 🎞 ER 다이어그램
-![image](https://user-images.githubusercontent.com/62453668/204154659-5b6e6bbb-34ec-4ca0-bb78-11efed63635e.png)
+![image](https://user-images.githubusercontent.com/62453668/210311530-10e574af-1f5c-443e-8e46-2f0b1834b2c9.png)
 
 <br>
 
