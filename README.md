@@ -70,6 +70,8 @@
 ## 🗃 API 명세서
 ✳ https://documenter.getpostman.com/view/14757100/2s8YzMY5fG
 
+<br>
+
 ## 👁‍🗨 이슈 정리
 [Wiki Issues & Trouble shooting](https://github.com/f-lab-edu/ward-study-reservation/wiki/4.-Issues-&-Trouble-shooting)에서 확인할 수 있습니다!
 
