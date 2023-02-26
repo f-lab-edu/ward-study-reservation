@@ -119,7 +119,7 @@
 <br>
 
 ## 🎞 ER 다이어그램
-![image](https://user-images.githubusercontent.com/62453668/210311530-10e574af-1f5c-443e-8e46-2f0b1834b2c9.png)
+![image](https://user-images.githubusercontent.com/62453668/221393510-564ee139-48f6-4d2b-9a71-68fd8e5defb5.png)
 
 <br>
 
